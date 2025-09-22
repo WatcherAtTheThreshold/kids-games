@@ -384,8 +384,21 @@ class ColorPopGame {
                 
                 // Set balloon color
                 balloon.dataset.color = color;
+                
+                // FORCE visual color update by directly setting CSS
+                const balloonBody = balloon.querySelector('.balloon-body');
+                if (balloonBody) {
+                    this.setBalloonBodyColor(balloonBody, color);
+                }
+                
+                // FORCE CSS class update to ensure visual color changes
                 balloon.classList.remove('popping', 'wobbling');
                 balloon.style.display = 'block';
+                
+                // Force a reflow to ensure CSS updates
+                balloon.offsetHeight; // Trigger reflow
+                
+                console.log(`🎨 Balloon ${index + 1} set to: ${color}`);
                 
                 // Start floating animation
                 this.animationSystem.float(balloon, { 
@@ -404,6 +417,26 @@ class ColorPopGame {
             'slide-in-up',
             { stagger: 200 }
         );
+    }
+
+    /* ===================================================================
+       BALLOON COLOR HELPER
+       Directly set balloon background colors to force visual updates
+       =================================================================== */
+    setBalloonBodyColor(balloonBody, color) {
+        const colorGradients = {
+            'red': 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+            'blue': 'linear-gradient(135deg, #4D96FF 0%, #7BB3FF 100%)',
+            'green': 'linear-gradient(135deg, #6BCB77 0%, #8FD999 100%)',
+            'yellow': 'linear-gradient(135deg, #FFD93D 0%, #FFE066 100%)',
+            'purple': 'linear-gradient(135deg, #9B59B6 0%, #B377D9 100%)',
+            'orange': 'linear-gradient(135deg, #FF8C42 0%, #FFA366 100%)'
+        };
+        
+        const gradient = colorGradients[color] || colorGradients['blue'];
+        balloonBody.style.background = gradient;
+        
+        console.log(`🎨 Applied ${color} gradient to balloon body`);
     }
 
     /* ===================================================================
