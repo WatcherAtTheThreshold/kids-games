@@ -54,7 +54,6 @@ class RewardSystem {
     /* === INITIALIZATION === */
     init() {
         this.createStickerShelf();
-        this.setupRewardScreen();
         this.loadCollection();
         console.log('Reward System initialized');
     }
