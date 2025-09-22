@@ -196,8 +196,7 @@ class ColorPopGame {
             minSize: 44
         });
         
-        // === Register Balloon Touch Targets ===
-        this.setupBalloonInteractions();
+        // NOTE: Balloon interactions are registered dynamically each round in displayRoundBalloons()
         
         console.log('🎯 Touch interactions registered');
     }
@@ -407,10 +406,20 @@ class ColorPopGame {
                 balloon.classList.remove('popping', 'wobbling');
                 balloon.style.display = 'block';
                 
-                // Force a reflow to ensure CSS updates
-                balloon.offsetHeight; // Trigger reflow
+                // RE-REGISTER TOUCH TARGET WITH NEW COLOR DATA
+                // This ensures TouchSystem reads the updated color
+                this.touchSystem.unregisterTouchTarget(balloon.dataset.touchId);
+                const newTouchId = this.touchSystem.registerTouchTarget(balloon, {
+                    callback: (touchData) => this.handleBalloonTap(balloon, touchData),
+                    minSize: 120,
+                    hitboxPadding: 20,
+                    data: { 
+                        color: color,  // Use the NEW color
+                        balloonId: balloon.dataset.balloonId 
+                    }
+                });
                 
-                console.log(`🎨 Balloon ${index + 1} set to: ${color}`);
+                console.log(`🎨 Balloon ${index + 1} set to: ${color} (TouchID: ${newTouchId})`);
                 
                 // Start floating animation
                 this.animationSystem.float(balloon, { 
@@ -418,8 +427,11 @@ class ColorPopGame {
                 });
                 
             } else {
-                // Hide extra balloons
+                // Hide extra balloons and unregister touch
                 balloon.style.display = 'none';
+                if (balloon.dataset.touchId) {
+                    this.touchSystem.unregisterTouchTarget(balloon.dataset.touchId);
+                }
             }
         });
         
