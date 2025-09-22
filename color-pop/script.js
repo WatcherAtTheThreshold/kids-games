@@ -333,6 +333,11 @@ class ColorPopGame {
                 this.feedbackSystem.bigCelebration(this.elements.gameContainer);
             }
         }, 500);
+        
+        // Automatically show reward popup after celebration
+        setTimeout(() => {
+            this.claimSticker();
+        }, 3000);
     }
 
     handleRewardShown(rewardData) {
