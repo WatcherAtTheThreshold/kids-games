@@ -3,8 +3,32 @@
 ## Overview
 Building a collection of 6 simple games for ages 3-5, starting with Color Pop as MVP. Focus on reusable systems that can be shared across all games.
 
----
+## File Structure
 
+kids-games/
+├── README.md
+├── core-systems/          # Phase 0 - shared code
+│   ├── audio-manager.js
+│   ├── feedback-system.js  
+│   ├── reward-system.js
+│   ├── touch-handler.js
+│   ├── game-flow.js
+│   ├── animations.css
+│   └── shared-styles.css
+├── color-pop/             # Phase 1
+│   ├── index.html
+│   ├── style.css
+│   ├── script.js
+│   └── assets/
+├── animal-peekaboo/       # Phase 2
+├── bug-count/
+├── bird-match/
+├── feelings-faces/
+├── sound-spelling/
+└── docs/
+    ├── phase-plan.md
+    └── dev-instructions.md
+---
 ## Phase 0: Core Systems Architecture
 
 ### 🎵 Audio System
