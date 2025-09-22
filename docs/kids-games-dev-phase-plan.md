@@ -4,7 +4,7 @@
 Building a collection of 6 simple games for ages 3-5, starting with Color Pop as MVP. Focus on reusable systems that can be shared across all games.
 
 ## File Structure
-
+```
 kids-games/
 ├── README.md
 ├── core-systems/          # Phase 0 - shared code
@@ -28,6 +28,7 @@ kids-games/
 └── docs/
     ├── phase-plan.md
     └── dev-instructions.md
+```
 ---
 ## Phase 0: Core Systems Architecture
 
