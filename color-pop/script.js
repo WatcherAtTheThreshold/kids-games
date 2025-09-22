@@ -190,6 +190,15 @@ class ColorPopGame {
             minSize: 80
         });
         
+        // === Play Again Button ===
+        this.elements.playAgainButton = document.querySelector('.play-again-btn');
+        if (this.elements.playAgainButton) {
+            this.touchSystem.registerTouchTarget(this.elements.playAgainButton, {
+                callback: () => this.restartGame(),
+                minSize: 80
+            });
+        }
+        
         // === Audio Toggle Button ===
         this.touchSystem.registerTouchTarget(this.elements.audioToggle, {
             callback: () => this.toggleAudio(),
