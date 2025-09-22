@@ -289,7 +289,10 @@ class ColorPopGame {
         console.log(`🎯 Starting Round ${roundData.roundNumber}`);
         
         this.gameState.currentRound = roundData.roundNumber;
+        
+        // IMPORTANT: Reset input state IMMEDIATELY
         this.gameState.isWaitingForInput = true;
+        console.log('✅ Input enabled for round', roundData.roundNumber);
         
         // Generate round balloons and target color
         this.generateRoundData();
@@ -313,10 +316,14 @@ class ColorPopGame {
         this.gameState.isWaitingForInput = false;
         this.updateProgressBar();
         
+        console.log(`📊 Current score: ${this.gameState.score.correct}/${this.gameState.score.total}`);
+        
         // Brief pause before next round
         setTimeout(() => {
             if (results.roundNumber < this.gameConfig.totalRounds) {
                 console.log('➡️  Proceeding to next round...');
+            } else {
+                console.log('🎉 All rounds completed! Waiting for game completion...');
             }
         }, 1500);
     }
@@ -342,7 +349,12 @@ class ColorPopGame {
 
     handleRewardShown(rewardData) {
         console.log('🏆 Reward shown:', rewardData);
-        // Additional reward handling can be added here
+        
+        // ACTUALLY SHOW THE REWARD POPUP
+        // This is called by GameFlowManager when the game naturally completes
+        setTimeout(() => {
+            this.claimSticker();
+        }, 1000); // Brief delay after the game flow completion
     }
 
     /* ===================================================================
@@ -444,14 +456,22 @@ class ColorPopGame {
        Process taps on balloons with feedback
        =================================================================== */
     handleBalloonTap(balloon, touchData) {
+        console.log(`🎈 Balloon tap attempt - Round ${this.gameState.currentRound}, Waiting: ${this.gameState.isWaitingForInput}`);
+        
         if (!this.gameState.isWaitingForInput) {
+            console.log('❌ Tap ignored - not waiting for input');
             return; // Ignore taps when not waiting for input
         }
         
         console.log(`🎈 Balloon tapped: ${touchData.targetData.color}`);
+        console.log(`🎯 Expected color: ${this.gameState.targetColor}`);
         
         const tappedColor = touchData.targetData.color;
         const isCorrect = tappedColor === this.gameState.targetColor;
+        
+        // DISABLE INPUT IMMEDIATELY after tap
+        this.gameState.isWaitingForInput = false;
+        console.log('🚫 Input disabled after tap');
         
         // Update score
         this.gameState.score.total++;
