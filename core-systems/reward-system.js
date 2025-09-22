@@ -142,6 +142,10 @@ class RewardSystem {
                     <button class="place-sticker-btn">Place on Shelf</button>
                     <button class="collect-later-btn">Collect Later</button>
                 </div>
+                <div class="navigation-buttons">
+                    <button class="play-again-nav-btn">Play Again</button>
+                    <a href="../index.html" class="back-to-hub-nav-btn">Back to Games</a>
+                </div>
             </div>
         `;
         
@@ -154,6 +158,8 @@ class RewardSystem {
     setupRewardScreenInteractions(rewardScreen, sticker) {
         const placeBtn = rewardScreen.querySelector('.place-sticker-btn');
         const collectBtn = rewardScreen.querySelector('.collect-later-btn');
+        const playAgainBtn = rewardScreen.querySelector('.play-again-nav-btn');
+        const backToHubBtn = rewardScreen.querySelector('.back-to-hub-nav-btn');
         
         if (this.touchSystem) {
             // Place sticker button
@@ -172,6 +178,31 @@ class RewardSystem {
                 },
                 minSize: 80
             });
+            
+            // Play again navigation
+            if (playAgainBtn) {
+                this.touchSystem.registerTouchTarget(playAgainBtn, {
+                    callback: () => {
+                        this.hideRewardScreen();
+                        // Call restart game if the game instance exists
+                        if (window.colorPopGame) {
+                            window.colorPopGame.restartGame();
+                        }
+                    },
+                    minSize: 80
+                });
+            }
+            
+            // Back to hub button (href handles navigation)
+            if (backToHubBtn) {
+                this.touchSystem.registerTouchTarget(backToHubBtn, {
+                    callback: () => {
+                        console.log('Returning to game hub...');
+                        // Navigation handled by href="../index.html"
+                    },
+                    minSize: 80
+                });
+            }
         }
     }
 
@@ -564,7 +595,7 @@ class RewardSystem {
                     border-radius: 20px;
                     padding: 30px;
                     text-align: center;
-                    max-width: 300px;
+                    max-width: 350px;
                     animation: reward-bounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
                 }
                 
@@ -599,6 +630,52 @@ class RewardSystem {
                 .collect-later-btn {
                     background: #f0f0f0;
                     color: #666;
+                }
+                
+                /* === NAVIGATION BUTTONS === */
+                .navigation-buttons {
+                    display: flex;
+                    gap: 15px;
+                    margin-top: 20px;
+                    padding-top: 20px;
+                    border-top: 1px solid #ECF0F1;
+                }
+                
+                .play-again-nav-btn,
+                .back-to-hub-nav-btn {
+                    flex: 1;
+                    padding: 12px 20px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    min-height: 44px;
+                    text-decoration: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: all 0.2s ease;
+                }
+                
+                .play-again-nav-btn {
+                    background: #4D96FF;
+                    color: white;
+                }
+                
+                .play-again-nav-btn:active {
+                    background: #3182FF;
+                    transform: scale(0.95);
+                }
+                
+                .back-to-hub-nav-btn {
+                    background: #9B59B6;
+                    color: white;
+                }
+                
+                .back-to-hub-nav-btn:active {
+                    background: #8E44AD;
+                    transform: scale(0.95);
                 }
                 
                 /* === STICKER SHELF === */
@@ -675,6 +752,24 @@ class RewardSystem {
                     0%, 100% { transform: scale(1) rotate(0deg); }
                     25% { transform: scale(1.2) rotate(-10deg); }
                     75% { transform: scale(1.1) rotate(10deg); }
+                }
+                
+                /* === RESPONSIVE === */
+                @media (max-width: 480px) {
+                    .reward-content {
+                        max-width: 300px;
+                        padding: 25px;
+                    }
+                    
+                    .navigation-buttons {
+                        flex-direction: column;
+                        gap: 10px;
+                    }
+                    
+                    .play-again-nav-btn,
+                    .back-to-hub-nav-btn {
+                        min-height: 50px;
+                    }
                 }
             </style>
         `;
