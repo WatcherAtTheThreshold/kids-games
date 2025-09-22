@@ -1,0 +1,677 @@
+/* ===================================================================
+   COLOR POP - GAME STYLES
+   Mobile-first, toddler-friendly balloon popping game
+   =================================================================== */
+
+/* ===================================================================
+   CSS CUSTOM PROPERTIES
+   Color-safe palette and responsive values
+   =================================================================== */
+:root {
+    /* Game Color Palette - High contrast for accessibility */
+    --balloon-red: #FF6B6B;
+    --balloon-blue: #4D96FF;  
+    --balloon-green: #6BCB77;
+    --balloon-yellow: #FFD93D;
+    --balloon-purple: #9B59B6;
+    --balloon-orange: #FF8C42;
+    
+    /* Background Gradients */
+    --sky-gradient: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 100%);
+    --celebration-gradient: linear-gradient(45deg, #FFB347 0%, #FFCCCB 50%, #87CEEB 100%);
+    
+    /* Game Spacing */
+    --balloon-size: 120px;
+    --balloon-string-height: 60px;
+    --touch-padding: 20px;
+    --screen-padding: 20px;
+    
+    /* Animation Durations */
+    --float-duration: 3s;
+    --screen-transition: 0.4s;
+    --balloon-pop-duration: 0.6s;
+}
+
+/* ===================================================================
+   GLOBAL GAME CONTAINER
+   Base layout using ResponsiveUIFramework
+   =================================================================== */
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    background: var(--sky-gradient);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ===================================================================
+   GAME HEADER
+   Title and menu controls
+   =================================================================== */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--screen-padding);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    min-height: 60px;
+}
+
+.game-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2C3E50;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.menu-btn {
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.menu-btn:active {
+    transform: scale(0.9);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* ===================================================================
+   MAIN GAME CONTENT
+   Flexible container for different screens
+   =================================================================== */
+.game-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===================================================================
+   SCREEN SYSTEM
+   Different game states with smooth transitions
+   =================================================================== */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all var(--screen-transition) ease;
+    pointer-events: none;
+}
+
+.screen.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* ===================================================================
+   INTRO SCREEN
+   Welcome and start game screen
+   =================================================================== */
+.intro-screen {
+    text-align: center;
+    padding: var(--screen-padding);
+}
+
+.intro-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2C3E50;
+    margin: 0 0 20px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.intro-balloon-demo {
+    font-size: 80px;
+    margin: 20px 0;
+    animation: gentle-float var(--float-duration) ease-in-out infinite;
+}
+
+.intro-instruction {
+    font-size: 20px;
+    color: #34495E;
+    margin: 20px 0 40px 0;
+    line-height: 1.4;
+    max-width: 300px;
+}
+
+.start-game-btn,
+.claim-sticker-btn,
+.big-button {
+    padding: 20px 40px;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    background: var(--balloon-green);
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(107, 203, 119, 0.3);
+    min-width: 200px;
+    min-height: 80px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.big-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(107, 203, 119, 0.4);
+}
+
+/* ===================================================================
+   GAMEPLAY SCREEN
+   Main game area with balloons and interactions
+   =================================================================== */
+.gameplay-screen {
+    justify-content: flex-start;
+    padding-top: 20px;
+}
+
+/* ===================================================================
+   ROUND STATUS
+   Round counter and voice prompt display
+   =================================================================== */
+.round-status {
+    width: 100%;
+    text-align: center;
+    padding: 0 var(--screen-padding);
+    margin-bottom: 20px;
+}
+
+.round-counter {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2C3E50;
+    margin-bottom: 10px;
+}
+
+.prompt-display {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px 25px;
+    border-radius: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.prompt-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2C3E50;
+}
+
+/* ===================================================================
+   BALLOON PLAYGROUND
+   Container for floating balloons
+   =================================================================== */
+.balloon-playground {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 40px var(--screen-padding);
+    min-height: 300px;
+}
+
+/* ===================================================================
+   BALLOON STYLING
+   Beautiful floating balloons with faces
+   =================================================================== */
+.balloon {
+    position: relative;
+    width: var(--balloon-size);
+    height: calc(var(--balloon-size) + var(--balloon-string-height));
+    cursor: pointer;
+    animation: gentle-float var(--float-duration) ease-in-out infinite;
+    /* Touch target padding for forgiveness */
+    padding: var(--touch-padding);
+    margin: calc(-1 * var(--touch-padding));
+    transition: transform 0.3s ease;
+}
+
+/* Stagger balloon float animations */
+.balloon:nth-child(1) { animation-delay: 0s; }
+.balloon:nth-child(2) { animation-delay: -1s; }
+.balloon:nth-child(3) { animation-delay: -2s; }
+
+.balloon:active {
+    transform: scale(0.95);
+}
+
+/* ===================================================================
+   BALLOON BODY
+   Main balloon shape with colors
+   =================================================================== */
+.balloon-body {
+    width: var(--balloon-size);
+    height: var(--balloon-size);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    box-shadow: 
+        inset 0 10px 20px rgba(255, 255, 255, 0.3),
+        0 5px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Balloon Colors */
+.balloon[data-color="red"] .balloon-body {
+    background: linear-gradient(135deg, var(--balloon-red) 0%, #FF8E8E 100%);
+}
+
+.balloon[data-color="blue"] .balloon-body {
+    background: linear-gradient(135deg, var(--balloon-blue) 0%, #7BB3FF 100%);
+}
+
+.balloon[data-color="green"] .balloon-body {
+    background: linear-gradient(135deg, var(--balloon-green) 0%, #8FD999 100%);
+}
+
+.balloon[data-color="yellow"] .balloon-body {
+    background: linear-gradient(135deg, var(--balloon-yellow) 0%, #FFE066 100%);
+}
+
+.balloon[data-color="purple"] .balloon-body {
+    background: linear-gradient(135deg, var(--balloon-purple) 0%, #B377D9 100%);
+}
+
+.balloon[data-color="orange"] .balloon-body {
+    background: linear-gradient(135deg, var(--balloon-orange) 0%, #FFA366 100%);
+}
+
+/* ===================================================================
+   BALLOON FACE
+   Cute facial features on each balloon
+   =================================================================== */
+.balloon-face {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 40px;
+}
+
+.balloon-eyes {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.eye {
+    width: 8px;
+    height: 8px;
+    background: #2C3E50;
+    border-radius: 50%;
+    position: relative;
+}
+
+/* Add sparkle to eyes */
+.eye::after {
+    content: '';
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 1px;
+    left: 2px;
+}
+
+.balloon-smile {
+    width: 20px;
+    height: 10px;
+    border: 2px solid #2C3E50;
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+    margin: 0 auto;
+}
+
+/* ===================================================================
+   BALLOON STRING
+   String hanging from balloon
+   =================================================================== */
+.balloon-string {
+    width: 2px;
+    height: var(--balloon-string-height);
+    background: linear-gradient(to bottom, #34495E 0%, #BDC3C7 100%);
+    margin: -5px auto 0 auto;
+    border-radius: 2px;
+    box-shadow: 1px 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================================================================
+   BALLOON ANIMATIONS
+   Floating, popping, and interaction effects
+   =================================================================== */
+@keyframes gentle-float {
+    0%, 100% { 
+        transform: translateY(0) rotate(-1deg); 
+    }
+    33% { 
+        transform: translateY(-15px) rotate(1deg); 
+    }
+    66% { 
+        transform: translateY(-8px) rotate(-0.5deg); 
+    }
+}
+
+/* Pop animation for correct balloon */
+@keyframes balloon-pop {
+    0% { 
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.3) rotate(5deg);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(0) rotate(15deg);
+        opacity: 0;
+    }
+}
+
+/* Wobble animation for incorrect balloon */
+@keyframes balloon-wobble {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-8px) rotate(-2deg); }
+    75% { transform: translateX(8px) rotate(2deg); }
+}
+
+.balloon.popping {
+    animation: balloon-pop var(--balloon-pop-duration) ease-out forwards;
+    z-index: 10;
+}
+
+.balloon.wobbling {
+    animation: balloon-wobble 0.6s ease-in-out;
+}
+
+/* ===================================================================
+   ROUND FEEDBACK
+   Messages and visual feedback area
+   =================================================================== */
+.round-feedback {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feedback-message {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 15px 25px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.feedback-message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feedback-message.success {
+    color: var(--balloon-green);
+    background: rgba(107, 203, 119, 0.1);
+    border: 2px solid var(--balloon-green);
+}
+
+.feedback-message.gentle {
+    color: #F39C12;
+    background: rgba(243, 156, 18, 0.1);
+    border: 2px solid #F39C12;
+}
+
+/* ===================================================================
+   COMPLETION SCREEN
+   Celebration and sticker reward
+   =================================================================== */
+.completion-screen {
+    text-align: center;
+    padding: var(--screen-padding);
+    background: var(--celebration-gradient);
+}
+
+.completion-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2C3E50;
+    margin: 0 0 20px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.completion-celebration {
+    font-size: 100px;
+    margin: 20px 0;
+    animation: celebration-bounce 1s ease-in-out infinite;
+}
+
+@keyframes celebration-bounce {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.completion-stats {
+    margin: 30px 0;
+}
+
+.completion-stats p {
+    font-size: 22px;
+    color: #2C3E50;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+.score-correct {
+    color: var(--balloon-green);
+    font-size: 28px;
+}
+
+/* ===================================================================
+   GAME FOOTER
+   Progress bar and game status
+   =================================================================== */
+.game-footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: var(--screen-padding);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--balloon-green) 0%, var(--balloon-blue) 100%);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #2C3E50;
+    white-space: nowrap;
+}
+
+/* ===================================================================
+   AUDIO TOGGLE BUTTON
+   Floating parent control for audio
+   =================================================================== */
+.audio-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border: none;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+}
+
+.audio-toggle-btn:active {
+    transform: scale(0.9);
+}
+
+.audio-toggle-btn.muted {
+    background: rgba(255, 0, 0, 0.7);
+}
+
+.audio-toggle-btn.muted::after {
+    content: '🔇';
+}
+
+/* ===================================================================
+   RESPONSIVE BREAKPOINTS
+   Tablet and desktop adaptations
+   =================================================================== */
+
+/* Tablet Layout (768px+) */
+@media (min-width: 768px) {
+    :root {
+        --balloon-size: 140px;
+        --balloon-string-height: 70px;
+        --screen-padding: 30px;
+    }
+    
+    .game-title {
+        font-size: 28px;
+    }
+    
+    .intro-title {
+        font-size: 36px;
+    }
+    
+    .completion-title {
+        font-size: 42px;
+    }
+    
+    .balloon-playground {
+        padding: 60px var(--screen-padding);
+    }
+}
+
+/* Desktop Layout (1024px+) */
+@media (min-width: 1024px) {
+    .game-container {
+        max-width: 800px;
+        margin: 0 auto;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+}
+
+/* ===================================================================
+   HIGH CONTRAST MODE
+   Enhanced accessibility for visual impairments
+   =================================================================== */
+@media (prefers-contrast: high) {
+    :root {
+        --balloon-red: #CC0000;
+        --balloon-blue: #0066CC;
+        --balloon-green: #009900;
+        --balloon-yellow: #FFCC00;
+    }
+    
+    .balloon-body {
+        border: 3px solid #000;
+    }
+    
+    .balloon-face * {
+        filter: contrast(150%);
+    }
+}
+
+/* ===================================================================
+   REDUCED MOTION
+   Accessibility for motion sensitivity
+   =================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .balloon {
+        animation-duration: 10s;
+    }
+    
+    .intro-balloon-demo {
+        animation: none;
+    }
+    
+    .completion-celebration {
+        animation: none;
+    }
+    
+    .screen {
+        transition-duration: 0.1s;
+    }
+}
+
+/* ===================================================================
+   LANDSCAPE ORIENTATION ADJUSTMENTS
+   Better layout for landscape mode
+   =================================================================== */
+@media (orientation: landscape) and (max-height: 600px) {
+    .balloon-playground {
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 20px var(--screen-padding);
+    }
+    
+    .intro-screen,
+    .completion-screen {
+        flex-direction: row;
+        text-align: left;
+    }
+    
+    .intro-content,
+    .completion-content {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+    }
+}
