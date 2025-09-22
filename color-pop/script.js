@@ -78,7 +78,7 @@ class ColorPopGame {
         this.uiFramework = new ResponsiveUIFramework({
             minTouchTarget: 80,
             colorScheme: 'auto',
-            orientation: 'portrait'
+            orientation: 'auto'  // Don't force orientation lock - let it be flexible
         });
         
         // === Audio System ===
