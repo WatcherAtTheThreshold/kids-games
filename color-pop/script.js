@@ -712,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* ===================================================================
    DEVELOPMENT HELPERS
-   Useful functions for testing and debugging
+   Useful functions for testing and debugging V2
    =================================================================== */
 if (typeof window !== 'undefined') {
     // Expose game instance globally for debugging
