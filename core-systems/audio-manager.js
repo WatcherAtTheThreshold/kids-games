@@ -20,9 +20,10 @@ class AudioSystem {
                       currentFile.includes('color-pop/index.html');
         
         // Set base path accordingly
-        const audioBasePath = isInGameFolder ? '../assets/audio/' : './assets/audio/';
-        
-        console.log(`Audio path detected: ${audioBasePath} (in game folder: ${isInGameFolder})`);
+       const audioBasePath = isInGameFolder ? '../assets/audio/' : './assets/audio/';
+
+console.log(`Current path: ${currentPath}`);
+console.log(`Audio path detected: ${audioBasePath} (in game folder: ${isInGameFolder})`);
         
         // === Audio file paths (dynamically set) ===
         this.soundPaths = {
