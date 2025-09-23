@@ -160,7 +160,7 @@ class GameFlowManager {
         }
         
         // Provide round completion feedback
-        this.showRoundFeedback(success);
+        //this.showRoundFeedback(success);
         
         // Start next round after brief delay
         setTimeout(() => {
