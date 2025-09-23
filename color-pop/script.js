@@ -529,7 +529,7 @@ class ColorPopGame {
        // if (this.audioSystem && this.audioSystem.isReady()) {
            // this.audioSystem.playVoicePrompt('great-job');
           //  this.audioSystem.playSound('pop');
-        }
+       // }
         
         // Show success message
         this.showFeedbackMessage('Great job! 🎉', 'success');
