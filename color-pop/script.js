@@ -524,7 +524,7 @@ handleCorrectTap(balloon) {
     // Simple feedback - no big celebration
    // if (this.feedbackSystem) {
      //   this.feedbackSystem.celebrateCorrect(balloon, 'gentle'); // Changed from 'normal' to 'gentle'
-    }
+   // }
     
     // Show success message
     this.showFeedbackMessage('Great job! 🎉', 'success');
