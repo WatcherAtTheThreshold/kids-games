@@ -110,7 +110,7 @@ class GameFlowManager {
         this.gameState.phase = 'completed';
         
         // Show completion celebration
-        this.showGameComplete();
+        //this.showGameComplete();
         
         return true;
     }
@@ -264,9 +264,9 @@ class GameFlowManager {
         
         // Play completion audio
         if (this.audioSystem && this.audioSystem.isReady()) {
-            this.audioSystem.playVoicePrompt('amazing');
+           // this.audioSystem.playVoicePrompt('amazing');
             setTimeout(() => {
-                this.audioSystem.playSound('celebrate');
+                //this.audioSystem.playSound('celebrate');
             }, 500);
         }
         
