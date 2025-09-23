@@ -527,7 +527,7 @@ handleCorrectTap(balloon) {
     }
     
     // Show success message
-    this.showFeedbackMessage('Great job! 🎉', 'success');
+    //this.showFeedbackMessage('Great job! 🎉', 'success');
 }
 
     handleIncorrectTap(balloon) {
