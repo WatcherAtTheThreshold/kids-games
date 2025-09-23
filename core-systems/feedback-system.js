@@ -92,8 +92,8 @@ class FeedbackSystem {
         // Celebration audio sequence
         setTimeout(() => {
             if (this.audioSystem && this.audioSystem.isReady()) {
-                this.audioSystem.playVoicePrompt('amazing');
-                this.audioSystem.playSound('celebrate');
+                //this.audioSystem.playVoicePrompt('amazing');
+                //this.audioSystem.playSound('celebrate');
             }
         }, 200);
         
