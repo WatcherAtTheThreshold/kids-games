@@ -265,9 +265,9 @@ class GameFlowManager {
         // Play completion audio
         //if (this.audioSystem && this.audioSystem.isReady()) {
            // this.audioSystem.playVoicePrompt('amazing');
-            //setTimeout(() => {
+            setTimeout(() => {
                 //this.audioSystem.playSound('celebrate');
-            //}, 500);
+            }, 500);
         }
         
         // Transition to reward screen
