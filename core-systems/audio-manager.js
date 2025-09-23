@@ -15,7 +15,9 @@ class AudioSystem {
         const currentPath = window.location.pathname;
         const isInGameFolder = currentPath.includes('/color-pop/') || 
                               currentPath.includes('/animal-peekaboo/') || 
-                              currentPath.includes('/bug-count/');
+                              currentPath.includes('/bug-count/')
+                                currentFile.includes('/color-pop/') ||
+                      currentFile.includes('color-pop/index.html');
         
         // Set base path accordingly
         const audioBasePath = isInGameFolder ? '../assets/audio/' : './assets/audio/';
