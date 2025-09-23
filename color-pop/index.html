@@ -2,172 +2,287 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Color Pop - Kids Game</title>
-    
-    <!-- ===================================================================
-         CORE SYSTEM IMPORTS
-         All our reusable game systems (in core-systems folder)
-         =================================================================== -->
-    <script src="../core-systems/responsive-ui-framework.js"></script>
-    <script src="../core-systems/audio-manager.js"></script>
-    <script src="../core-systems/touch-handler.js"></script>
-    <script src="../core-systems/feedback-system.js"></script>
-    <script src="../core-systems/animations-system.js"></script>
-    <script src="../core-systems/game-flow.js"></script>
-    <script src="../core-systems/reward-system.js"></script>
-    
-    <!-- ===================================================================
-         GAME-SPECIFIC STYLES
-         =================================================================== -->
-    <link rel="stylesheet" href="style.css">
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Color Pop - Kids Games</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        /* === COLOR POP SPECIFIC STYLES === */
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<body>
-    <!-- ===================================================================
-         MAIN GAME CONTAINER
-         This container will be managed by ResponsiveUIFramework
-         =================================================================== -->
-    <div class="game-container" data-game-container data-game-area>
-        
-        <!-- ===================================================================
-             GAME HEADER
-             Title, menu button, progress indicator
-             =================================================================== -->
-        <header class="game-header">
-            <h1 class="game-title">Color Pop</h1>
-            <button class="menu-btn" aria-label="Menu">☰</button>
-        </header>
+        /* === GAME HEADER === */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-        <!-- ===================================================================
-             MAIN GAME CONTENT AREA
-             This is where all the game action happens
-             =================================================================== -->
-        <main class="game-content">
+        .back-button {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 167, 38, 0.3);
+        }
+
+        .back-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 167, 38, 0.4);
+        }
+
+        .game-title {
+            color: var(--text-dark);
+            font-size: 2rem;
+            margin: 0;
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+        }
+
+        .progress-indicator {
+            background: white;
+            border-radius: 25px;
+            padding: 10px 20px;
+            font-weight: 600;
+            color: var(--primary-purple);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* === INSTRUCTION SECTION === */
+        .instruction-section {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            margin: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .instruction-text {
+            font-size: 1.8rem;
+            color: var(--text-dark);
+            margin: 0;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .instruction-emoji {
+            font-size: 3rem;
+            margin: 0 10px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        /* === GAME AREA === */
+        .game-area {
+            position: relative;
+            height: 400px;
+            margin: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        /* === BALLOON STYLES === */
+        .balloon {
+            position: absolute;
+            width: 120px;
+            height: 140px;
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: rgba(0,0,0,0.7);
+            /* === BIG TOUCH TARGET === */
+            min-width: 120px;
+            min-height: 120px;
+        }
+
+        .balloon:hover {
+            transform: scale(1.1);
+        }
+
+        .balloon:active {
+            transform: scale(0.9);
+        }
+
+        /* === BALLOON COLORS === */
+        .balloon.red { background: linear-gradient(135deg, #ff6b6b, #ee5a52); }
+        .balloon.blue { background: linear-gradient(135deg, #4ecdc4, #44a08d); }
+        .balloon.yellow { background: linear-gradient(135deg, #feca57, #ff9ff3); }
+        .balloon.green { background: linear-gradient(135deg, #48dbfb, #0abde3); }
+        .balloon.purple { background: linear-gradient(135deg, #ff9ff3, #f368e0); }
+        .balloon.orange { background: linear-gradient(135deg, #ffa726, #ff8a50); }
+
+        /* === BALLOON STRING === */
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: #666;
+            transform: translateX(-50%);
+        }
+
+        /* === CELEBRATION OVERLAY === */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .celebration-content {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .celebration-text {
+            font-size: 2.5rem;
+            margin: 0 0 20px 0;
+            font-weight: 700;
+            color: var(--primary-green);
+        }
+
+        .celebration-emoji {
+            font-size: 4rem;
+            margin: 20px 0;
+            display: block;
+        }
+
+        .continue-button {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px 40px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            min-height: 80px;
+        }
+
+        .continue-button:hover {
+            background: var(--success-green);
+            transform: scale(1.05);
+        }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 768px) {
+            .game-header {
+                padding: 15px;
+            }
             
-            <!-- ===================================================================
-                 INTRO SCREEN
-                 Welcome screen shown before gameplay starts
-                 =================================================================== -->
-            <section class="intro-screen screen" data-screen="intro">
-                <div class="intro-content">
-                    <h2 class="intro-title">Let's Play Color Pop!</h2>
-                    <div class="intro-balloon-demo">🎈</div>
-                    <p class="intro-instruction">Tap the balloon when I say the color!</p>
-                    <button class="start-game-btn big-button">Start Playing</button>
-                </div>
-            </section>
+            .game-title {
+                font-size: 1.6rem;
+            }
+            
+            .instruction-text {
+                font-size: 1.5rem;
+            }
+            
+            .instruction-emoji {
+                font-size: 2.5rem;
+            }
+            
+            .game-area {
+                height: 350px;
+                margin: 15px;
+            }
+            
+            .balloon {
+                width: 100px;
+                height: 120px;
+                font-size: 2rem;
+                min-width: 100px;
+                min-height: 100px;
+            }
+            
+            .celebration-text {
+                font-size: 2rem;
+            }
+            
+            .celebration-emoji {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
 
-            <!-- ===================================================================
-                 GAMEPLAY SCREEN  
-                 The main game area where balloons appear
-                 =================================================================== -->
-            <section class="gameplay-screen screen" data-screen="gameplay">
-                
-                <!-- Round Status Display -->
-                <div class="round-status">
-                    <div class="round-counter">Round <span class="current-round">1</span> of <span class="total-rounds">5</span></div>
-                    <div class="prompt-display">
-                        <span class="prompt-text">Find the red balloon!</span>
-                    </div>
-                </div>
+    <!-- === GAME HEADER === -->
+    <header class="game-header">
+        <button class="back-button" id="backButton" title="Back to Hub">
+            ←
+        </button>
+        <h1 class="game-title">🎈 Color Pop</h1>
+        <div class="progress-indicator" id="progressIndicator">
+            Round 1 of 5
+        </div>
+    </header>
 
-                <!-- Balloon Playground -->
-                <div class="balloon-playground">
-                    <!-- Balloons will be dynamically created here -->
-                    <div class="balloon" data-color="red" data-balloon-id="1">
-                        <div class="balloon-body"></div>
-                        <div class="balloon-face">
-                            <div class="balloon-eyes">
-                                <div class="eye"></div>
-                                <div class="eye"></div>
-                            </div>
-                            <div class="balloon-smile"></div>
-                        </div>
-                        <div class="balloon-string"></div>
-                    </div>
-                    
-                    <div class="balloon" data-color="blue" data-balloon-id="2">
-                        <div class="balloon-body"></div>
-                        <div class="balloon-face">
-                            <div class="balloon-eyes">
-                                <div class="eye"></div>
-                                <div class="eye"></div>
-                            </div>
-                            <div class="balloon-smile"></div>
-                        </div>
-                        <div class="balloon-string"></div>
-                    </div>
-                    
-                    <div class="balloon" data-color="green" data-balloon-id="3">
-                        <div class="balloon-body"></div>
-                        <div class="balloon-face">
-                            <div class="balloon-eyes">
-                                <div class="eye"></div>
-                                <div class="eye"></div>
-                            </div>
-                            <div class="balloon-smile"></div>
-                        </div>
-                        <div class="balloon-string"></div>
-                    </div>
-                </div>
+    <!-- === INSTRUCTION SECTION === -->
+    <section class="instruction-section">
+        <p class="instruction-text" id="instructionText">
+            <span class="instruction-emoji">👀</span>
+            Get ready to pop balloons!
+            <span class="instruction-emoji">🎈</span>
+        </p>
+    </section>
 
-                <!-- Round Feedback Area -->
-                <div class="round-feedback">
-                    <div class="feedback-message"></div>
-                </div>
+    <!-- === GAME AREA === -->
+    <main class="game-area" id="gameArea">
+        <!-- Balloons will be dynamically created here -->
+    </main>
 
-            </section>
-
-            <!-- ===================================================================
-                 COMPLETION SCREEN
-                 Celebration after completing all rounds
-                 =================================================================== -->
-            <section class="completion-screen screen" data-screen="completion">
-                <div class="completion-content">
-                    <h2 class="completion-title">Amazing Job!</h2>
-                    <div class="completion-celebration">🎉</div>
-                    <div class="completion-stats">
-                        <p>You popped <span class="score-correct">5</span> balloons!</p>
-                        <p>You earned a sticker!</p>
-                    </div>
-                    <button class="claim-sticker-btn big-button">Get My Sticker!</button>
-                    
-                    <!-- Navigation buttons -->
-                    <div class="completion-actions">
-                        <button class="play-again-btn big-button secondary">Play Again</button>
-                        <a href="../index.html" class="back-to-hub-btn big-button">Back to Games</a>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- ===================================================================
-             GAME FOOTER
-             Progress bar and game controls
-             =================================================================== -->
-        <footer class="game-footer">
-            <div class="progress-container">
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 0%"></div>
-                </div>
-                <div class="progress-text">0 / 5</div>
-            </div>
-        </footer>
-
+    <!-- === CELEBRATION OVERLAY === -->
+    <div class="celebration-overlay" id="celebrationOverlay">
+        <div class="celebration-content">
+            <div class="celebration-text" id="celebrationText">Great Job!</div>
+            <div class="celebration-emoji">🎉</div>
+            <button class="continue-button" id="continueButton">Continue</button>
+        </div>
     </div>
 
-    <!-- ===================================================================
-         AUDIO TOGGLE BUTTON
-         Floating button for parents to control audio
-         =================================================================== -->
-    <button class="audio-toggle-btn" aria-label="Toggle Audio">🔊</button>
+    <!-- === GAME JAVASCRIPT === -->
+    <script src="color-pop.js"></script>
 
-    <!-- ===================================================================
-         GAME INITIALIZATION SCRIPT
-         =================================================================== -->
-    <script src="script.js"></script>
-    
 </body>
 </html>
