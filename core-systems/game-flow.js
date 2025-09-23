@@ -264,9 +264,9 @@ class GameFlowManager {
         
         // Play completion audio
         if (this.audioSystem && this.audioSystem.isReady()) {
-            this.audioSystem.playVoicePrompt('amazing');
+            //this.audioSystem.playVoicePrompt('amazing');
             setTimeout(() => {
-                this.audioSystem.playSound('celebrate');
+                //this.audioSystem.playSound('celebrate');
             }, 500);
         }
         
