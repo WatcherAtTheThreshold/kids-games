@@ -274,7 +274,7 @@ class RewardSystem {
         
         // Audio feedback
         if (this.audioSystem && this.audioSystem.isReady()) {
-            this.audioSystem.playVoicePrompt('great-job');
+            //this.audioSystem.playVoicePrompt('great-job');
             this.audioSystem.playSound('pop');
         }
         
@@ -535,7 +535,7 @@ class RewardSystem {
         
         // Audio celebration
         if (this.audioSystem && this.audioSystem.isReady()) {
-            this.audioSystem.playVoicePrompt('amazing');
+            //this.audioSystem.playVoicePrompt('amazing');
         }
     }
 
