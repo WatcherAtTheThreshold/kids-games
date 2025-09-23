@@ -518,8 +518,8 @@ handleCorrectTap(balloon) {
     this.gameState.isWaitingForInput = false;
     
     // Pop animation
-    //balloon.classList.add('popping');
-    //this.animationSystem.pop(balloon);
+    balloon.classList.add('popping');
+    this.animationSystem.pop(balloon);
     
     // Simple feedback - no big celebration
     if (this.feedbackSystem) {
@@ -527,7 +527,7 @@ handleCorrectTap(balloon) {
     }
     
     // Show success message
-    this.showFeedbackMessage('Great job! 🎉', 'success');
+   // this.showFeedbackMessage('Great job! 🎉', 'success');
 }
 
     handleIncorrectTap(balloon) {
