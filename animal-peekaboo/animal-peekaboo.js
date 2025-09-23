@@ -77,7 +77,14 @@ function setupEventListeners() {
     homeBtn.addEventListener('click', handleHomeClick);
     soundBtn.addEventListener('click', handleSoundToggle);
     continueBtn.addEventListener('click', handleContinueClick);
-    startGameBtn.addEventListener('click', handleStartGameClick);
+    
+    // === START GAME BUTTON - CHECK IF EXISTS ===
+    if (startGameBtn) {
+        startGameBtn.addEventListener('click', handleStartGameClick);
+    } else {
+        console.error('Start game button not found! Checking HTML structure...');
+        console.log('Available elements:', document.querySelectorAll('[id]'));
+    }
     
     // === PREVENT DOUBLE-CLICKS ===
     hidingSpotsContainer.addEventListener('click', preventDoubleClick);
@@ -85,14 +92,24 @@ function setupEventListeners() {
 
 /* === START GAME === */
 function startGame() {
-    // === GAME IS READY BUT WAITING FOR USER TO START ===
-    gameActive = false;  // Will be set to true when start button clicked
-    roundComplete = false;
-    updateRoundDisplay();
-    
-    // === SHOW READY MESSAGE === 
-    instructionText.textContent = 'Ready to play peekaboo with animals?';
-    startGameBtn.classList.add('bounce');
+    // === CHECK IF START BUTTON EXISTS (IN UPDATED HTML) ===
+    if (startGameBtn) {
+        // === NEWER VERSION: WAIT FOR USER TO CLICK START ===
+        gameActive = false;  // Will be set to true when start button clicked
+        roundComplete = false;
+        updateRoundDisplay();
+        
+        // === SHOW READY MESSAGE === 
+        instructionText.textContent = 'Ready to play peekaboo with animals?';
+        startGameBtn.classList.add('bounce');
+    } else {
+        // === FALLBACK: START IMMEDIATELY (OLDER HTML VERSION) ===
+        console.log('No start button found - starting game immediately');
+        gameActive = true;
+        roundComplete = false;
+        updateRoundDisplay();
+        showStartMessage();
+    }
 }
 
 /* === HANDLE START GAME CLICK === */
