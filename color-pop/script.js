@@ -107,7 +107,7 @@ class ColorPopGame {
         
         // === Reward System ===
         this.rewardSystem = new RewardSystem({
-            audioSystem: this.audioSystem,
+            //audioSystem: this.audioSystem,
             feedbackSystem: this.feedbackSystem,
             touchSystem: this.touchSystem
         });
