@@ -476,42 +476,37 @@ class ColorPopGame {
        BALLOON INTERACTION HANDLING
        Process taps on balloons with feedback
        =================================================================== */
-    handleBalloonTap(balloon, touchData) {
-        console.log(`🎈 Balloon tap attempt - Round ${this.gameState.currentRound}, Waiting: ${this.gameState.isWaitingForInput}`);
-        
-        if (!this.gameState.isWaitingForInput) {
-            console.log('❌ Tap ignored - not waiting for input');
-            return; // Ignore taps when not waiting for input
-        }
-        
-        console.log(`🎈 Balloon tapped: ${touchData.targetData.color}`);
-        console.log(`🎯 Expected color: ${this.gameState.targetColor}`);
-        
-        const tappedColor = touchData.targetData.color;
-        const isCorrect = tappedColor === this.gameState.targetColor;
-        
-        // DISABLE INPUT IMMEDIATELY after tap
-        this.gameState.isWaitingForInput = false;
-        console.log('🚫 Input disabled after tap');
-        
-        // Update score
-        this.gameState.score.total++;
-        if (isCorrect) {
-            this.gameState.score.correct++;
-        }
-        
-        // Process the tap result
-        if (isCorrect) {
-            this.handleCorrectTap(balloon);
-        } else {
-            this.handleIncorrectTap(balloon);
-        }
-        
-        // Complete the round after feedback
-        setTimeout(() => {
-            this.gameFlow.completeCurrentRound(isCorrect);
-        }, isCorrect ? 1500 : 1000);
+handleBalloonTap(balloon, touchData) {
+    console.log('🎈 Balloon tap attempt - Round', this.gameState.currentRound);
+    console.log('👆 TouchData:', touchData);
+    
+    if (!this.gameState.isWaitingForInput) {
+        console.log('❌ Tap ignored - not waiting for input');
+        return;
     }
+    
+    // Add this line to see if handleCorrectTap is even being called:
+    console.log('🎯 About to call handleCorrectTap');
+    
+    const tappedColor = touchData.targetData.color;
+    const isCorrect = tappedColor === this.gameState.targetColor;
+    
+    this.gameState.isWaitingForInput = false;
+    this.gameState.score.total++;
+    if (isCorrect) {
+        this.gameState.score.correct++;
+    }
+    
+    if (isCorrect) {
+        this.handleCorrectTap(balloon);
+    } else {
+        this.handleIncorrectTap(balloon);
+    }
+    
+    setTimeout(() => {
+        this.gameFlow.completeCurrentRound(isCorrect);
+    }, isCorrect ? 1500 : 1000);
+}
 handleCorrectTap(balloon) {
     console.log('✅ Correct balloon tapped!');
     
