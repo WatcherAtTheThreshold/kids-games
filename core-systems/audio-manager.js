@@ -4,43 +4,48 @@
    =================================================================== */
 
 class AudioSystem {
-    constructor() {
-        this.sounds = new Map();
-        this.isEnabled = true;
-        this.isInitialized = false;
-        this.audioContext = null;
+   constructor() {
+    this.sounds = new Map();
+    this.isEnabled = true;
+    this.isInitialized = false;
+    this.audioContext = null;
+    
+    // === Smart path detection ===
+    // Check if we're in a game subfolder by looking at the URL
+    const currentPath = window.location.pathname;
+    const currentURL = window.location.href;  // Fixed: define this variable
+    
+    const isInGameFolder = currentPath.includes('/color-pop/') || 
+                          currentPath.includes('/animal-peekaboo/') || 
+                          currentPath.includes('/bug-count/') ||      // Fixed: added missing semicolon
+                          currentURL.includes('/color-pop/') ||       // Fixed: use currentURL instead of currentFile
+                          currentURL.includes('color-pop/index.html'); // Fixed: use currentURL
+    
+    // Set base path accordingly
+    const audioBasePath = isInGameFolder ? '../assets/audio/' : './assets/audio/';
+    
+    console.log(`Current path: ${currentPath}`);
+    console.log(`Audio path detected: ${audioBasePath} (in game folder: ${isInGameFolder})`);
+    
+    // === Audio file paths (dynamically set) ===
+    this.soundPaths = {
+        // Voice prompts
+        'find-red': audioBasePath + 'find-red.mp3',
+        'find-blue': audioBasePath + 'find-blue.mp3',
+        'find-yellow': audioBasePath + 'find-yellow.mp3',
+        'find-green': audioBasePath + 'find-green.mp3',
+        'great-job': audioBasePath + 'great-job.mp3',
+        'try-again': audioBasePath + 'try-again.mp3',
+        'amazing': audioBasePath + 'amazing.mp3',
         
-        // === Smart path detection ===
-        // Check if we're in a game subfolder by looking at the URL
-        const currentPath = window.location.pathname;
-        const isInGameFolder = currentPath.includes('/color-pop/') || 
-                              currentPath.includes('/animal-peekaboo/') || 
-                              currentPath.includes('/bug-count/');
-        
-        // Set base path accordingly
-        const audioBasePath = isInGameFolder ? '../assets/audio/' : './assets/audio/';
-        
-        console.log(`Audio path detected: ${audioBasePath} (in game folder: ${isInGameFolder})`);
-        
-        // === Audio file paths (dynamically set) ===
-        this.soundPaths = {
-            // Voice prompts
-            'find-red': audioBasePath + 'find-red.mp3',
-            'find-blue': audioBasePath + 'find-blue.mp3',
-            'find-yellow': audioBasePath + 'find-yellow.mp3',
-            'find-green': audioBasePath + 'find-green.mp3',
-            'great-job': audioBasePath + 'great-job.mp3',
-            'try-again': audioBasePath + 'try-again.mp3',
-            'amazing': audioBasePath + 'amazing.mp3',
-            
-            // Sound effects
-            'pop': audioBasePath + 'pop.mp3',
-            'chime': audioBasePath + 'chime.mp3',
-            'whoosh': audioBasePath + 'whoosh.mp3',
-            'celebrate': audioBasePath + 'celebrate.mp3',
-            'gentle-no': audioBasePath + 'gentle-no.mp3'
-        };
-    }
+        // Sound effects
+        'pop': audioBasePath + 'pop.mp3',
+        'chime': audioBasePath + 'chime.mp3',
+        'whoosh': audioBasePath + 'whoosh.mp3',
+        'celebrate': audioBasePath + 'celebrate.mp3',
+        'gentle-no': audioBasePath + 'gentle-no.mp3'
+    };
+}
 
     /* === INITIALIZATION === */
     async init() {
