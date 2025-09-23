@@ -120,6 +120,8 @@
             /* === BIG TOUCH TARGET === */
             min-width: 120px;
             min-height: 120px;
+            /* === BALLOON ABOVE STRING === */
+            z-index: 10;
         }
 
         .balloon:hover {
@@ -148,6 +150,8 @@
             height: 40px;
             background: #666;
             transform: translateX(-50%);
+            /* === STRING BEHIND BALLOON === */
+            z-index: -1;
         }
 
         /* === CELEBRATION OVERLAY === */
