@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeGame();
     setupEventListeners();
     loadSoundPreference();
+    
+    // === iOS FIX: INITIALIZE SPEECH ON FIRST TOUCH ===
+    initializeSpeechForIOS();
 });
 
 /* === INITIALIZE GAME === */
@@ -67,7 +70,33 @@ function setupEventListeners() {
     document.addEventListener('click', handleDocumentClick);
 }
 
+/* === INITIALIZE SPEECH FOR iOS === */
+function initializeSpeechForIOS() {
+    // === iOS REQUIRES USER INTERACTION FOR SPEECH ===
+    let speechInitialized = false;
+    
+    function initSpeech() {
+        if (speechInitialized) return;
+        
+        if ('speechSynthesis' in window) {
+            // === TRIGGER SPEECH SYNTHESIS TO "WAKE IT UP" ===
+            const testUtterance = new SpeechSynthesisUtterance('');
+            testUtterance.volume = 0;
+            speechSynthesis.speak(testUtterance);
+            speechInitialized = true;
+        }
+    }
+    
+    // === INITIALIZE ON FIRST TOUCH/CLICK ===
+    document.addEventListener('touchstart', initSpeech, { once: true });
+    document.addEventListener('click', initSpeech, { once: true });
+}
+
 /* === LOAD SOUND PREFERENCE === */
+function loadSoundPreference() {
+    const savedSound = localStorage.getItem('kidsGames_soundEnabled');
+    soundEnabled = savedSound !== null ? savedSound === 'true' : true;
+}
 function loadSoundPreference() {
     const savedSound = localStorage.getItem('kidsGames_soundEnabled');
     soundEnabled = savedSound !== null ? savedSound === 'true' : true;
@@ -88,8 +117,8 @@ function startNewRound() {
     // === CREATE BALLOONS ===
     createBalloons();
     
-    // === UPDATE INSTRUCTION ===
-    updateInstruction(`Find ${targetColor.display}!`, '👆', '🎈');
+    // === UPDATE INSTRUCTION WITH COLOR STYLING ===
+    updateInstructionWithColor(`Find the ${targetColor.display} balloon!`, '👆', '🎈', targetColor.name);
     
     // === PLAY VOICE PROMPT ===
     playVoicePrompt(targetColor.display);
@@ -252,7 +281,7 @@ function handleIncorrectChoice(balloon) {
     playTryAgainSound();
     
     // === UPDATE INSTRUCTION ===
-    updateInstruction(`Try again! Find ${targetColor.display}!`, '🤔', '🎈');
+    updateInstructionWithColor(`Try again! Find the ${targetColor.display} balloon!`, '🤔', '🎈', targetColor.name);
     
     // === REMOVE FEEDBACK AFTER ANIMATION ===
     setTimeout(() => {
@@ -344,7 +373,48 @@ function clearBalloons() {
     balloons = [];
 }
 
+/* === UPDATE INSTRUCTION TEXT WITH COLOR === */
+function updateInstructionWithColor(text, emoji1, emoji2, colorName) {
+    const colorStyles = {
+        'red': '#ff6b6b',
+        'blue': '#48dbfb', 
+        'yellow': '#f9ca24',
+        'green': '#4ecdc4',
+        'purple': '#9b59b6',
+        'orange': '#ffa726'
+    };
+    
+    const colorHex = colorStyles[colorName] || '#333';
+    
+    const newHTML = `
+        <span class="instruction-emoji">${emoji1}</span>
+        ${text.replace(colorName.charAt(0).toUpperCase() + colorName.slice(1), 
+            `<span style="color: ${colorHex}; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">${colorName.charAt(0).toUpperCase() + colorName.slice(1)}</span>`)}
+        <span class="instruction-emoji">${emoji2}</span>
+    `;
+    instructionText.innerHTML = newHTML;
+}
+
 /* === UPDATE INSTRUCTION TEXT === */
+function updateInstruction(text, emoji1, emoji2) {
+    const instructionEmojis = document.querySelectorAll('.instruction-emoji');
+    
+    if (instructionEmojis.length >= 2) {
+        instructionEmojis[0].textContent = emoji1;
+        instructionEmojis[1].textContent = emoji2;
+    }
+    
+    // === UPDATE TEXT BETWEEN EMOJIS ===
+    const textParts = instructionText.innerHTML.split('<span class="instruction-emoji">');
+    if (textParts.length >= 3) {
+        const newHTML = `
+            <span class="instruction-emoji">${emoji1}</span>
+            ${text}
+            <span class="instruction-emoji">${emoji2}</span>
+        `;
+        instructionText.innerHTML = newHTML;
+    }
+}
 function updateInstruction(text, emoji1, emoji2) {
     const instructionEmojis = document.querySelectorAll('.instruction-emoji');
     
@@ -415,13 +485,52 @@ function handleDocumentClick(event) {
 function playVoicePrompt(colorName) {
     if (!soundEnabled) return;
     
-    // === USE SPEECH SYNTHESIS ===
+    // === USE SPEECH SYNTHESIS WITH iOS FIXES ===
     if ('speechSynthesis' in window) {
+        // === iOS FIX: CANCEL ANY PENDING SPEECH ===
+        speechSynthesis.cancel();
+        
+        // === CREATE UTTERANCE ===
         const utterance = new SpeechSynthesisUtterance(`Find ${colorName}!`);
         utterance.rate = 0.8;
         utterance.pitch = 1.2;
-        utterance.volume = 0.7;
-        speechSynthesis.speak(utterance);
+        utterance.volume = 1.0; // Max volume for iOS
+        
+        // === iOS FIX: SET VOICE EXPLICITLY ===
+        const voices = speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            // === PREFER ENGLISH VOICES ===
+            const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+            }
+        }
+        
+        // === iOS FIX: HANDLE VOICE LOADING ===
+        if (voices.length === 0) {
+            // === WAIT FOR VOICES TO LOAD ===
+            speechSynthesis.addEventListener('voiceschanged', function() {
+                const newVoices = speechSynthesis.getVoices();
+                const englishVoice = newVoices.find(voice => voice.lang.startsWith('en'));
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+                speechSynthesis.speak(utterance);
+            }, { once: true });
+        } else {
+            speechSynthesis.speak(utterance);
+        }
+        
+        // === FALLBACK: PLAY INSTRUCTION CHIMES IF SPEECH FAILS ===
+        setTimeout(() => {
+            if (speechSynthesis.speaking) return; // Speech worked
+            
+            // === PLAY CHIME PATTERN FOR COLOR INSTRUCTION ===
+            playInstructionChimes(colorName);
+        }, 1000);
+    } else {
+        // === NO SPEECH SYNTHESIS AVAILABLE ===
+        playInstructionChimes(colorName);
     }
 }
 
@@ -445,7 +554,37 @@ function playTryAgainSound() {
     playBeepSound(300, 200);
 }
 
+/* === PLAY INSTRUCTION CHIMES (FALLBACK FOR iOS) === */
+function playInstructionChimes(colorName) {
+    if (!soundEnabled) return;
+    
+    // === PLAY DIFFERENT CHIME PATTERNS FOR EACH COLOR ===
+    const colorFrequencies = {
+        'Red': [440, 550],      // Lower tones for red
+        'Blue': [550, 660],     // Mid tones for blue  
+        'Yellow': [660, 770],   // Higher tones for yellow
+        'Green': [330, 440],    // Lower-mid tones for green
+        'Purple': [770, 880],   // Higher tones for purple
+        'Orange': [495, 550]    // Orange between red and yellow
+    };
+    
+    const frequencies = colorFrequencies[colorName] || [440, 550];
+    
+    // === PLAY TWO-TONE CHIME ===
+    playBeepSound(frequencies[0], 300);
+    setTimeout(() => playBeepSound(frequencies[1], 400), 200);
+}
+
 /* === PLAY COMPLETION SOUND === */
+function playCompletionSound() {
+    if (!soundEnabled) return;
+    
+    // === PLAY VICTORY MELODY ===
+    const melody = [523, 659, 784, 1047];
+    melody.forEach((freq, index) => {
+        setTimeout(() => playBeepSound(freq, 400), index * 200);
+    });
+}
 function playCompletionSound() {
     if (!soundEnabled) return;
     
