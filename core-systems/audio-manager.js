@@ -10,23 +10,35 @@ class AudioSystem {
         this.isInitialized = false;
         this.audioContext = null;
         
-        // === Audio file paths (customize per game) ===
+        // === Smart path detection ===
+        // Check if we're in a game subfolder by looking at the URL
+        const currentPath = window.location.pathname;
+        const isInGameFolder = currentPath.includes('/color-pop/') || 
+                              currentPath.includes('/animal-peekaboo/') || 
+                              currentPath.includes('/bug-count/');
+        
+        // Set base path accordingly
+        const audioBasePath = isInGameFolder ? '../assets/audio/' : './assets/audio/';
+        
+        console.log(`Audio path detected: ${audioBasePath} (in game folder: ${isInGameFolder})`);
+        
+        // === Audio file paths (dynamically set) ===
         this.soundPaths = {
             // Voice prompts
-            'find-red': './assets/audio/find-red.mp3',
-            'find-blue': './assets/audio/find-blue.mp3',
-            'find-yellow': './assets/audio/find-yellow.mp3',
-            'find-green': './assets/audio/find-green.mp3',
-            'great-job': './assets/audio/great-job.mp3',
-            'try-again': './assets/audio/try-again.mp3',
-            'amazing': './assets/audio/amazing.mp3',
+            'find-red': audioBasePath + 'find-red.mp3',
+            'find-blue': audioBasePath + 'find-blue.mp3',
+            'find-yellow': audioBasePath + 'find-yellow.mp3',
+            'find-green': audioBasePath + 'find-green.mp3',
+            'great-job': audioBasePath + 'great-job.mp3',
+            'try-again': audioBasePath + 'try-again.mp3',
+            'amazing': audioBasePath + 'amazing.mp3',
             
             // Sound effects
-            'pop': './assets/audio/pop.mp3',
-            'chime': './assets/audio/chime.mp3',
-            'whoosh': './assets/audio/whoosh.mp3',
-            'celebrate': './assets/audio/celebrate.mp3',
-            'gentle-no': './assets/audio/gentle-no.mp3'
+            'pop': audioBasePath + 'pop.mp3',
+            'chime': audioBasePath + 'chime.mp3',
+            'whoosh': audioBasePath + 'whoosh.mp3',
+            'celebrate': audioBasePath + 'celebrate.mp3',
+            'gentle-no': audioBasePath + 'gentle-no.mp3'
         };
     }
 
