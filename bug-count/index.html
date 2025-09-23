@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bug Count - Kids Games</title>
+    <!-- === LOAD SHARED STYLES === -->
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        /* === BUG COUNT GAME STYLES === */
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* === GAME HEADER === */
+        .game-header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 20px;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: #2d5a27;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .round-info {
+            color: #4a7c59;
+            font-size: 1.2rem;
+            margin: 10px 0 0 0;
+        }
+
+        /* === GARDEN SCENE === */
+        .garden-container {
+            position: relative;
+            width: 100%;
+            min-height: 400px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><rect fill="%2398FB98" width="800" height="400"/><circle fill="%23FFD700" cx="700" cy="80" r="40"/><path fill="%236B8E23" d="M0,350 Q200,320 400,350 T800,350 L800,400 L0,400 Z"/></svg>') no-repeat center bottom;
+            background-size: cover;
+            margin: 0 auto;
+            max-width: 800px;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        /* === FLOWERS DECORATION === */
+        .flower {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .flower:nth-child(odd) {
+            animation-delay: -2s;
+        }
+
+        /* === BUG ELEMENTS === */
+        .bug {
+            position: absolute;
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .bug:hover {
+            transform: scale(1.2);
+        }
+
+        /* === LADYBUG SPECIFIC === */
+        .ladybug {
+            color: #dc143c;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .ladybug.found {
+            animation: found-bug 0.5s ease-out;
+            transform: scale(1.3);
+            filter: brightness(1.3);
+        }
+
+        @keyframes found-bug {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5) rotate(10deg); }
+            100% { transform: scale(1.3); }
+        }
+
+        /* === OTHER BUGS === */
+        .butterfly {
+            color: #ff69b4;
+        }
+
+        .bee {
+            color: #ffd700;
+        }
+
+        /* === INSTRUCTION PANEL === */
+        .instruction-panel {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 500px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .instruction-text {
+            font-size: 1.8rem;
+            color: #2d5a27;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .found-count {
+            font-size: 1.3rem;
+            color: #dc143c;
+            margin: 10px 0 0 0;
+            font-weight: 600;
+        }
+
+        /* === ANSWER PANEL === */
+        .answer-panel {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .answer-question {
+            font-size: 1.6rem;
+            color: #2d5a27;
+            margin: 0 0 25px 0;
+            font-weight: 600;
+        }
+
+        .number-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .number-button {
+            width: 80px;
+            height: 80px;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .number-button:nth-child(1) { background: #ff6b6b; }
+        .number-button:nth-child(2) { background: #4ecdc4; }
+        .number-button:nth-child(3) { background: #45b7d1; }
+        .number-button:nth-child(4) { background: #ffa726; }
+        .number-button:nth-child(5) { background: #ab47bc; }
+
+        .number-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* === CONTROL BUTTONS === */
+        .game-controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .back-button:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        /* === START SCREEN === */
+        .start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+        }
+
+        .start-content {
+            background: white;
+            border-radius: 30px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .start-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .start-title {
+            font-size: 2.5rem;
+            color: #2d5a27;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+        }
+
+        .start-description {
+            font-size: 1.2rem;
+            color: #4a7c59;
+            margin: 0 0 35px 0;
+            line-height: 1.5;
+        }
+
+        .start-button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px 40px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 160px;
+            min-height: 80px;
+            box-shadow: 0 6px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .start-button:hover {
+            background: #45b7d1;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(69, 183, 209, 0.4);
+        }
+
+        .start-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* === COMPLETION SCREEN === */
+        .completion-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .completion-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            margin: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .completion-title {
+            font-size: 2.5rem;
+            color: #2d5a27;
+            margin: 0 0 20px 0;
+            font-weight: 700;
+        }
+
+        .completion-message {
+            font-size: 1.3rem;
+            color: #4a7c59;
+            margin: 0 0 30px 0;
+            line-height: 1.4;
+        }
+
+        .completion-button {
+            background: #4ecdc4;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            min-height: 60px;
+        }
+
+        .completion-button:hover {
+            background: #45b7d1;
+            transform: translateY(-2px);
+        }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .garden-container {
+                min-height: 350px;
+                margin: 0 10px;
+            }
+            
+            .instruction-text {
+                font-size: 1.5rem;
+            }
+            
+            .number-button {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+            
+            .bug {
+                font-size: 2rem;
+            }
+        }
+
+        /* === HIDDEN CLASS === */
+        .hidden {
+            display: none !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- === GAME CONTROLS === -->
+    <div class="game-controls">
+        <button class="back-button" id="backButton" title="Back to Games">
+            ←
+        </button>
+    </div>
+
+    <!-- === GAME HEADER === -->
+    <header class="game-header hidden" id="gameHeader">
+        <h1 class="game-title">🐛 Bug Count</h1>
+        <p class="round-info" id="roundInfo">Round 1 of 5</p>
+    </header>
+
+    <!-- === INSTRUCTION PANEL === -->
+    <div class="instruction-panel hidden" id="instructionPanel">
+        <p class="instruction-text" id="instructionText">Find and tap all the ladybugs!</p>
+        <p class="found-count" id="foundCount">Found: 0 ladybugs</p>
+    </div>
+
+    <!-- === GARDEN SCENE === -->
+    <div class="garden-container hidden" id="gardenContainer">
+        <!-- === DECORATIVE FLOWERS === -->
+        <div class="flower" style="top: 60px; left: 50px;">🌸</div>
+        <div class="flower" style="top: 80px; right: 80px;">🌼</div>
+        <div class="flower" style="bottom: 120px; left: 120px;">🌺</div>
+        <div class="flower" style="bottom: 100px; right: 150px;">🌻</div>
+        <div class="flower" style="top: 150px; left: 200px;">🌷</div>
+        
+        <!-- === BUGS WILL BE ADDED BY JAVASCRIPT === -->
+    </div>
+
+    <!-- === ANSWER PANEL === -->
+    <div class="answer-panel hidden" id="answerPanel">
+        <p class="answer-question" id="answerQuestion">How many ladybugs did you find?</p>
+        <div class="number-buttons" id="numberButtons">
+            <button class="number-button" data-number="1">1</button>
+            <button class="number-button" data-number="2">2</button>
+            <button class="number-button" data-number="3">3</button>
+            <button class="number-button" data-number="4">4</button>
+            <button class="number-button" data-number="5">5</button>
+        </div>
+    </div>
+
+    <!-- === START SCREEN === -->
+    <div class="start-screen" id="startScreen">
+        <div class="start-content">
+            <div class="start-icon">🐛</div>
+            <h2 class="start-title">Bug Count</h2>
+            <p class="start-description">
+                Help find and count the ladybugs<br>
+                in the garden!
+            </p>
+            <button class="start-button" id="startButton">
+                🎮 Start Game
+            </button>
+        </div>
+    </div>
+
+    <!-- === COMPLETION SCREEN === -->
+    <div class="completion-screen hidden" id="completionScreen">
+        <div class="completion-content">
+            <h2 class="completion-title">🎉 Amazing Job!</h2>
+            <p class="completion-message">
+                You're a fantastic bug counter!<br>
+                You earned a new sticker! 🏆
+            </p>
+            <button class="completion-button" id="completionButton">
+                Return to Games
+            </button>
+        </div>
+    </div>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="bug-count.js"></script>
+
+</body>
+</html>
