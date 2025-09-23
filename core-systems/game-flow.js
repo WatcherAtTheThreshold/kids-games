@@ -263,7 +263,7 @@ class GameFlowManager {
         });
         
         // Play completion audio
-        //if (this.audioSystem && this.audioSystem.isReady()) {
+        if (this.audioSystem && this.audioSystem.isReady()) {
            // this.audioSystem.playVoicePrompt('amazing');
             setTimeout(() => {
                 //this.audioSystem.playSound('celebrate');
