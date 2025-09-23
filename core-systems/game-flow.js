@@ -240,7 +240,7 @@ class GameFlowManager {
             const gameContainer = document.querySelector('[data-game-container]');
             
             if (success) {
-                this.feedbackSystem.celebrateCorrect(gameContainer, 'normal');
+                //this.feedbackSystem.celebrateCorrect(gameContainer, 'normal');
             } else {
                 // For kids games, even "incorrect" gets gentle positive reinforcement
                 this.feedbackSystem.gentleRedirect(gameContainer, 'try-again');
