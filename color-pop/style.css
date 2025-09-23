@@ -318,18 +318,6 @@
     overflow: hidden;
 }
 
-.balloon-body::after { /* This creates the balloon knot/tail */
-  content: "";
-  position: absolute;
-  bottom: -20px; /* Adjust position as needed */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-top: 20px; /* Match balloon color */
-}
 
 /* Balloon Colors */
 .balloon[data-color="red"] .balloon-body {
