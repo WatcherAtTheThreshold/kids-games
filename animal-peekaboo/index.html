@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Animal Peekaboo - Kids Games</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        /* === ANIMAL PEEKABOO SPECIFIC STYLES === */
+        
+        body {
+            background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* === GAME HEADER === */
+        .game-header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: #4ecdc4;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .round-info {
+            color: #666;
+            font-size: 1.1rem;
+            margin: 10px 0 0 0;
+        }
+
+        /* === GAME PLAY AREA === */
+        .play-area {
+            position: relative;
+            min-height: 60vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* === INSTRUCTION DISPLAY === */
+        .instruction-display {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .instruction-text {
+            font-size: 1.8rem;
+            color: #333;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        /* === HIDING SPOTS CONTAINER === */
+        .hiding-spots-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 400px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><defs><linearGradient id="grass" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387ceeb;stop-opacity:1" /><stop offset="70%" style="stop-color:%2387ceeb;stop-opacity:1" /><stop offset="70%" style="stop-color:%2390ee90;stop-opacity:1" /><stop offset="100%" style="stop-color:%2368b85c;stop-opacity:1" /></linearGradient></defs><rect width="600" height="400" fill="url(%23grass)"/></svg>') center/cover;
+            border-radius: 20px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        /* === HIDING SPOTS === */
+        .hiding-spot {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            /* === BIG TOUCH TARGET === */
+            min-width: 120px;
+            min-height: 120px;
+        }
+
+        .hiding-spot:hover {
+            transform: scale(1.05);
+        }
+
+        .hiding-spot:active {
+            transform: scale(0.95);
+        }
+
+        /* === INDIVIDUAL SPOT POSITIONS === */
+        .spot-1 { top: 50px; left: 80px; background: #8b4513; }    /* Tree trunk */
+        .spot-2 { top: 80px; right: 60px; background: #228b22; }   /* Bush */
+        .spot-3 { bottom: 120px; left: 50px; background: #daa520; }  /* Log */
+        .spot-4 { bottom: 80px; right: 80px; background: #cd853f; }  /* Rock */
+        .spot-5 { top: 150px; left: 250px; background: #32cd32; }    /* Tall grass */
+        .spot-6 { bottom: 200px; right: 200px; background: #6b8e23; } /* Small bush */
+
+        /* === ANIMAL IN SPOT === */
+        .animal-in-spot {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: 10;
+            animation: peek-animation 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes peek-animation {
+            0% { transform: translateY(20px) scale(0.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        /* === GAME CONTROLS === */
+        .game-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        /* === CELEBRATION OVERLAY === */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(78, 205, 196, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+            text-align: center;
+        }
+
+        .celebration-text {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .celebration-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .instruction-text {
+                font-size: 1.5rem;
+            }
+            
+            .hiding-spots-container {
+                height: 300px;
+                max-width: 100%;
+            }
+            
+            .hiding-spot {
+                width: 80px;
+                height: 80px;
+                min-width: 100px;
+                min-height: 100px;
+                font-size: 2.5rem;
+            }
+            
+            .animal-in-spot {
+                font-size: 2rem;
+            }
+            
+            /* === ADJUST POSITIONS FOR MOBILE === */
+            .spot-1 { top: 30px; left: 40px; }
+            .spot-2 { top: 50px; right: 30px; }
+            .spot-3 { bottom: 80px; left: 30px; }
+            .spot-4 { bottom: 50px; right: 40px; }
+            .spot-5 { top: 120px; left: 150px; }
+            .spot-6 { bottom: 140px; right: 120px; }
+        }
+
+        /* === ACCESSIBILITY === */
+        @media (prefers-reduced-motion: reduce) {
+            .animal-in-spot {
+                animation: none;
+            }
+            
+            .hiding-spot {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === GAME CONTROLS === -->
+    <div class="game-controls">
+        <button class="control-btn" id="homeBtn" title="Back to Hub">🏠</button>
+        <button class="control-btn" id="soundBtn" title="Toggle Sound">🔊</button>
+    </div>
+
+    <!-- === GAME HEADER === -->
+    <header class="game-header">
+        <h1 class="game-title">Animal Peekaboo</h1>
+        <div class="round-info">
+            <span id="roundDisplay">Round 1 of 5</span>
+        </div>
+    </header>
+
+    <!-- === GAME PLAY AREA === -->
+    <main class="play-area">
+        
+        <!-- === INSTRUCTION DISPLAY === -->
+        <div class="instruction-display">
+            <p class="instruction-text" id="instructionText">Get ready to find the animals!</p>
+        </div>
+
+        <!-- === HIDING SPOTS CONTAINER === -->
+        <div class="hiding-spots-container" id="hidingSpotsContainer">
+            
+            <!-- === HIDING SPOTS === -->
+            <div class="hiding-spot spot-1" data-spot="1">🌳</div>
+            <div class="hiding-spot spot-2" data-spot="2">🌿</div>
+            <div class="hiding-spot spot-3" data-spot="3">🪵</div>
+            <div class="hiding-spot spot-4" data-spot="4">🪨</div>
+            <div class="hiding-spot spot-5" data-spot="5">🌾</div>
+            <div class="hiding-spot spot-6" data-spot="6">🌱</div>
+            
+        </div>
+
+    </main>
+
+    <!-- === CELEBRATION OVERLAY === -->
+    <div class="celebration-overlay hidden" id="celebrationOverlay">
+        <div class="celebration-text" id="celebrationText">Great Job!</div>
+        <div class="celebration-subtitle" id="celebrationSubtitle">You found all the animals!</div>
+        <button class="game-button" id="continueBtn">Continue</button>
+    </div>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="animal-peekaboo.js"></script>
+
+</body>
+</html>
