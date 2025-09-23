@@ -505,7 +505,7 @@ handleBalloonTap(balloon, touchData) {
     
     setTimeout(() => {
     console.log('🔄 About to call completeCurrentRound');
-    // this.gameFlow.completeCurrentRound(isCorrect); // COMMENT THIS OUT TEMPORARILY
+    this.gameFlow.completeCurrentRound(isCorrect); // COMMENT THIS OUT TEMPORARILY
 }, isCorrect ? 1500 : 1000);
 }
 handleCorrectTap(balloon) {
