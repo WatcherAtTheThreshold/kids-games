@@ -22,25 +22,41 @@ const animals = [
     { emoji: '🐵', name: 'monkey', sound: 'ooh-ooh' }
 ];
 
-// === DOM ELEMENTS ===
-const instructionText = document.getElementById('instructionText');
-const roundDisplay = document.getElementById('roundDisplay');
-const hidingSpotsContainer = document.getElementById('hidingSpotsContainer');
-const celebrationOverlay = document.getElementById('celebrationOverlay');
-const celebrationText = document.getElementById('celebrationText');
-const celebrationSubtitle = document.getElementById('celebrationSubtitle');
-const continueBtn = document.getElementById('continueBtn');
-const homeBtn = document.getElementById('homeBtn');
-const soundBtn = document.getElementById('soundBtn');
-const startGameBtn = document.getElementById('startGameBtn');
-const allHidingSpots = document.querySelectorAll('.hiding-spot');
+// === DOM ELEMENTS - WILL BE SET AFTER DOM LOADS ===
+let instructionText;
+let roundDisplay;
+let hidingSpotsContainer;
+let celebrationOverlay;
+let celebrationText;
+let celebrationSubtitle;
+let continueBtn;
+let homeBtn;
+let soundBtn;
+let startGameBtn;
+let allHidingSpots;
 
 /* === INITIALIZATION === */
 document.addEventListener('DOMContentLoaded', function() {
+    getDOMElements();
     loadGameSettings();
     setupEventListeners();
     startGame();
 });
+
+/* === GET DOM ELEMENTS === */
+function getDOMElements() {
+    instructionText = document.getElementById('instructionText');
+    roundDisplay = document.getElementById('roundDisplay');
+    hidingSpotsContainer = document.getElementById('hidingSpotsContainer');
+    celebrationOverlay = document.getElementById('celebrationOverlay');
+    celebrationText = document.getElementById('celebrationText');
+    celebrationSubtitle = document.getElementById('celebrationSubtitle');
+    continueBtn = document.getElementById('continueBtn');
+    homeBtn = document.getElementById('homeBtn');
+    soundBtn = document.getElementById('soundBtn');
+    startGameBtn = document.getElementById('startGameBtn');
+    allHidingSpots = document.querySelectorAll('.hiding-spot');
+}
 
 /* === LOAD GAME SETTINGS === */
 function loadGameSettings() {
