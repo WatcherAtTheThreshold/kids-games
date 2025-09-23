@@ -110,7 +110,7 @@ class GameFlowManager {
         this.gameState.phase = 'completed';
         
         // Show completion celebration
-        //this.showGameComplete();
+        this.showGameComplete();
         
         return true;
     }
