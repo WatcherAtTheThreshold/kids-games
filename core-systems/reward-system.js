@@ -116,12 +116,12 @@ class RewardSystem {
         }
         
         // Audio celebration
-        if (this.audioSystem && this.audioSystem.isReady()) {
+       // if (this.audioSystem && this.audioSystem.isReady()) {
            // this.audioSystem.playVoicePrompt('amazing');
-            setTimeout(() => {
+           // setTimeout(() => {
               //  this.audioSystem.playSound('celebrate');
-            }, 800);
-        }
+           // }, 800);
+       // }
     }
 
     displayRewardScreen(sticker) {
