@@ -343,11 +343,11 @@ class ColorPopGame {
         this.showCompletionScreen();
         
         // Trigger big celebration
-        setTimeout(() => {
-            if (this.feedbackSystem) {
-                this.feedbackSystem.bigCelebration(this.elements.gameContainer);
-            }
-        }, 500);
+        //setTimeout(() => {
+            //if (this.feedbackSystem) {
+               // this.feedbackSystem.bigCelebration(this.elements.gameContainer);
+           // }
+        //}, 500);
         
         // Automatically show reward popup after celebration
         setTimeout(() => {
