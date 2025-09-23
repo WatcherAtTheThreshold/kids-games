@@ -32,6 +32,7 @@ const celebrationSubtitle = document.getElementById('celebrationSubtitle');
 const continueBtn = document.getElementById('continueBtn');
 const homeBtn = document.getElementById('homeBtn');
 const soundBtn = document.getElementById('soundBtn');
+const startGameBtn = document.getElementById('startGameBtn');
 const allHidingSpots = document.querySelectorAll('.hiding-spot');
 
 /* === INITIALIZATION === */
@@ -60,6 +61,7 @@ function setupEventListeners() {
     homeBtn.addEventListener('click', handleHomeClick);
     soundBtn.addEventListener('click', handleSoundToggle);
     continueBtn.addEventListener('click', handleContinueClick);
+    startGameBtn.addEventListener('click', handleStartGameClick);
     
     // === PREVENT DOUBLE-CLICKS ===
     hidingSpotsContainer.addEventListener('click', preventDoubleClick);
@@ -67,10 +69,29 @@ function setupEventListeners() {
 
 /* === START GAME === */
 function startGame() {
-    gameActive = true;
+    // === GAME IS READY BUT WAITING FOR USER TO START ===
+    gameActive = false;  // Will be set to true when start button clicked
     roundComplete = false;
     updateRoundDisplay();
-    showStartMessage();
+    
+    // === SHOW READY MESSAGE === 
+    instructionText.textContent = 'Ready to play peekaboo with animals?';
+    startGameBtn.classList.add('bounce');
+}
+
+/* === HANDLE START GAME CLICK === */
+function handleStartGameClick() {
+    // === USER INTERACTION ENABLES AUDIO === 
+    gameActive = true;
+    
+    // === HIDE START BUTTON ===
+    startGameBtn.classList.add('fade-out');
+    startGameBtn.classList.remove('bounce');
+    
+    setTimeout(() => {
+        startGameBtn.style.display = 'none';
+        showStartMessage();
+    }, 300);
 }
 
 /* === SHOW START MESSAGE === */
@@ -87,6 +108,9 @@ function showStartMessage() {
 /* === START ROUND === */
 function startRound() {
     if (!gameActive) return;
+    
+    // === RESET ROUND STATE === 
+    roundComplete = false;  // CRITICAL: Reset so clicks work in this round
     
     // === CLEAR ANY EXISTING ANIMALS ===
     clearAllAnimals();
