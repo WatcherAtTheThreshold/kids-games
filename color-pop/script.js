@@ -518,8 +518,8 @@ handleCorrectTap(balloon) {
     this.gameState.isWaitingForInput = false;
     
     // Pop animation
-    balloon.classList.add('popping');
-    this.animationSystem.pop(balloon);
+   // balloon.classList.add('popping');
+    //this.animationSystem.pop(balloon);
     
     // Simple feedback - no big celebration
    // if (this.feedbackSystem) {
