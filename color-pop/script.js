@@ -512,28 +512,23 @@ class ColorPopGame {
             this.gameFlow.completeCurrentRound(isCorrect);
         }, isCorrect ? 1500 : 1000);
     }
-
-    handleCorrectTap(balloon) {
-        console.log('✅ Correct balloon tapped!');
-        
-        this.gameState.isWaitingForInput = false;
-        
-        // Pop animation
-        balloon.classList.add('popping');
-        this.animationSystem.pop(balloon);
-        
-        // Celebration feedback
-        this.feedbackSystem.celebrateCorrect(balloon, 'normal');
-        
-        // Audio celebration
-       // if (this.audioSystem && this.audioSystem.isReady()) {
-           // this.audioSystem.playVoicePrompt('great-job');
-          //  this.audioSystem.playSound('pop');
-       // }
-        
-        // Show success message
-        this.showFeedbackMessage('Great job! 🎉', 'success');
+handleCorrectTap(balloon) {
+    console.log('✅ Correct balloon tapped!');
+    
+    this.gameState.isWaitingForInput = false;
+    
+    // Pop animation
+    balloon.classList.add('popping');
+    this.animationSystem.pop(balloon);
+    
+    // Simple feedback - no big celebration
+    if (this.feedbackSystem) {
+        this.feedbackSystem.celebrateCorrect(balloon, 'gentle'); // Changed from 'normal' to 'gentle'
     }
+    
+    // Show success message
+    this.showFeedbackMessage('Great job! 🎉', 'success');
+}
 
     handleIncorrectTap(balloon) {
         console.log('❌ Incorrect balloon tapped');
