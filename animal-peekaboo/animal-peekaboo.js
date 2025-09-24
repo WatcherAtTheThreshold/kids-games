@@ -300,11 +300,30 @@ function completeGame() {
     showGameCompleteCelebration();
 }
 
-/* === SAVE STICKER === */
+/* === AWARD SPECIFIC STICKER === */
 function saveSticker() {
-    const currentStickers = localStorage.getItem('kidsGames_stickerCount');
-    const newCount = currentStickers ? parseInt(currentStickers) + 1 : 1;
-    localStorage.setItem('kidsGames_stickerCount', newCount.toString());
+    const gameKey = 'animal-peekaboo';
+    
+    // === GET CURRENT EARNED STICKERS ===
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers') || '';
+    const stickerList = earnedStickers ? earnedStickers.split(',').filter(s => s.length > 0) : [];
+    
+    // === CHECK IF ALREADY EARNED ===
+    if (stickerList.includes(gameKey)) {
+        console.log(`Sticker ${gameKey} already earned`);
+        return; // Already earned, don't duplicate
+    }
+    
+    // === ADD NEW STICKER ===
+    stickerList.push(gameKey);
+    
+    // === SAVE UPDATED LIST ===
+    localStorage.setItem('kidsGames_earnedStickers', stickerList.join(','));
+    
+    // === UPDATE COUNT FOR BACKWARD COMPATIBILITY ===
+    localStorage.setItem('kidsGames_stickerCount', stickerList.length.toString());
+    
+    console.log(`🐶 Animal Peekaboo sticker earned! Total: ${stickerList.length}`);
 }
 
 /* === SHOW GAME COMPLETE CELEBRATION === */
