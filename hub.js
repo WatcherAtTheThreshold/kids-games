@@ -547,3 +547,73 @@ function generateStickerGrid() {
         stickerGrid.appendChild(stickerSlot);
     });
 }
+
+/* === HANDLE MODAL STICKER CLICK === */
+function handleModalStickerClick(stickerSlot, stickerData) {
+    if (!stickerData.unlocked) {
+        // === EMPTY SLOT FEEDBACK ===
+        stickerSlot.classList.add('shake');
+        setTimeout(() => {
+            stickerSlot.classList.remove('shake');
+        }, 600);
+        
+        if (soundEnabled) {
+            playModalSound('locked');
+        }
+        return;
+    }
+    
+    // === EARNED STICKER - ADD EFFECTS ===
+    const stickerEmoji = stickerSlot.querySelector('.sticker-emoji');
+    
+    // === RANDOM EFFECT CHOICE ===
+    const effects = ['bounce', 'sparkle', 'pop-animation'];
+    const randomEffect = effects[Math.floor(Math.random() * effects.length)];
+    
+    stickerEmoji.classList.add(randomEffect);
+    
+    // === PLAY SUCCESS SOUND ===
+    if (soundEnabled) {
+        playModalSound('click');
+    }
+    
+    // === REMOVE EFFECT AFTER ANIMATION ===
+    setTimeout(() => {
+        stickerEmoji.classList.remove(randomEffect);
+    }, 600);
+}
+
+/* === UPDATE COLLECTION STATS === */
+function updateCollectionStats() {
+    const earnedStickers = Object.values(STICKER_REGISTRY).filter(sticker => sticker.unlocked).length;
+    const totalStickers = Object.keys(STICKER_REGISTRY).length;
+    
+    collectedCount.textContent = earnedStickers;
+    totalCount.textContent = totalStickers;
+    
+    // === UPDATE SUBTITLE BASED ON PROGRESS ===
+    if (earnedStickers === 0) {
+        modalSubtitle.textContent = 'Play games to start your collection!';
+    } else if (earnedStickers === totalStickers) {
+        modalSubtitle.textContent = 'Amazing! You collected them all! 🎉';
+    } else {
+        modalSubtitle.textContent = `${totalStickers - earnedStickers} more stickers to find!`;
+    }
+}
+
+/* === MODAL SOUND EFFECTS === */
+function playModalSound(type) {
+    if (!soundEnabled) return;
+    
+    const soundMap = {
+        'open': { freq: 440, volume: 0.2, duration: 0.3 },
+        'close': { freq: 330, volume: 0.15, duration: 0.2 },
+        'click': { freq: 660, volume: 0.1, duration: 0.1 },
+        'locked': { freq: 200, volume: 0.1, duration: 0.1 }
+    };
+    
+    const sound = soundMap[type];
+    if (sound) {
+        playSliderSound(sound.freq, sound.volume, sound.duration);
+    }
+}
