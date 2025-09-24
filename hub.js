@@ -5,6 +5,11 @@ let stickerCount = 0;
 let gamesPlayedToday = 0;
 let soundEnabled = true;
 
+// === SLIDER VARIABLES ===
+let isDragging = false;
+let currentSlider = null;
+let currentSticker = null;
+
 // === STICKER REGISTRY - Easy to expand tomorrow ===
 const STICKER_REGISTRY = {
     'color-pop': { emoji: '🎈', name: 'Balloon Pop', unlocked: false },
@@ -15,13 +20,22 @@ const STICKER_REGISTRY = {
     'sound-spelling': { emoji: '🔤', name: 'Word Star', unlocked: false }
 };
 
-// === DOM ELEMENTS ===
-const stickerCountElement = document.getElementById('stickerCount');
-const gamesPlayedElement = document.getElementById('gamesPlayedToday');
-const soundToggleButton = document.getElementById('soundToggle');
-const helpButton = document.getElementById('helpButton');
-const gameCards = document.querySelectorAll('.game-card');
-const floatingStickers = document.querySelectorAll('.floating-sticker');
+// === DOM ELEMENT INITIALIZATION (CALLED AFTER DOM LOADS) ===
+function initializeDOMElements() {
+    stickerCountElement = document.getElementById('stickerCount');
+    gamesPlayedElement = document.getElementById('gamesPlayedToday');
+    soundToggleButton = document.getElementById('soundToggle');
+    helpButton = document.getElementById('helpButton');
+    gameCards = document.querySelectorAll('.game-card');
+    floatingStickers = document.querySelectorAll('.floating-sticker');
+    
+    stickerModalOverlay = document.getElementById('stickerModalOverlay');
+    modalCloseButton = document.getElementById('modalCloseButton');
+    stickerGrid = document.getElementById('stickerGrid');
+    modalSubtitle = document.getElementById('modalSubtitle');
+    collectedCount = document.getElementById('collectedCount');
+    totalCount = document.getElementById('totalCount');
+}
 
 /* === INITIALIZATION === */
 document.addEventListener('DOMContentLoaded', function() {
@@ -320,10 +334,6 @@ function handleStickerClick(event) {
 
 /* === SLIDER SYSTEM === */
 
-// === SLIDER VARIABLES ===
-let isDragging = false;
-let currentSlider = null;
-let currentSticker = null;
 
 /* === INITIALIZE SLIDERS === */
 function initializeSliders() {
@@ -481,14 +491,6 @@ function playSliderSound(frequency, volume, duration) {
 }
 
 /* === STICKER SHOWCASE MODAL SYSTEM === */
-
-// === MODAL DOM ELEMENTS ===
-const stickerModalOverlay = document.getElementById('stickerModalOverlay');
-const modalCloseButton = document.getElementById('modalCloseButton');
-const stickerGrid = document.getElementById('stickerGrid');
-const modalSubtitle = document.getElementById('modalSubtitle');
-const collectedCount = document.getElementById('collectedCount');
-const totalCount = document.getElementById('totalCount');
 
 /* === INITIALIZE MODAL === */
 function initializeStickerModal() {
