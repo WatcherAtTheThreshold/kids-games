@@ -279,7 +279,7 @@ function updateStickerDisplay() {
     });
 }
 
-/* === HANDLE STICKER CLICK === */
+/* === HANDLE STICKER CLICK - UPDATED === */
 function handleStickerClick(event) {
     const stickerElement = event.currentTarget;
     const gameType = stickerElement.dataset.game;
@@ -293,6 +293,16 @@ function handleStickerClick(event) {
         }, 600);
         return;
     }
+    
+    // === UNLOCKED STICKER - OPEN SHOWCASE MODAL ===
+    const stickerIcon = stickerElement.querySelector('.sticker-icon');
+    stickerIcon.classList.add('pop-animation');
+    
+    setTimeout(() => {
+        openStickerModal();
+        stickerIcon.classList.remove('pop-animation');
+    }, 200);
+}
     
     // === UNLOCKED STICKER - ADD BOUNCE EFFECT ===
     const stickerIcon = stickerElement.querySelector('.sticker-icon');
