@@ -22,13 +22,15 @@ const soundToggleButton = document.getElementById('soundToggle');
 const helpButton = document.getElementById('helpButton');
 const gameCards = document.querySelectorAll('.game-card');
 const floatingStickers = document.querySelectorAll('.floating-sticker');
+
 /* === INITIALIZATION === */
 document.addEventListener('DOMContentLoaded', function() {
     loadHubData();
     setupEventListeners();
     updateDisplay();
     updateStickerDisplay();
-    initializeSliders(); // ADD THIS LINE
+    initializeSliders();
+    initializeStickerModal(); // ADD THIS LINE
 });
 
 /* === LOAD DATA FROM STORAGE === */
