@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Bird Match - Kids Games</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        /* === BIRD MATCH GAME STYLES === */
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #98FB98 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+
+        /* === GAME HEADER === */
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            color: #2C5F2D;
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .game-instructions {
+            font-size: 1.3rem;
+            color: #4A6741;
+            margin: 10px 0 0 0;
+            font-weight: 500;
+        }
+
+        /* === GAME AREA === */
+        .game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.9);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* === TARGET ZONE (TOP) === */
+        .target-zone {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: rgba(173, 216, 230, 0.3);
+            border-radius: 20px;
+            border: 3px dashed #4682B4;
+            min-height: 200px;
+        }
+
+        .target-zone h3 {
+            text-align: center;
+            color: #2C5F2D;
+            font-size: 1.4rem;
+            margin: 0 0 20px 0;
+        }
+
+        .silhouettes-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            min-height: 120px;
+        }
+
+        /* === BIRD SILHOUETTES === */
+        .bird-silhouette {
+            width: 120px;
+            height: 120px;
+            background: #2F4F4F;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .bird-silhouette.highlight {
+            background: #4682B4;
+            box-shadow: 0 0 20px rgba(70, 130, 180, 0.5);
+            transform: scale(1.1);
+        }
+
+        .bird-silhouette.filled {
+            background: var(--success-green);
+            box-shadow: 0 0 25px rgba(102, 187, 106, 0.6);
+        }
+
+        /* === DRAG ZONE (BOTTOM) === */
+        .drag-zone {
+            padding: 20px;
+            background: rgba(255, 248, 220, 0.5);
+            border-radius: 20px;
+            border: 3px solid #DAA520;
+        }
+
+        .drag-zone h3 {
+            text-align: center;
+            color: #B8860B;
+            font-size: 1.4rem;
+            margin: 0 0 20px 0;
+        }
+
+        .birds-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            min-height: 120px;
+        }
+
+        /* === DRAGGABLE BIRDS === */
+        .draggable-bird {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            cursor: grab;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            /* === BIG TOUCH TARGET === */
+            min-width: 100px;
+            min-height: 100px;
+        }
+
+        .draggable-bird:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .draggable-bird.dragging {
+            transform: scale(1.2);
+            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            cursor: grabbing;
+        }
+
+        .draggable-bird.matched {
+            opacity: 0.3;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+
+        /* === PROGRESS AND CONTROLS === */
+        .game-progress {
+            text-align: center;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .round-info {
+            font-size: 1.2rem;
+            color: #2C5F2D;
+            font-weight: 600;
+        }
+
+        .back-button {
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            /* === BIG TOUCH TARGET === */
+            min-width: 80px;
+            min-height: 50px;
+        }
+
+        .back-button:hover {
+            background: #545b62;
+            transform: translateY(-2px);
+        }
+
+        /* === GAME COMPLETION === */
+        .completion-screen {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 25px;
+            margin: 20px 0;
+        }
+
+        .completion-title {
+            font-size: 2.5rem;
+            color: white;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .completion-message {
+            font-size: 1.5rem;
+            color: white;
+            margin: 0 0 30px 0;
+            font-weight: 500;
+        }
+
+        .sticker-reward {
+            font-size: 4rem;
+            margin: 20px 0;
+        }
+
+        .return-button {
+            background: white;
+            color: #FF6347;
+            border: none;
+            border-radius: 20px;
+            padding: 15px 30px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            /* === BIG TOUCH TARGET === */
+            min-width: 120px;
+            min-height: 60px;
+        }
+
+        .return-button:hover {
+            background: #f8f9fa;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .game-container {
+                padding: 20px;
+            }
+            
+            .bird-silhouette, .draggable-bird {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .game-title {
+                font-size: 2rem;
+            }
+            
+            .silhouettes-container, .birds-container {
+                gap: 15px;
+            }
+        }
+
+        /* === ACCESSIBILITY === */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === GAME HEADER === -->
+    <header class="game-header">
+        <h1 class="game-title">🦅 Bird Match</h1>
+        <p class="game-instructions">Drag each bird to its shadow!</p>
+    </header>
+
+    <!-- === GAME CONTAINER === -->
+    <div class="game-container">
+        
+        <!-- === GAME PROGRESS === -->
+        <div class="game-progress">
+            <button class="back-button" id="backButton">← Back to Games</button>
+            <div class="round-info">
+                <span id="roundInfo">Round 1 of 5</span>
+            </div>
+            <div class="round-info">
+                <span id="scoreInfo">0 / 0 matched</span>
+            </div>
+        </div>
+
+        <!-- === TARGET ZONE (BIRD SILHOUETTES) === -->
+        <div class="target-zone">
+            <h3>🎯 Match the Birds</h3>
+            <div class="silhouettes-container" id="silhouettesContainer">
+                <!-- Bird silhouettes will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- === DRAG ZONE (COLORFUL BIRDS) === -->
+        <div class="drag-zone">
+            <h3>🐦 Drag the Birds</h3>
+            <div class="birds-container" id="birdsContainer">
+                <!-- Draggable birds will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- === COMPLETION SCREEN (HIDDEN INITIALLY) === -->
+        <div class="completion-screen hidden" id="completionScreen">
+            <h2 class="completion-title">🎉 Amazing Job!</h2>
+            <p class="completion-message">You matched all the birds!</p>
+            <div class="sticker-reward">🌟</div>
+            <p class="completion-message">You earned a sticker!</p>
+            <button class="return-button" id="returnButton">Return to Games</button>
+        </div>
+
+    </div>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="bird-match.js"></script>
+
+</body>
+</html>
