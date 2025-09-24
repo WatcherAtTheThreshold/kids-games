@@ -316,7 +316,7 @@ function handleStickerClick(event) {
     setTimeout(() => {
         stickerIcon.classList.remove('pop-animation');
     }, 300);
-}
+
 
 /* === SLIDER SYSTEM === */
 
