@@ -46,6 +46,7 @@ const loadingState = document.getElementById('loadingState');
 const gameContent = document.getElementById('gameContent');
 const startGameButton = document.getElementById('startGameButton');
 const backToHubButton = document.getElementById('backToHub');
+const repeatButton = document.getElementById('repeatButton');
 const wordPicture = document.getElementById('wordPicture');
 const wordInstruction = document.getElementById('wordInstruction');
 const spellingArea = document.getElementById('spellingArea');
@@ -83,6 +84,9 @@ function setupEventListeners() {
     
     // === BACK TO HUB BUTTON ===
     backToHubButton.addEventListener('click', handleBackToHub);
+    
+    // === REPEAT BUTTON ===
+    repeatButton.addEventListener('click', handleRepeatPrompt);
 }
 
 /* === HANDLE START GAME === */
@@ -267,15 +271,18 @@ function handleWrongLetter(button) {
 
 /* === HANDLE WORD COMPLETE === */
 function handleWordComplete() {
+    const currentWord = gameWords[currentWordIndex].word;
+    
     // === SHOW CELEBRATION MESSAGE ===
-    celebrationMessage.textContent = `Great job! You spelled ${gameWords[currentWordIndex].word}! 🌟`;
+    celebrationMessage.textContent = `Great job! You spelled ${currentWord}! 🌟`;
     celebrationMessage.classList.add('show');
     
     // === ADD CELEBRATION ANIMATIONS ===
     spellingArea.classList.add('celebration');
     
-    // === PLAY CELEBRATION SOUND ===
+    // === PLAY CELEBRATION SOUND AND SPEECH ===
     playCelebrationSound();
+    speakCelebration(`Great job! You spelled ${currentWord}!`);
     
     // === MOVE TO NEXT WORD OR FINISH GAME ===
     setTimeout(() => {
@@ -310,13 +317,16 @@ function finishGame() {
     // === UPDATE CELEBRATION MESSAGE ===
     celebrationMessage.textContent = '🎉 Amazing! You completed all words! 🎉';
     
+    // === SPEAK FINAL CELEBRATION ===
+    speakCelebration('Amazing! You completed all words! Great job spelling!');
+    
     // === AWARD STICKER ===
     awardSticker();
     
     // === RETURN TO HUB AFTER CELEBRATION ===
     setTimeout(() => {
         returnToHub();
-    }, 3000);
+    }, 4000); // Extra time for final speech
 }
 
 /* === AWARD STICKER === */
@@ -358,13 +368,43 @@ function handleBackToHub() {
 
 /* === PLAY AUDIO PROMPT === */
 function playAudioPrompt(text) {
-    if (!soundEnabled || !audioContext) return;
+    if (!soundEnabled) return;
     
-    // === SIMPLE AUDIO FEEDBACK ===
-    playTone(440, 0.3, 0.1); // Pleasant prompt tone
-    
-    // === IN REAL APP: Use speech synthesis or audio files ===
-    console.log(`Audio prompt: ${text}`);
+    // === CHECK IF SPEECH SYNTHESIS IS AVAILABLE ===
+    if ('speechSynthesis' in window) {
+        // === CANCEL ANY PREVIOUS SPEECH ===
+        window.speechSynthesis.cancel();
+        
+        // === CREATE SPEECH UTTERANCE ===
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // === CONFIGURE SPEECH SETTINGS ===
+        utterance.rate = 0.8; // Slightly slower for kids
+        utterance.pitch = 1.1; // Slightly higher pitch
+        utterance.volume = 0.8; // Good volume level
+        
+        // === TRY TO USE A CHILD-FRIENDLY VOICE ===
+        const voices = window.speechSynthesis.getVoices();
+        const childFriendlyVoice = voices.find(voice => 
+            voice.name.includes('Google') || 
+            voice.name.includes('Karen') || 
+            voice.name.includes('Samantha') ||
+            voice.lang.startsWith('en')
+        );
+        
+        if (childFriendlyVoice) {
+            utterance.voice = childFriendlyVoice;
+        }
+        
+        // === SPEAK THE TEXT ===
+        window.speechSynthesis.speak(utterance);
+        
+        console.log(`Speaking: ${text}`);
+    } else {
+        // === FALLBACK TO TONE ===
+        playTone(440, 0.3, 0.1);
+        console.log(`Audio prompt: ${text}`);
+    }
 }
 
 /* === PLAY SUCCESS SOUND === */
@@ -382,6 +422,58 @@ function playTryAgainSound() {
     
     // === GENTLE INCORRECT SOUND ===
     playTone(220, 0.1, 0.3); // Low A note
+}
+
+/* === SPEAK CELEBRATION === */
+function speakCelebration(text) {
+    if (!soundEnabled) return;
+    
+    if ('speechSynthesis' in window) {
+        // === WAIT A MOMENT THEN SPEAK ===
+        setTimeout(() => {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.2; // Higher pitch for excitement
+            utterance.volume = 0.9;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const childFriendlyVoice = voices.find(voice => 
+                voice.name.includes('Google') || 
+                voice.name.includes('Karen') || 
+                voice.name.includes('Samantha') ||
+                voice.lang.startsWith('en')
+            );
+            
+            if (childFriendlyVoice) {
+                utterance.voice = childFriendlyVoice;
+            }
+            
+            window.speechSynthesis.speak(utterance);
+            console.log(`Speaking celebration: ${text}`);
+        }, 200);
+    }
+}
+
+/* === HANDLE REPEAT PROMPT === */
+function handleRepeatPrompt() {
+    // === ADD BUTTON FEEDBACK ===
+    repeatButton.classList.add('pop-animation');
+    
+    // === REPEAT THE CURRENT PROMPT ===
+    repeatPrompt();
+    
+    // === REMOVE ANIMATION ===
+    setTimeout(() => {
+        repeatButton.classList.remove('pop-animation');
+    }, 300);
+}
+
+/* === REPEAT CURRENT PROMPT === */
+function repeatPrompt() {
+    if (currentWordIndex < gameWords.length) {
+        const currentWord = gameWords[currentWordIndex];
+        playAudioPrompt(currentWord.audio);
+    }
 }
 
 /* === PLAY CELEBRATION SOUND === */
