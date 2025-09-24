@@ -333,15 +333,15 @@ function handleStickerClick(event) {
 }
     
     // === UNLOCKED STICKER - ADD BOUNCE EFFECT ===
-    const stickerIcon = stickerElement.querySelector('.sticker-icon');
-    stickerIcon.classList.add('pop-animation');
+    //const stickerIcon = stickerElement.querySelector('.sticker-icon');
+    //stickerIcon.classList.add('pop-animation');
     
     // === TODO: OPEN STICKER SHOWCASE MODAL ===
-    console.log(`Clicked sticker: ${stickerData.name}`);
+    //console.log(`Clicked sticker: ${stickerData.name}`);
     
-    setTimeout(() => {
-        stickerIcon.classList.remove('pop-animation');
-    }, 300);
+    //setTimeout(() => {
+        //stickerIcon.classList.remove('pop-animation');
+    //}, 300);
 
 
 /* === SLIDER SYSTEM === */
