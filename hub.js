@@ -249,4 +249,58 @@ function getSoundEnabled() {
 function refreshHubData() {
     loadHubData();
     updateDisplay();
+    updateStickerDisplay(); // ADD THIS LINE
+}
+
+/* === STICKER SYSTEM FUNCTIONS === */
+
+/* === UPDATE STICKER DISPLAY BASED ON COUNT === */
+function updateStickerDisplay() {
+    const stickerKeys = Object.keys(STICKER_REGISTRY);
+    
+    // === UNLOCK STICKERS BASED ON CURRENT COUNT ===
+    for (let i = 0; i < Math.min(stickerCount, stickerKeys.length); i++) {
+        STICKER_REGISTRY[stickerKeys[i]].unlocked = true;
+    }
+    
+    // === UPDATE FLOATING STICKER VISIBILITY ===
+    floatingStickers.forEach(stickerElement => {
+        const gameType = stickerElement.dataset.game;
+        const stickerData = STICKER_REGISTRY[gameType];
+        
+        if (stickerData && stickerData.unlocked) {
+            stickerElement.classList.remove('locked');
+            stickerElement.classList.add('unlocked');
+        } else {
+            stickerElement.classList.add('locked');
+            stickerElement.classList.remove('unlocked');
+        }
+    });
+}
+
+/* === HANDLE STICKER CLICK === */
+function handleStickerClick(event) {
+    const stickerElement = event.currentTarget;
+    const gameType = stickerElement.dataset.game;
+    const stickerData = STICKER_REGISTRY[gameType];
+    
+    if (!stickerData.unlocked) {
+        // === LOCKED STICKER FEEDBACK ===
+        stickerElement.classList.add('shake');
+        setTimeout(() => {
+            stickerElement.classList.remove('shake');
+        }, 600);
+        return;
+    }
+    
+    // === UNLOCKED STICKER - ADD BOUNCE EFFECT ===
+    const stickerIcon = stickerElement.querySelector('.sticker-icon');
+    stickerIcon.classList.add('pop-animation');
+    
+    // === TODO: OPEN STICKER SHOWCASE MODAL ===
+    console.log(`Clicked sticker: ${stickerData.name}`);
+    
+    setTimeout(() => {
+        stickerIcon.classList.remove('pop-animation');
+    }, 300);
 }
