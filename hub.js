@@ -395,24 +395,28 @@ function handleSliderEnd(event) {
     currentSticker = null;
 }
 
-/* === SET SLIDER POSITION === */
+/* === SET SLIDER POSITION ON CURVED ARC === */
 function setSliderPosition(handle, percentage) {
-    // === CALCULATE ARC POSITION ===
+    // === CALCULATE CURVED ARC POSITION ===
     const sliderWidth = handle.parentElement.offsetWidth;
-    const handleSize = 20;
-    const trackPadding = 10;
+    const sliderHeight = handle.parentElement.offsetHeight;
+    
+    // === ARC MATH: QUADRATIC CURVE FROM LEFT TO RIGHT ===
+    const startX = 15; // Left curve start
+    const endX = sliderWidth - 15; // Right curve end  
+    const peakY = 10; // Curve peak height
+    const baseY = 40; // Base level
     
     // === X POSITION ALONG ARC ===
-    const maxX = sliderWidth - handleSize - trackPadding;
-    const x = trackPadding + (percentage * maxX);
+    const x = startX + (percentage * (endX - startX));
     
-    // === Y POSITION FOR ARC CURVE ===
-    const arcHeight = 15;
-    const y = 2 + (Math.sin(percentage * Math.PI) * arcHeight);
+    // === Y POSITION FOLLOWING CURVE ===
+    const curveHeight = baseY - peakY;
+    const y = baseY - (curveHeight * Math.sin(percentage * Math.PI));
     
     // === APPLY POSITION ===
-    handle.style.left = x + 'px';
-    handle.style.bottom = y + 'px';
+    handle.style.left = (x - 10) + 'px'; // Center handle on path
+    handle.style.bottom = (sliderHeight - y - 10) + 'px'; // Center handle vertically
 }
 
 /* === APPLY STICKER EFFECTS === */
