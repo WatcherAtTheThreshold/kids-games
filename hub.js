@@ -299,14 +299,20 @@ function refreshHubData() {
 
 /* === STICKER SYSTEM FUNCTIONS === */
 
-/* === UPDATE STICKER DISPLAY BASED ON COUNT === */
+/* === UPDATE STICKER DISPLAY BASED ON EARNED STICKERS === */
 function updateStickerDisplay() {
-    const stickerKeys = Object.keys(STICKER_REGISTRY);
+    // === GET EARNED STICKERS LIST ===
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers');
+    const earnedList = earnedStickers ? earnedStickers.split(',').filter(s => s.length > 0) : [];
     
-    // === UNLOCK STICKERS BASED ON CURRENT COUNT ===
-    for (let i = 0; i < Math.min(stickerCount, stickerKeys.length); i++) {
-        STICKER_REGISTRY[stickerKeys[i]].unlocked = true;
-    }
+    // === UNLOCK SPECIFIC EARNED STICKERS ===
+    Object.keys(STICKER_REGISTRY).forEach(gameKey => {
+        if (earnedList.includes(gameKey)) {
+            STICKER_REGISTRY[gameKey].unlocked = true;
+        } else {
+            STICKER_REGISTRY[gameKey].unlocked = false;
+        }
+    });
     
     // === UPDATE FLOATING STICKER VISIBILITY ===
     floatingStickers.forEach(stickerElement => {
@@ -319,6 +325,35 @@ function updateStickerDisplay() {
         } else {
             stickerElement.classList.add('locked');
             stickerElement.classList.remove('unlocked');
+        }
+    });
+    
+    // === UPDATE FLOATING STICKERS TO SHOW EARNED ONES ===
+    updateFloatingStickers(earnedList);
+}
+
+/* === UPDATE FLOATING STICKERS TO SHOW ACTUAL EARNED STICKERS === */
+function updateFloatingStickers(earnedList) {
+    // === GET FIRST 3 EARNED STICKERS (OR DEFAULTS IF LESS THAN 3) ===
+    const defaultStickers = ['color-pop', 'animal-peekaboo', 'bug-count'];
+    
+    floatingStickers.forEach((stickerElement, index) => {
+        let gameKey;
+        
+        if (index < earnedList.length) {
+            // === SHOW ACTUAL EARNED STICKER ===
+            gameKey = earnedList[index];
+        } else {
+            // === SHOW DEFAULT PLACEHOLDER ===
+            gameKey = defaultStickers[index];
+        }
+        
+        // === UPDATE STICKER DISPLAY ===
+        const stickerData = STICKER_REGISTRY[gameKey];
+        if (stickerData) {
+            stickerElement.dataset.game = gameKey;
+            const iconElement = stickerElement.querySelector('.sticker-icon');
+            iconElement.textContent = stickerData.emoji;
         }
     });
 }
