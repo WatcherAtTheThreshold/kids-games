@@ -48,6 +48,17 @@ function initializeDOMElements() {
     totalCount = document.getElementById('totalCount');
 }
 
+/* === INITIALIZATION === */
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDOMElements(); // ADD THIS FIRST
+    loadHubData();
+    setupEventListeners();
+    updateDisplay();
+    updateStickerDisplay();
+    initializeSliders();
+    initializeStickerModal();
+});
+
 /* === LOAD DATA FROM STORAGE === */
 function loadHubData() {
     // === LOAD STICKER COUNT ===
