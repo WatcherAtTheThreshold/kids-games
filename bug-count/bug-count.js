@@ -1,4 +1,4 @@
-/* === BUG COUNT GAME JAVASCRIPT === */
+/* === LADYBUG COUNT GAME JAVASCRIPT === */
 
 // === GLOBAL GAME VARIABLES ===
 let currentRound = 1;
@@ -19,7 +19,7 @@ const roundConfigs = [
 ];
 
 // === OTHER BUG TYPES FOR DECORATION ===
-const otherBugs = ['🦋', '🐝', '🐞', '🦗', '🐛'];
+const otherBugs = ['🦋', '🐝', '🦗', '🐛', '🕷️'];
 
 // === DOM ELEMENTS ===
 let startScreen, startButton, gameHeader, instructionPanel, gardenContainer;
