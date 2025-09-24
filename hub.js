@@ -370,3 +370,95 @@ function handleSliderMove(event) {
     setSliderPosition(currentSlider, percentage);
     applyStickerEffects(currentSticker, percentage);
 }
+
+/* === HANDLE SLIDER END === */
+function handleSliderEnd(event) {
+    if (!isDragging) return;
+    
+    // === REMOVE ACTIVE STATES ===
+    if (currentSlider) {
+        currentSlider.parentElement.classList.remove('active');
+    }
+    if (currentSticker) {
+        currentSticker.classList.remove('dragging');
+    }
+    
+    // === PLAY END SOUND ===
+    if (soundEnabled) {
+        playSliderSound(400, 0.15, 0.1);
+    }
+    
+    // === RESET VARIABLES ===
+    isDragging = false;
+    currentSlider = null;
+    currentSticker = null;
+}
+
+/* === SET SLIDER POSITION === */
+function setSliderPosition(handle, percentage) {
+    // === CALCULATE ARC POSITION ===
+    const sliderWidth = handle.parentElement.offsetWidth;
+    const handleSize = 20;
+    const trackPadding = 10;
+    
+    // === X POSITION ALONG ARC ===
+    const maxX = sliderWidth - handleSize - trackPadding;
+    const x = trackPadding + (percentage * maxX);
+    
+    // === Y POSITION FOR ARC CURVE ===
+    const arcHeight = 15;
+    const y = 2 + (Math.sin(percentage * Math.PI) * arcHeight);
+    
+    // === APPLY POSITION ===
+    handle.style.left = x + 'px';
+    handle.style.bottom = y + 'px';
+}
+
+/* === APPLY STICKER EFFECTS === */
+function applyStickerEffects(stickerElement, percentage) {
+    const stickerIcon = stickerElement.querySelector('.sticker-icon');
+    
+    // === ROTATION EFFECT === 
+    const rotation = -15 + (percentage * 30); // -15deg to +15deg
+    
+    // === SCALE EFFECT ===
+    const scale = 0.9 + (percentage * 0.3); // 0.9x to 1.2x
+    
+    // === BRIGHTNESS EFFECT ===
+    const brightness = 0.8 + (percentage * 0.4); // 0.8 to 1.2
+    
+    // === APPLY ALL EFFECTS ===
+    stickerIcon.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+    stickerIcon.style.filter = `brightness(${brightness})`;
+    
+    // === PLAY MOVE SOUND (THROTTLED) ===
+    if (Math.random() < 0.3) { // Only 30% of moves play sound
+        playSliderSound(300 + (percentage * 200), 0.05, 0.05);
+    }
+}
+
+/* === SLIDER SOUND EFFECTS === */
+function playSliderSound(frequency, volume, duration) {
+    if (!soundEnabled) return;
+    
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(volume, audioContext.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration);
+    } catch (error) {
+        // Silent fail if audio context not available
+    }
+}
