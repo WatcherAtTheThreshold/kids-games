@@ -467,3 +467,83 @@ function playSliderSound(frequency, volume, duration) {
         // Silent fail if audio context not available
     }
 }
+
+/* === STICKER SHOWCASE MODAL SYSTEM === */
+
+// === MODAL DOM ELEMENTS ===
+const stickerModalOverlay = document.getElementById('stickerModalOverlay');
+const modalCloseButton = document.getElementById('modalCloseButton');
+const stickerGrid = document.getElementById('stickerGrid');
+const modalSubtitle = document.getElementById('modalSubtitle');
+const collectedCount = document.getElementById('collectedCount');
+const totalCount = document.getElementById('totalCount');
+
+/* === INITIALIZE MODAL === */
+function initializeStickerModal() {
+    // === CLOSE BUTTON EVENT ===
+    modalCloseButton.addEventListener('click', closeStickerModal);
+    
+    // === CLICK OUTSIDE TO CLOSE ===
+    stickerModalOverlay.addEventListener('click', (event) => {
+        if (event.target === stickerModalOverlay) {
+            closeStickerModal();
+        }
+    });
+    
+    // === ESCAPE KEY TO CLOSE ===
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && stickerModalOverlay.classList.contains('active')) {
+            closeStickerModal();
+        }
+    });
+}
+
+/* === OPEN STICKER MODAL === */
+function openStickerModal() {
+    // === GENERATE STICKER GRID ===
+    generateStickerGrid();
+    
+    // === UPDATE STATS ===
+    updateCollectionStats();
+    
+    // === SHOW MODAL ===
+    stickerModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // Prevent background scroll
+    
+    // === PLAY OPEN SOUND ===
+    if (soundEnabled) {
+        playModalSound('open');
+    }
+}
+
+/* === CLOSE STICKER MODAL === */
+function closeStickerModal() {
+    stickerModalOverlay.classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
+    
+    // === PLAY CLOSE SOUND ===
+    if (soundEnabled) {
+        playModalSound('close');
+    }
+}
+
+/* === GENERATE STICKER GRID === */
+function generateStickerGrid() {
+    stickerGrid.innerHTML = '';
+    
+    Object.entries(STICKER_REGISTRY).forEach(([gameKey, stickerData]) => {
+        const stickerSlot = document.createElement('div');
+        stickerSlot.className = `sticker-slot ${stickerData.unlocked ? 'earned' : 'empty'}`;
+        stickerSlot.dataset.game = gameKey;
+        
+        stickerSlot.innerHTML = `
+            <div class="sticker-emoji">${stickerData.unlocked ? stickerData.emoji : '❓'}</div>
+            <div class="sticker-name">${stickerData.unlocked ? stickerData.name : 'Play to unlock!'}</div>
+        `;
+        
+        // === ADD CLICK HANDLER ===
+        stickerSlot.addEventListener('click', () => handleModalStickerClick(stickerSlot, stickerData));
+        
+        stickerGrid.appendChild(stickerSlot);
+    });
+}
