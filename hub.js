@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadHubData();
     setupEventListeners();
     updateDisplay();
-    updateStickerDisplay(); // ADD THIS LINE
+    updateStickerDisplay();
+    initializeSliders(); // ADD THIS LINE
 });
 
 /* === LOAD DATA FROM STORAGE === */
