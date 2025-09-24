@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sound Spelling - Kids Games</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        /* === SOUND SPELLING SPECIFIC STYLES === */
+        body {
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: white;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* === START SCREEN === */
+        .start-screen {
+            text-align: center;
+            padding: 60px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .start-content {
+            max-width: 400px;
+        }
+
+        .start-icon {
+            font-size: 6rem;
+            margin-bottom: 20px;
+        }
+
+        .start-title {
+            font-size: 2.5rem;
+            color: var(--primary-purple);
+            margin: 0 0 15px 0;
+            font-weight: 700;
+        }
+
+        .start-description {
+            font-size: 1.3rem;
+            color: #666;
+            margin: 0 0 30px 0;
+            line-height: 1.4;
+        }
+
+        .start-button {
+            background: var(--success-green);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 187, 106, 0.3);
+            min-width: 200px;
+            min-height: 80px;
+        }
+
+        .start-button:hover {
+            background: #4caf50;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 187, 106, 0.4);
+        }
+
+        .start-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* === GAME HEADER === */
+        .game-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            min-height: 60px;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        /* === GAME AREA === */
+        .game-area {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #333;
+        }
+
+        /* === WORD PICTURE === */
+        .word-picture-area {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .word-picture {
+            font-size: 8rem;
+            margin: 20px 0;
+            display: block;
+        }
+
+        .word-instruction {
+            font-size: 1.5rem;
+            color: #444;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        /* === SPELLING AREA === */
+        .spelling-area {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 30px 0;
+            min-height: 80px;
+            align-items: center;
+        }
+
+        .letter-slot {
+            width: 60px;
+            height: 60px;
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .letter-slot.filled {
+            background: var(--success-green);
+            color: white;
+            border: 3px solid var(--success-green);
+            transform: scale(1.1);
+        }
+
+        /* === LETTER BUTTONS === */
+        .letters-area {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .letter-button {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .letter-button:hover {
+            background: var(--primary-purple);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .letter-button:active {
+            transform: translateY(0);
+        }
+
+        .letter-button.used {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.5;
+        }
+
+        /* === PROGRESS AREA === */
+        .progress-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .round-counter {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        /* === CELEBRATION === */
+        .celebration-message {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--success-green);
+            font-weight: bold;
+            margin: 20px 0;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s ease;
+        }
+
+        .celebration-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 768px) {
+            .game-area {
+                padding: 20px;
+                margin: 0 10px;
+            }
+
+            .word-picture {
+                font-size: 6rem;
+            }
+
+            .letter-slot {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+
+            .letter-button {
+                width: 70px;
+                height: 70px;
+                font-size: 1.8rem;
+            }
+
+            .game-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* === LOADING STATE === */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === BACK TO HUB BUTTON === -->
+    <button class="back-button" id="backToHub">
+        ← Hub
+    </button>
+
+    <!-- === GAME HEADER === -->
+    <header class="game-header">
+        <h1 class="game-title">🔤 Sound Spelling</h1>
+    </header>
+
+    <!-- === MAIN GAME AREA === -->
+    <main class="game-area">
+        
+        <!-- === START SCREEN === -->
+        <div class="start-screen" id="startScreen">
+            <div class="start-content">
+                <div class="start-icon">🔤</div>
+                <h2 class="start-title">Sound Spelling</h2>
+                <p class="start-description">Listen and spell simple words!<br>Perfect for ages 3-5</p>
+                <button class="start-button big-touch-target" id="startGameButton">
+                    🔊 Start Game
+                </button>
+            </div>
+        </div>
+
+        <!-- === LOADING STATE === -->
+        <div class="loading hidden" id="loadingState">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Getting ready to spell...</div>
+        </div>
+
+        <!-- === GAME CONTENT === -->
+        <div class="game-content hidden" id="gameContent">
+            
+            <!-- === WORD PICTURE === -->
+            <div class="word-picture-area">
+                <div class="word-picture" id="wordPicture">🐱</div>
+                <div class="word-instruction" id="wordInstruction">Can you spell CAT?</div>
+            </div>
+
+            <!-- === SPELLING AREA === -->
+            <div class="spelling-area" id="spellingArea">
+                <!-- Letter slots will be created by JavaScript -->
+            </div>
+
+            <!-- === LETTER BUTTONS === -->
+            <div class="letters-area" id="lettersArea">
+                <!-- Letter buttons will be created by JavaScript -->
+            </div>
+
+            <!-- === CELEBRATION MESSAGE === -->
+            <div class="celebration-message" id="celebrationMessage">
+                Great job! 🌟
+            </div>
+
+            <!-- === PROGRESS AREA === -->
+            <div class="progress-area">
+                <div class="round-counter" id="roundCounter">Word 1 of 5</div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="sound-spelling.js"></script>
+
+</body>
+</html>
