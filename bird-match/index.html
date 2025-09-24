@@ -78,7 +78,8 @@
         .bird-silhouette {
             width: 120px;
             height: 120px;
-            background: #2F4F4F;
+            background: #E6E6FA;
+            border: 3px dashed #4682B4;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -87,17 +88,23 @@
             position: relative;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            /* === MAKE BIRD EMOJI LOOK LIKE SHADOW === */
+            filter: grayscale(100%) brightness(0.3);
         }
 
         .bird-silhouette.highlight {
-            background: #4682B4;
-            box-shadow: 0 0 20px rgba(70, 130, 180, 0.5);
+            background: #87CEEB;
+            border-color: #4169E1;
+            box-shadow: 0 0 20px rgba(65, 105, 225, 0.5);
             transform: scale(1.1);
+            filter: grayscale(50%) brightness(0.5); /* Lighter shadow when highlighted */
         }
 
         .bird-silhouette.filled {
             background: var(--success-green);
+            border-color: var(--success-green);
             box-shadow: 0 0 25px rgba(102, 187, 106, 0.6);
+            filter: none; /* Remove shadow effect when filled */
         }
 
         /* === DRAG ZONE (BOTTOM) === */
