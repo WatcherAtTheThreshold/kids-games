@@ -358,6 +358,53 @@ function updateFloatingStickers(earnedList) {
     });
 }
 
+/* === SHARED STICKER UTILITY - FOR GAMES TO USE === */
+
+/* === AWARD SPECIFIC STICKER === */
+function awardSticker(gameKey) {
+    // === VALIDATE GAME KEY ===
+    if (!STICKER_REGISTRY[gameKey]) {
+        console.warn(`Unknown game key: ${gameKey}`);
+        return false;
+    }
+    
+    // === GET CURRENT EARNED STICKERS ===
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers') || '';
+    const stickerList = earnedStickers ? earnedStickers.split(',').filter(s => s.length > 0) : [];
+    
+    // === CHECK IF STICKER ALREADY EARNED ===
+    if (stickerList.includes(gameKey)) {
+        console.log(`Sticker ${gameKey} already earned`);
+        return false; // Already earned
+    }
+    
+    // === ADD NEW STICKER ===
+    stickerList.push(gameKey);
+    
+    // === SAVE UPDATED LIST ===
+    localStorage.setItem('kidsGames_earnedStickers', stickerList.join(','));
+    
+    // === UPDATE COUNT FOR BACKWARD COMPATIBILITY ===
+    localStorage.setItem('kidsGames_stickerCount', stickerList.length.toString());
+    
+    // === LOG SUCCESS ===
+    console.log(`🌟 Awarded sticker: ${gameKey} (${STICKER_REGISTRY[gameKey].name})`);
+    
+    return true; // Successfully awarded
+}
+
+/* === GET EARNED STICKERS LIST === */
+function getEarnedStickers() {
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers') || '';
+    return earnedStickers ? earnedStickers.split(',').filter(s => s.length > 0) : [];
+}
+
+/* === CHECK IF STICKER IS EARNED === */
+function hasStickerBeenEarned(gameKey) {
+    const earnedList = getEarnedStickers();
+    return earnedList.includes(gameKey);
+}
+
 /* === HANDLE STICKER CLICK - UPDATED === */
 function handleStickerClick(event) {
     const stickerElement = event.currentTarget;
