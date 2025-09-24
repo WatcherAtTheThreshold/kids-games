@@ -304,3 +304,69 @@ function handleStickerClick(event) {
         stickerIcon.classList.remove('pop-animation');
     }, 300);
 }
+
+/* === SLIDER SYSTEM === */
+
+// === SLIDER VARIABLES ===
+let isDragging = false;
+let currentSlider = null;
+let currentSticker = null;
+
+/* === INITIALIZE SLIDERS === */
+function initializeSliders() {
+    const sliderHandles = document.querySelectorAll('.slider-handle');
+    
+    sliderHandles.forEach(handle => {
+        // === MOUSE EVENTS ===
+        handle.addEventListener('mousedown', handleSliderStart);
+        
+        // === TOUCH EVENTS ===
+        handle.addEventListener('touchstart', handleSliderStart, { passive: false });
+        
+        // === SET INITIAL POSITION ===
+        setSliderPosition(handle, 0); // Start at 0% (left side)
+    });
+    
+    // === GLOBAL MOVE AND END EVENTS ===
+    document.addEventListener('mousemove', handleSliderMove);
+    document.addEventListener('mouseup', handleSliderEnd);
+    document.addEventListener('touchmove', handleSliderMove, { passive: false });
+    document.addEventListener('touchend', handleSliderEnd);
+}
+
+/* === HANDLE SLIDER START === */
+function handleSliderStart(event) {
+    event.preventDefault();
+    
+    isDragging = true;
+    currentSlider = event.target;
+    currentSticker = currentSlider.closest('.floating-sticker');
+    
+    // === ADD ACTIVE STATES ===
+    currentSlider.parentElement.classList.add('active');
+    currentSticker.classList.add('dragging');
+    
+    // === PLAY START SOUND IF ENABLED ===
+    if (soundEnabled) {
+        playSliderSound(200, 0.1, 0.1);
+    }
+}
+
+/* === HANDLE SLIDER MOVE === */
+function handleSliderMove(event) {
+    if (!isDragging || !currentSlider) return;
+    
+    event.preventDefault();
+    
+    // === GET MOUSE/TOUCH POSITION ===
+    const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+    
+    // === CALCULATE SLIDER POSITION ===
+    const sliderRect = currentSlider.parentElement.getBoundingClientRect();
+    const relativeX = clientX - sliderRect.left;
+    const percentage = Math.max(0, Math.min(1, relativeX / sliderRect.width));
+    
+    // === UPDATE HANDLE POSITION AND STICKER EFFECTS ===
+    setSliderPosition(currentSlider, percentage);
+    applyStickerEffects(currentSticker, percentage);
+}
