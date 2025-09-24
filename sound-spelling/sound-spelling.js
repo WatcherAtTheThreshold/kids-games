@@ -329,17 +329,30 @@ function finishGame() {
     }, 4000); // Extra time for final speech
 }
 
-/* === AWARD STICKER === */
+/* === AWARD SPECIFIC STICKER === */
 function awardSticker() {
-    // === GET CURRENT STICKER COUNT ===
-    const currentStickers = localStorage.getItem('kidsGames_stickerCount');
-    const stickerCount = currentStickers ? parseInt(currentStickers) : 0;
+    const gameKey = 'sound-spelling';
     
-    // === INCREMENT STICKER COUNT ===
-    const newStickerCount = stickerCount + 1;
-    localStorage.setItem('kidsGames_stickerCount', newStickerCount.toString());
+    // === GET CURRENT EARNED STICKERS ===
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers') || '';
+    const stickerList = earnedStickers ? earnedStickers.split(',').filter(s => s.length > 0) : [];
     
-    console.log(`Sticker awarded! New total: ${newStickerCount}`);
+    // === CHECK IF ALREADY EARNED ===
+    if (stickerList.includes(gameKey)) {
+        console.log(`Sticker ${gameKey} already earned`);
+        return; // Already earned, don't duplicate
+    }
+    
+    // === ADD NEW STICKER ===
+    stickerList.push(gameKey);
+    
+    // === SAVE UPDATED LIST ===
+    localStorage.setItem('kidsGames_earnedStickers', stickerList.join(','));
+    
+    // === UPDATE COUNT FOR BACKWARD COMPATIBILITY ===
+    localStorage.setItem('kidsGames_stickerCount', stickerList.length.toString());
+    
+    console.log(`🔤 Sound Spelling sticker earned! Total: ${stickerList.length}`);
 }
 
 /* === RETURN TO HUB === */
