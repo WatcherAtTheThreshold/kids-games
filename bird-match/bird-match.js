@@ -14,39 +14,33 @@ let draggedBird = null;
 const birdTypes = {
     robin: { 
         emoji: '🐦', 
-        color: '#8B4513', 
-        name: 'Robin',
-        shadow: '🐦‍⬛' 
+        color: '#CD5C5C', 
+        name: 'Robin'
     },
     duck: { 
         emoji: '🦆', 
         color: '#DAA520', 
-        name: 'Duck',
-        shadow: '🦆' 
+        name: 'Duck'
     },
     owl: { 
         emoji: '🦉', 
         color: '#8B4513', 
-        name: 'Owl',
-        shadow: '🦉' 
+        name: 'Owl'
     },
     cardinal: { 
-        emoji: '🐦‍🔥', 
+        emoji: '🐦', 
         color: '#DC143C', 
-        name: 'Cardinal',
-        shadow: '🐦‍⬛' 
+        name: 'Red Bird'
     },
     bluejay: { 
         emoji: '🐦', 
         color: '#4169E1', 
-        name: 'Blue Jay',
-        shadow: '🐦‍⬛' 
+        name: 'Blue Jay'
     },
     crane: { 
         emoji: '🕊️', 
-        color: '#B0B0B0', 
-        name: 'Crane',
-        shadow: '🕊️' 
+        color: '#D3D3D3', 
+        name: 'Crane'
     }
 };
 
@@ -150,7 +144,8 @@ function createSilhouettes() {
         const silhouette = document.createElement('div');
         silhouette.className = 'bird-silhouette';
         silhouette.dataset.birdType = birdKey;
-        silhouette.innerHTML = bird.shadow;
+        // === USE SAME EMOJI AS DRAGGABLE BIRD ===
+        silhouette.innerHTML = bird.emoji;
         
         // === ADD TO CONTAINER ===
         silhouettesContainer.appendChild(silhouette);
