@@ -139,6 +139,32 @@
             font-weight: 600;
         }
 
+        .repeat-button {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            min-width: 120px;
+            min-height: 50px;
+            box-shadow: 0 3px 10px rgba(255, 167, 38, 0.3);
+        }
+
+        .repeat-button:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 167, 38, 0.4);
+        }
+
+        .repeat-button:active {
+            transform: translateY(0);
+        }
+
         /* === SPELLING AREA === */
         .spelling-area {
             display: flex;
@@ -321,6 +347,9 @@
             <div class="word-picture-area">
                 <div class="word-picture" id="wordPicture">🐱</div>
                 <div class="word-instruction" id="wordInstruction">Can you spell CAT?</div>
+                <button class="repeat-button big-touch-target" id="repeatButton" title="Hear it again">
+                    🔊 Repeat
+                </button>
             </div>
 
             <!-- === SPELLING AREA === -->
