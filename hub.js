@@ -53,9 +53,27 @@ function initializeDOMElements() {
 
 /* === LOAD DATA FROM STORAGE === */
 function loadHubData() {
-    // === LOAD STICKER COUNT ===
-    const savedStickers = localStorage.getItem('kidsGames_stickerCount');
-    stickerCount = savedStickers ? parseInt(savedStickers) : 0;
+    // === LOAD INDIVIDUAL STICKER DATA ===
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers');
+    const stickerCount_old = localStorage.getItem('kidsGames_stickerCount');
+    
+    if (earnedStickers) {
+        // === NEW SYSTEM: Parse earned stickers list ===
+        const stickerList = earnedStickers.split(',').filter(s => s.length > 0);
+        stickerCount = stickerList.length;
+    } else if (stickerCount_old) {
+        // === BACKWARD COMPATIBILITY: Convert old count to new system ===
+        const oldCount = parseInt(stickerCount_old);
+        stickerCount = oldCount;
+        
+        // === Create earned stickers list from registry (first N stickers) ===
+        const stickerKeys = Object.keys(STICKER_REGISTRY);
+        const earnedList = stickerKeys.slice(0, oldCount);
+        localStorage.setItem('kidsGames_earnedStickers', earnedList.join(','));
+    } else {
+        // === NO STICKERS YET ===
+        stickerCount = 0;
+    }
     
     // === LOAD GAMES PLAYED TODAY ===
     const today = new Date().toDateString();
