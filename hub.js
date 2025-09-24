@@ -5,18 +5,29 @@ let stickerCount = 0;
 let gamesPlayedToday = 0;
 let soundEnabled = true;
 
+// === STICKER REGISTRY - Easy to expand tomorrow ===
+const STICKER_REGISTRY = {
+    'color-pop': { emoji: '🎈', name: 'Balloon Pop', unlocked: false },
+    'animal-peekaboo': { emoji: '🐶', name: 'Happy Puppy', unlocked: false },
+    'bug-count': { emoji: '🐞', name: 'Ladybug Count', unlocked: false },
+    'bird-match': { emoji: '🦅', name: 'Bird Match', unlocked: false },
+    'feelings-faces': { emoji: '😊', name: 'Happy Face', unlocked: false },
+    'sound-spelling': { emoji: '🔤', name: 'Word Star', unlocked: false }
+};
+
 // === DOM ELEMENTS ===
 const stickerCountElement = document.getElementById('stickerCount');
 const gamesPlayedElement = document.getElementById('gamesPlayedToday');
 const soundToggleButton = document.getElementById('soundToggle');
 const helpButton = document.getElementById('helpButton');
 const gameCards = document.querySelectorAll('.game-card');
-
+const floatingStickers = document.querySelectorAll('.floating-sticker');
 /* === INITIALIZATION === */
 document.addEventListener('DOMContentLoaded', function() {
     loadHubData();
     setupEventListeners();
     updateDisplay();
+    updateStickerDisplay(); // ADD THIS LINE
 });
 
 /* === LOAD DATA FROM STORAGE === */
@@ -74,6 +85,11 @@ function setupEventListeners() {
     // === GAME CARD CLICKS ===
     gameCards.forEach(card => {
         card.addEventListener('click', handleGameCardClick);
+    });
+    
+    // === FLOATING STICKER CLICKS === 
+    floatingStickers.forEach(sticker => {
+        sticker.addEventListener('click', handleStickerClick);
     });
     
     // === SOUND TOGGLE BUTTON ===
