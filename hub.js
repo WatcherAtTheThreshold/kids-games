@@ -23,12 +23,13 @@ const STICKER_REGISTRY = {
 
 /* === INITIALIZATION === */
 document.addEventListener('DOMContentLoaded', function() {
+    initializeDOMElements(); // THIS MUST BE FIRST
     loadHubData();
     setupEventListeners();
     updateDisplay();
     updateStickerDisplay();
     initializeSliders();
-    initializeStickerModal(); // ADD THIS LINE
+    initializeStickerModal();
 });
 
 // === DOM ELEMENT INITIALIZATION (CALLED AFTER DOM LOADS) ===
