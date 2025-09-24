@@ -325,19 +325,31 @@ function finishGame() {
     showGameCompletion();
 }
 
-/* === AWARD STICKER === */
+/* === AWARD SPECIFIC STICKER === */
 function awardSticker() {
-    // === GET CURRENT STICKER COUNT ===
-    let currentStickers = localStorage.getItem('kidsGames_stickerCount');
-    currentStickers = currentStickers ? parseInt(currentStickers) : 0;
+    const gameKey = 'color-pop';
     
-    // === INCREMENT STICKER COUNT ===
-    currentStickers++;
+    // === GET CURRENT EARNED STICKERS ===
+    const earnedStickers = localStorage.getItem('kidsGames_earnedStickers') || '';
+    const stickerList = earnedStickers ? earnedStickers.split(',').filter(s => s.length > 0) : [];
     
-    // === SAVE TO STORAGE ===
-    localStorage.setItem('kidsGames_stickerCount', currentStickers.toString());
+    // === CHECK IF ALREADY EARNED ===
+    if (stickerList.includes(gameKey)) {
+        console.log(`Sticker ${gameKey} already earned`);
+        return; // Already earned, don't duplicate
+    }
+    
+    // === ADD NEW STICKER ===
+    stickerList.push(gameKey);
+    
+    // === SAVE UPDATED LIST ===
+    localStorage.setItem('kidsGames_earnedStickers', stickerList.join(','));
+    
+    // === UPDATE COUNT FOR BACKWARD COMPATIBILITY ===
+    localStorage.setItem('kidsGames_stickerCount', stickerList.length.toString());
+    
+    console.log(`🎈 Color Pop sticker earned! Total: ${stickerList.length}`);
 }
-
 /* === SHOW GAME COMPLETION === */
 function showGameCompletion() {
     // === UPDATE CELEBRATION TEXT ===
