@@ -458,8 +458,8 @@ function applyStickerEffects(stickerElement, percentage) {
     // === ROTATION EFFECT === 
     const rotation = -15 + (percentage * 30); // -15deg to +15deg
     
-    // === SCALE EFFECT - BIGGER IMPACT === 
-    const scale = 0.7 + (percentage * 0.8); // 0.7x to 1.5x (was 0.9x to 1.2x)
+    // === SCALE EFFECT - MAXIMUM IMPACT === 
+    const scale = 0.6 + (percentage * 1.0); // 0.6x to 1.6x - DRAMATIC!
     
     // === BRIGHTNESS EFFECT ===
     const brightness = 0.8 + (percentage * 0.4); // 0.8 to 1.2
