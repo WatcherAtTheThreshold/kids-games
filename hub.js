@@ -108,10 +108,16 @@ function setupEventListeners() {
         card.addEventListener('click', handleGameCardClick);
     });
     
-    // === FLOATING STICKER CLICKS === 
+    // === FLOATING STICKER CLICKS ===
     floatingStickers.forEach(sticker => {
         sticker.addEventListener('click', handleStickerClick);
     });
+    
+    // === COLLECTION BOX CLICK - ADD THIS ===
+    const collectionCard = document.querySelector('.collection-card');
+    if (collectionCard) {
+        collectionCard.addEventListener('click', openStickerModal);
+    }
     
     // === SOUND TOGGLE BUTTON ===
     soundToggleButton.addEventListener('click', handleSoundToggle);
