@@ -20,6 +20,17 @@ const STICKER_REGISTRY = {
     'sound-spelling': { emoji: '🔤', name: 'Word Star', unlocked: false }
 };
 
+
+/* === INITIALIZATION === */
+document.addEventListener('DOMContentLoaded', function() {
+    loadHubData();
+    setupEventListeners();
+    updateDisplay();
+    updateStickerDisplay();
+    initializeSliders();
+    initializeStickerModal(); // ADD THIS LINE
+});
+
 // === DOM ELEMENT INITIALIZATION (CALLED AFTER DOM LOADS) ===
 function initializeDOMElements() {
     stickerCountElement = document.getElementById('stickerCount');
@@ -36,16 +47,6 @@ function initializeDOMElements() {
     collectedCount = document.getElementById('collectedCount');
     totalCount = document.getElementById('totalCount');
 }
-
-/* === INITIALIZATION === */
-document.addEventListener('DOMContentLoaded', function() {
-    loadHubData();
-    setupEventListeners();
-    updateDisplay();
-    updateStickerDisplay();
-    initializeSliders();
-    initializeStickerModal(); // ADD THIS LINE
-});
 
 /* === LOAD DATA FROM STORAGE === */
 function loadHubData() {
