@@ -86,6 +86,9 @@ function setupEventListeners() {
         console.log('Available elements:', document.querySelectorAll('[id]'));
     }
     
+    // === CLICK ANYWHERE TO START (WHILE WAITING) ===
+    document.addEventListener('click', handleAnywhereClick);
+    
     // === PREVENT DOUBLE-CLICKS ===
     hidingSpotsContainer.addEventListener('click', preventDoubleClick);
 }
@@ -125,6 +128,20 @@ function handleStartGameClick() {
         startGameBtn.style.display = 'none';
         showStartMessage();
     }, 300);
+}
+
+/* === HANDLE ANYWHERE CLICK (FOR EASY START) === */
+function handleAnywhereClick(event) {
+    // === ONLY WORK IF GAME IS WAITING TO START ===
+    if (!gameActive && startGameBtn && startGameBtn.style.display !== 'none') {
+        // === DON'T TRIGGER IF CLICKING CONTROL BUTTONS ===
+        if (event.target.closest('.control-btn')) {
+            return;
+        }
+        
+        // === TRIGGER START GAME ===
+        handleStartGameClick();
+    }
 }
 
 /* === SHOW START MESSAGE === */
@@ -391,14 +408,78 @@ function preventDoubleClick(event) {
 
 /* === PLAY VOICE PROMPT === */
 function playVoicePrompt(animalName) {
-    // === CREATE SYNTHETIC SPEECH ===
+    if (!soundEnabled) return;
+    
+    // === USE SPEECH SYNTHESIS WITH iOS FIXES ===
     if ('speechSynthesis' in window) {
+        // === iOS FIX: CANCEL ANY PENDING SPEECH ===
+        speechSynthesis.cancel();
+        
+        // === CREATE UTTERANCE ===
         const utterance = new SpeechSynthesisUtterance(`Find the ${animalName}!`);
         utterance.rate = 0.8;
         utterance.pitch = 1.2;
-        utterance.volume = 0.8;
-        speechSynthesis.speak(utterance);
+        utterance.volume = 1.0; // Max volume for iOS
+        
+        // === iOS FIX: SET VOICE EXPLICITLY ===
+        const voices = speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            // === PREFER ENGLISH VOICES ===
+            const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+            }
+        }
+        
+        // === iOS FIX: HANDLE VOICE LOADING ===
+        if (voices.length === 0) {
+            // === WAIT FOR VOICES TO LOAD ===
+            speechSynthesis.addEventListener('voiceschanged', function() {
+                const newVoices = speechSynthesis.getVoices();
+                const englishVoice = newVoices.find(voice => voice.lang.startsWith('en'));
+                if (englishVoice) {
+                    utterance.voice = englishVoice;
+                }
+                speechSynthesis.speak(utterance);
+            }, { once: true });
+        } else {
+            speechSynthesis.speak(utterance);
+        }
+        
+        // === FALLBACK: PLAY INSTRUCTION CHIMES IF SPEECH FAILS ===
+        setTimeout(() => {
+            if (speechSynthesis.speaking) return; // Speech worked
+            
+            // === PLAY CHIME PATTERN FOR ANIMAL INSTRUCTION ===
+            playInstructionChimes(animalName);
+        }, 1000);
+    } else {
+        // === NO SPEECH SYNTHESIS AVAILABLE ===
+        playInstructionChimes(animalName);
     }
+}
+
+/* === PLAY INSTRUCTION CHIMES (FALLBACK FOR iOS) === */
+function playInstructionChimes(animalName) {
+    if (!soundEnabled) return;
+    
+    // === PLAY DIFFERENT CHIME PATTERNS FOR EACH ANIMAL ===
+    const animalFrequencies = {
+        'puppy': [440, 550],      // Lower tones for puppy
+        'kitty': [550, 660],      // Mid tones for kitty  
+        'bunny': [660, 770],      // Higher tones for bunny
+        'froggy': [330, 440],     // Lower-mid tones for froggy
+        'teddy bear': [770, 880], // Higher tones for teddy bear
+        'duck': [495, 550],       // Duck between puppy and kitty
+        'piggy': [385, 495],      // Piggy in lower-mid range
+        'monkey': [880, 990]      // Monkey in highest range
+    };
+    
+    const frequencies = animalFrequencies[animalName] || [440, 550];
+    
+    // === PLAY TWO-TONE CHIME ===
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    playBeepSequence(context, frequencies);
 }
 
 /* === PLAY ANIMAL SOUND === */
