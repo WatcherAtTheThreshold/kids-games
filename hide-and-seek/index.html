@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hide and Seek - Kids Games</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        /* === HIDE AND SEEK GAME STYLES === */
+        
+        body {
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
+            font-family: 'Arial', 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            overflow: hidden;
+        }
+
+        /* === GAME CONTAINER === */
+        .game-container {
+            position: relative;
+            width: 750px;
+            height: 500px;
+            background: #f0f0f0; /* Placeholder - will be replaced by your background image */
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* === GAME CONTROLS === */
+        .game-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 300;
+        }
+
+        .control-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        /* === ROUND INFO === */
+        .round-info {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #333;
+            z-index: 250;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        /* === HIDING SPOTS === */
+        .hiding-spot {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+
+        .hiding-spot.active:hover {
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .hiding-spot.found {
+            opacity: 0.7;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .hiding-spot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* === HIDING SPOT POSITIONS - PLACEHOLDER === */
+        .spot-1 { top: 50px; left: 80px; width: 120px; height: 150px; }
+        .spot-2 { top: 80px; right: 100px; width: 140px; height: 160px; }
+        .spot-3 { bottom: 80px; left: 100px; width: 130px; height: 140px; }
+        .spot-4 { bottom: 100px; right: 120px; width: 150px; height: 130px; }
+        .spot-5 { top: 180px; left: 320px; width: 110px; height: 120px; }
+
+        /* === ANIMALS - LAYERED ABOVE SLIDERS === */
+        .animal {
+            position: absolute;
+            z-index: 150; /* Above sliders (100) but below UI (200+) */
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .animal img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* === ANIMAL HIDDEN STATE === */
+        .animal.hidden {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        /* === ANIMAL REVEALED STATE === */
+        .animal.revealed {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* === ANIMAL CELEBRATING === */
+        .animal.celebrating {
+            animation: celebration 0.8s ease-out;
+        }
+
+        @keyframes celebration {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.2) rotate(-10deg); }
+            50% { transform: scale(1.3) rotate(10deg); }
+            75% { transform: scale(1.2) rotate(-5deg); }
+        }
+
+        /* === SLIDER CONTAINER === */
+        .slider-container {
+            position: absolute;
+            width: 200px;
+            height: 80px;
+            z-index: 100; /* Below animals (150) */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .slider-container.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+        }
+
+        /* === SLIDER TRACK (YOUR MOCKUP STYLING) === */
+        .slider-track {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            /* Placeholder - will be styled to match your mockup */
+            background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+            border-radius: 30px;
+            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.3);
+        }
+
+        /* === SLIDER HANDLE === */
+        .slider-handle {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 4px solid #FFA500;
+            border-radius: 50%;
+            cursor: grab;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+
+        .slider-handle:active {
+            cursor: grabbing;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+
+        .slider-handle:hover {
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        /* === INTRO OVERLAY === */
+        .intro-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .intro-overlay.hidden {
+            display: none;
+        }
+
+        /* === COMPLETION OVERLAY === */
+        .completion-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(78, 205, 196, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 250;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .completion-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .completion-text {
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .continue-button {
+            background: white;
+            color: #4ecdc4;
+            border: none;
+            border-radius: 20px;
+            padding: 20px 40px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+            min-height: 80px;
+        }
+
+        .continue-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* === MOBILE RESPONSIVE === */
+        @media (max-width: 800px) {
+            .game-container {
+                width: 95vw;
+                height: 63vw; /* Maintain aspect ratio */
+                max-height: 80vh;
+            }
+            
+            .control-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* === ACCESSIBILITY === */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === GAME CONTROLS === -->
+    <div class="game-controls">
+        <button class="control-btn" id="homeBtn" title="Back to Hub">🏠</button>
+        <button class="control-btn" id="soundBtn" title="Toggle Sound">🔊</button>
+    </div>
+
+    <!-- === MAIN GAME CONTAINER === -->
+    <div class="game-container" id="gameContainer">
+        
+        <!-- === ROUND INFO === -->
+        <div class="round-info" id="roundInfo">Round 1 of 3</div>
+
+        <!-- === INTRO OVERLAY === -->
+        <div class="intro-overlay" id="introOverlay">
+            <div id="countingText">Get Ready!</div>
+        </div>
+
+        <!-- === HIDING SPOTS (YOUR VECTOR ASSETS) === -->
+        <div class="hiding-spot spot-1 active" data-spot="1">
+            <img src="images/hiding-spots/log.svg" alt="Log" />
+        </div>
+
+        <div class="hiding-spot spot-2 active" data-spot="2">
+            <img src="images/hiding-spots/bush.svg" alt="Bush" />
+        </div>
+
+        <div class="hiding-spot spot-3 active" data-spot="3">
+            <img src="images/hiding-spots/tree.svg" alt="Tree" />
+        </div>
+
+        <div class="hiding-spot spot-4 active" data-spot="4">
+            <img src="images/hiding-spots/barrel.svg" alt="Barrel" />
+        </div>
+
+        <div class="hiding-spot spot-5 active" data-spot="5">
+            <img src="images/hiding-spots/rock.svg" alt="Rock" />
+        </div>
+
+        <!-- === ANIMALS (YOUR VECTOR ASSETS) === -->
+        <div class="animal hidden" data-animal="kitty" data-spot="1">
+            <img src="images/animals/kitty.svg" alt="Kitty" />
+        </div>
+
+        <div class="animal hidden" data-animal="puppy" data-spot="2">
+            <img src="images/animals/puppy.svg" alt="Puppy" />
+        </div>
+
+        <div class="animal hidden" data-animal="bunny" data-spot="3">
+            <img src="images/animals/bunny.svg" alt="Bunny" />
+        </div>
+
+        <div class="animal hidden" data-animal="froggie" data-spot="4">
+            <img src="images/animals/froggie.svg" alt="Froggie" />
+        </div>
+
+        <div class="animal hidden" data-animal="teddy" data-spot="5">
+            <img src="images/animals/teddy.svg" alt="Teddy Bear" />
+        </div>
+
+        <!-- === SLIDER (APPEARS ON CLICK) === -->
+        <div class="slider-container" id="sliderContainer">
+            <div class="slider-track">
+                <div class="slider-handle" id="sliderHandle"></div>
+            </div>
+        </div>
+
+        <!-- === COMPLETION OVERLAY === -->
+        <div class="completion-overlay" id="completionOverlay">
+            <div class="completion-text" id="completionText">Great Job!</div>
+            <button class="continue-button" id="continueBtn">Continue</button>
+        </div>
+
+    </div>
+
+    <!-- === AUDIO ELEMENTS === -->
+    <audio id="audioCountToFive" src="audio/count-to-five.mp3" preload="auto"></audio>
+    <audio id="audioReadyOrNot" src="audio/ready-or-not.mp3" preload="auto"></audio>
+    <audio id="audioAmazing" src="audio/amazing.mp3" preload="auto"></audio>
+    <audio id="audioGoodJob" src="audio/good-job.mp3" preload="auto"></audio>
+    <audio id="audioChime" src="audio/chime.mp3" preload="auto"></audio>
+    <audio id="audioPop" src="audio/pop.mp3" preload="auto"></audio>
+    <audio id="audioWhoosh" src="audio/whoosh.mp3" preload="auto"></audio>
+
+    <!-- === JAVASCRIPT === -->
+    <script src="hide-and-seek.js"></script>
+
+</body>
+</html>
