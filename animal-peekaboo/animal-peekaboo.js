@@ -146,10 +146,20 @@ function handleAnywhereClick(event) {
 
 /* === SHOW START MESSAGE === */
 function showStartMessage() {
-    // === SKIP "GET READY" MESSAGE - GO STRAIGHT TO FIRST ANIMAL ===
+    instructionText.textContent = 'Get ready to find the animals!';
+    instructionText.classList.add('bounce');
+    
+    // === SPEAK THE GET READY MESSAGE TO WARM UP SPEECH SYSTEM ===
+    if (soundEnabled) {
+        setTimeout(() => {
+            playVoicePrompt('Get ready');
+        }, 500);
+    }
+    
     setTimeout(() => {
+        instructionText.classList.remove('bounce');
         startRound();
-    }, 1000); // Short delay just for button fade transition
+    }, 3000); // 3 seconds allows "Get ready" speech to complete
 }
 
 /* === START ROUND === */
@@ -179,7 +189,7 @@ function startRound() {
     setTimeout(() => {
         instructionText.classList.remove('pop-animation');
         showAnimalInSpot();
-    }, 1500);
+    }, 2000); // Increased delay to ensure speech system is ready
 }
 
 /* === SHOW ANIMAL IN SPOT === */
@@ -407,13 +417,21 @@ function preventDoubleClick(event) {
 function playVoicePrompt(animalName) {
     if (!soundEnabled) return;
     
+    // === CREATE APPROPRIATE MESSAGE ===
+    let message;
+    if (animalName === 'Get ready') {
+        message = 'Get ready to find the animals!';
+    } else {
+        message = `Find the ${animalName}!`;
+    }
+    
     // === USE SPEECH SYNTHESIS WITH iOS FIXES ===
     if ('speechSynthesis' in window) {
         // === iOS FIX: CANCEL ANY PENDING SPEECH ===
         speechSynthesis.cancel();
         
         // === CREATE UTTERANCE ===
-        const utterance = new SpeechSynthesisUtterance(`Find the ${animalName}!`);
+        const utterance = new SpeechSynthesisUtterance(message);
         utterance.rate = 0.8;
         utterance.pitch = 1.2;
         utterance.volume = 1.0; // Max volume for iOS
@@ -447,12 +465,16 @@ function playVoicePrompt(animalName) {
         setTimeout(() => {
             if (speechSynthesis.speaking) return; // Speech worked
             
-            // === PLAY CHIME PATTERN FOR ANIMAL INSTRUCTION ===
-            playInstructionChimes(animalName);
+            // === ONLY PLAY CHIMES FOR ANIMAL INSTRUCTIONS ===
+            if (animalName !== 'Get ready') {
+                playInstructionChimes(animalName);
+            }
         }, 1000);
     } else {
         // === NO SPEECH SYNTHESIS AVAILABLE ===
-        playInstructionChimes(animalName);
+        if (animalName !== 'Get ready') {
+            playInstructionChimes(animalName);
+        }
     }
 }
 
