@@ -363,10 +363,8 @@ function returnToHub() {
 
 /* === HANDLE HOME CLICK === */
 function handleHomeClick() {
-    const confirmExit = confirm('Are you sure you want to go back to the main menu?');
-    if (confirmExit) {
-        returnToHub();
-    }
+    // === GO STRAIGHT BACK TO HUB - NO CONFIRMATION FOR KIDS ===
+    returnToHub();
 }
 
 /* === HANDLE SOUND TOGGLE === */
