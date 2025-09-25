@@ -146,13 +146,10 @@ function handleAnywhereClick(event) {
 
 /* === SHOW START MESSAGE === */
 function showStartMessage() {
-    instructionText.textContent = 'Get ready to find the animals!';
-    instructionText.classList.add('bounce');
-    
+    // === SKIP "GET READY" MESSAGE - GO STRAIGHT TO FIRST ANIMAL ===
     setTimeout(() => {
-        instructionText.classList.remove('bounce');
         startRound();
-    }, 2000);
+    }, 1000); // Short delay just for button fade transition
 }
 
 /* === START ROUND === */
