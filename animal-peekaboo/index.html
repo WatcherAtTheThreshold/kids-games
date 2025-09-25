@@ -78,9 +78,9 @@
         .hiding-spots-container {
             position: relative;
             width: 100%;
-            max-width: 600px;
-            height: 400px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><defs><linearGradient id="grass" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387ceeb;stop-opacity:1" /><stop offset="70%" style="stop-color:%2387ceeb;stop-opacity:1" /><stop offset="70%" style="stop-color:%2390ee90;stop-opacity:1" /><stop offset="100%" style="stop-color:%2368b85c;stop-opacity:1" /></linearGradient></defs><rect width="600" height="400" fill="url(%23grass)"/></svg>') center/cover;
+            max-width: 750px;  /* Increased from 600px */
+            height: 500px;     /* Increased from 400px */
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 500"><defs><linearGradient id="grass" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:%2387ceeb;stop-opacity:1" /><stop offset="70%" style="stop-color:%2387ceeb;stop-opacity:1" /><stop offset="70%" style="stop-color:%2390ee90;stop-opacity:1" /><stop offset="100%" style="stop-color:%2368b85c;stop-opacity:1" /></linearGradient></defs><rect width="750" height="500" fill="url(%23grass)"/></svg>') center/cover;
             border-radius: 20px;
             margin: 0 auto;
             overflow: hidden;
@@ -89,18 +89,18 @@
         /* === HIDING SPOTS === */
         .hiding-spot {
             position: absolute;
-            width: 100px;
-            height: 100px;
+            width: 120px;      /* Increased from 100px */
+            height: 120px;     /* Increased from 100px */
             border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 3.5rem;  /* Increased from 3rem */
             /* === BIG TOUCH TARGET === */
-            min-width: 120px;
-            min-height: 120px;
+            min-width: 140px;   /* Increased from 120px */
+            min-height: 140px;  /* Increased from 120px */
         }
 
         .hiding-spot:hover {
@@ -111,18 +111,18 @@
             transform: scale(0.95);
         }
 
-        /* === INDIVIDUAL SPOT POSITIONS === */
-        .spot-1 { top: 50px; left: 80px; background: #8b4513; }    /* Tree trunk */
-        .spot-2 { top: 80px; right: 60px; background: #228b22; }   /* Bush */
-        .spot-3 { bottom: 120px; left: 50px; background: #daa520; }  /* Log */
-        .spot-4 { bottom: 80px; right: 80px; background: #cd853f; }  /* Rock */
-        .spot-5 { top: 150px; left: 250px; background: #32cd32; }    /* Tall grass */
-        .spot-6 { bottom: 200px; right: 200px; background: #6b8e23; } /* Small bush */
+        /* === INDIVIDUAL SPOT POSITIONS (SCALED UP 25%) === */
+        .spot-1 { top: 62px; left: 100px; background: #8b4513; }    /* Tree trunk */
+        .spot-2 { top: 100px; right: 75px; background: #228b22; }   /* Bush */
+        .spot-3 { bottom: 150px; left: 62px; background: #daa520; }  /* Log */
+        .spot-4 { bottom: 100px; right: 100px; background: #cd853f; }  /* Rock */
+        .spot-5 { top: 188px; left: 312px; background: #32cd32; }    /* Tall grass */
+        .spot-6 { bottom: 250px; right: 250px; background: #6b8e23; } /* Small bush */
 
         /* === ANIMAL IN SPOT === */
         .animal-in-spot {
             position: absolute;
-            font-size: 2.5rem;
+            font-size: 3rem;  /* Increased from 2.5rem */
             z-index: 10;
             animation: peek-animation 0.5s ease-out;
             pointer-events: none;
@@ -202,29 +202,30 @@
             }
             
             .hiding-spots-container {
-                height: 300px;
+                height: 400px;  /* Scaled mobile height */
                 max-width: 100%;
+                margin: 0 10px;  /* Add some margin on mobile */
             }
             
             .hiding-spot {
-                width: 80px;
-                height: 80px;
-                min-width: 100px;
-                min-height: 100px;
-                font-size: 2.5rem;
+                width: 100px;   /* Mobile hiding spot size */
+                height: 100px;
+                min-width: 120px;
+                min-height: 120px;
+                font-size: 3rem;  /* Larger mobile icons */
             }
             
             .animal-in-spot {
-                font-size: 2rem;
+                font-size: 2.5rem;  /* Larger mobile animals */
             }
             
-            /* === ADJUST POSITIONS FOR MOBILE === */
-            .spot-1 { top: 30px; left: 40px; }
-            .spot-2 { top: 50px; right: 30px; }
-            .spot-3 { bottom: 80px; left: 30px; }
-            .spot-4 { bottom: 50px; right: 40px; }
-            .spot-5 { top: 120px; left: 150px; }
-            .spot-6 { bottom: 140px; right: 120px; }
+            /* === MOBILE POSITIONS (SCALED FOR SMALLER CONTAINER) === */
+            .spot-1 { top: 40px; left: 50px; }
+            .spot-2 { top: 60px; right: 40px; }
+            .spot-3 { bottom: 100px; left: 40px; }
+            .spot-4 { bottom: 70px; right: 50px; }
+            .spot-5 { top: 150px; left: 50%; transform: translateX(-50%); }
+            .spot-6 { bottom: 180px; right: 30%; }
         }
 
         /* === ACCESSIBILITY === */
