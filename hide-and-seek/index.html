@@ -23,10 +23,10 @@
 
         /* === GAME CONTAINER === */
         .game-container {
-            /*position: relative;*/
+         
             width: 750px;
             height: 500px;
-            background-image: url("images/background.png");
+             background-image: url('images/background.png');
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center center;
@@ -102,12 +102,46 @@
             object-fit: contain;
         }
 
-        /* === HIDING SPOT POSITIONS - PLACEHOLDER === */
-        .spot-1 { top: 50px; left: 80px; width: 120px; height: 150px; }
-        .spot-2 { top: 80px; right: 100px; width: 140px; height: 160px; }
-        .spot-3 { bottom: 80px; left: 100px; width: 130px; height: 140px; }
-        .spot-4 { bottom: 100px; right: 120px; width: 150px; height: 130px; }
-        .spot-5 { top: 180px; left: 320px; width: 110px; height: 120px; }
+        /* === HIDING SPOT POSITIONS - GROUND LEVEL === */
+        /* Log - Front Left */
+        .spot-1 { 
+            bottom: 40px; 
+            left: 80px; 
+            width: 140px; 
+            height: 140px; 
+        }
+        
+        /* Bush - Back Right */
+        .spot-2 { 
+            bottom: 80px; 
+            right: 80px; 
+            width: 150px; 
+            height: 150px; 
+        }
+        
+        /* Tree - Front Left-Center */
+        .spot-3 { 
+            bottom: 35px; 
+            left: 230px; 
+            width: 130px; 
+            height: 160px; 
+        }
+        
+        /* Barrel - Front Right */
+        .spot-4 { 
+            bottom: 30px; 
+            right: 250px; 
+            width: 120px; 
+            height: 140px; 
+        }
+        
+        /* Rock - Center-Back */
+        .spot-5 { 
+            bottom: 60px; 
+            left: 380px; 
+            width: 110px; 
+            height: 110px; 
+        }
 
         /* === ANIMALS - LAYERED ABOVE SLIDERS === */
         .animal {
@@ -339,23 +373,23 @@
 
         <!-- === ANIMALS (YOUR VECTOR ASSETS) === -->
         <div class="animal hidden" data-animal="kitty" data-spot="1">
-            <img src="images/animals/kitty.svg" alt="Kitty" />
+            <img src="images/animals/kitty.png" alt="Kitty" />
         </div>
 
         <div class="animal hidden" data-animal="puppy" data-spot="2">
-            <img src="images/animals/puppy.svg" alt="Puppy" />
+            <img src="images/animals/puppy.png" alt="Puppy" />
         </div>
 
         <div class="animal hidden" data-animal="bunny" data-spot="3">
-            <img src="images/animals/bunny.svg" alt="Bunny" />
+            <img src="images/animals/bunny.png" alt="Bunny" />
         </div>
 
         <div class="animal hidden" data-animal="froggie" data-spot="4">
-            <img src="images/animals/froggie.svg" alt="Froggie" />
+            <img src="images/animals/froggie.png" alt="Froggie" />
         </div>
 
         <div class="animal hidden" data-animal="teddy" data-spot="5">
-            <img src="images/animals/teddy.svg" alt="Teddy Bear" />
+            <img src="images/animals/teddy.png" alt="Teddy Bear" />
         </div>
 
         <!-- === SLIDER (APPEARS ON CLICK) === -->
