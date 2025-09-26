@@ -166,10 +166,13 @@ function showAndHideAnimal(animalId, spotNumber) {
     
     // === SLIDE BEHIND HIDING SPOT (PARTIAL PEEK) ===
     setTimeout(() => {
-        // === MOVE ANIMAL SLIGHTLY BEHIND (80% HIDDEN) ===
-        const hiddenOffset = spotRect.width * 0.8;
-        animal.style.transform = `translateX(-${hiddenOffset}px)`;
-        animal.dataset.hiddenOffset = hiddenOffset;
+        // === ANIMAL STARTS PEEKING FROM RIGHT SIDE (10% VISIBLE) ===
+        const peekOffset = spotRect.width * 0.1;
+        animal.style.transform = `translateX(${peekOffset}px)`;
+        
+        // === STORE VALUES FOR DRAGGING ===
+        animal.dataset.peekOffset = peekOffset;
+        animal.dataset.totalRevealDistance = spotRect.width * 1.0;
     }, 300);
 }
 
@@ -288,14 +291,15 @@ function handleSliderMove(event) {
 function revealAnimalByPercentage(percentage) {
     if (!currentAnimal) return;
     
-    // === GET HIDDEN OFFSET ===
-    const hiddenOffset = parseFloat(currentAnimal.dataset.hiddenOffset) || 0;
+    // === GET STORED VALUES ===
+    const peekOffset = parseFloat(currentAnimal.dataset.peekOffset) || 0;
+    const totalDistance = parseFloat(currentAnimal.dataset.totalRevealDistance) || 0;
     
-    // === CALCULATE NEW POSITION ===
-    const revealOffset = hiddenOffset * (1 - percentage);
+    // === CALCULATE POSITION (MOVES RIGHT AS PERCENTAGE INCREASES) ===
+    const currentPosition = peekOffset + (totalDistance * percentage);
     
     // === UPDATE ANIMAL POSITION ===
-    currentAnimal.style.transform = `translateX(-${revealOffset}px)`;
+    currentAnimal.style.transform = `translateX(${currentPosition}px)`;
 }
 
 /* === HANDLE SLIDER END === */
@@ -326,8 +330,10 @@ function handleSliderEnd(event) {
 
 /* === HANDLE ANIMAL FOUND === */
 function handleAnimalFound() {
-    // === FULLY REVEAL ANIMAL ===
-    currentAnimal.style.transform = 'translateX(0)';
+    // === FULLY REVEAL ANIMAL (MOVE ALL THE WAY RIGHT) ===
+    const peekOffset = parseFloat(currentAnimal.dataset.peekOffset) || 0;
+    const totalDistance = parseFloat(currentAnimal.dataset.totalRevealDistance) || 0;
+    currentAnimal.style.transform = `translateX(${peekOffset + totalDistance}px)`;
     currentAnimal.classList.add('revealed', 'celebrating');
     
     // === PLAY SUCCESS SOUNDS ===
@@ -374,10 +380,10 @@ function resetSliderAndAnimal() {
     // === RESET SLIDER POSITION ===
     sliderHandle.style.left = '5px';
     
-    // === RESET ANIMAL POSITION ===
+    // === RESET ANIMAL TO PEEKING POSITION ===
     if (currentAnimal) {
-        const hiddenOffset = parseFloat(currentAnimal.dataset.hiddenOffset) || 0;
-        currentAnimal.style.transform = `translateX(-${hiddenOffset}px)`;
+        const peekOffset = parseFloat(currentAnimal.dataset.peekOffset) || 0;
+        currentAnimal.style.transform = `translateX(${peekOffset}px)`;
     }
     
     // === HIDE SLIDER ===
