@@ -508,10 +508,7 @@ function returnToHub() {
 /* === HANDLE HOME CLICK === */
 function handleHomeClick() {
     if (gameActive && animalsFound > 0) {
-        const confirmExit = confirm('Are you sure you want to go back? Your progress will be lost.');
-        if (!confirmExit) return;
-    }
-    returnToHub();
+        returnToHub();
 }
 
 /* === HANDLE SOUND TOGGLE === */
