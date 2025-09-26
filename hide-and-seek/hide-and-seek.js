@@ -507,10 +507,9 @@ function returnToHub() {
 
 /* === HANDLE HOME CLICK === */
 function handleHomeClick() {
-    if (gameActive && animalsFound > 0) {
-        returnToHub();
+    returnToHub();
 }
-}
+
 /* === HANDLE SOUND TOGGLE === */
 function handleSoundToggle() {
     soundEnabled = !soundEnabled;
