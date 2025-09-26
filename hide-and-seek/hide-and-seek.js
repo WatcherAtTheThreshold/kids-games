@@ -334,6 +334,10 @@ function handleAnimalFound() {
     const peekOffset = parseFloat(currentAnimal.dataset.peekOffset) || 0;
     const totalDistance = parseFloat(currentAnimal.dataset.totalRevealDistance) || 0;
     currentAnimal.style.transform = `translateX(${peekOffset + totalDistance}px)`;
+    
+    // === BRING ANIMAL TO FRONT ===
+    currentAnimal.style.zIndex = '150';
+    
     currentAnimal.classList.add('revealed', 'celebrating');
     
     // === PLAY SUCCESS SOUNDS ===
@@ -426,6 +430,7 @@ function handleContinue() {
         animal.classList.add('hidden');
         animal.classList.remove('revealed', 'celebrating');
         animal.style.transform = '';
+        animal.style.zIndex = '50'; // Reset to behind hiding spots
     });
     
     // === RESET HIDING SPOTS ===
