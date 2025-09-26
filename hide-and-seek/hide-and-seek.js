@@ -25,7 +25,7 @@ const roundConfigs = [
 // === DOM ELEMENTS ===
 let gameContainer, roundInfo, introOverlay, countingText;
 let sliderContainer, sliderHandle, completionOverlay, completionText;
-let homeBtn, soundBtn, continueBtn;
+let homeBtn, soundBtn, continueBtn, startGameBtn;
 let hidingSpots, animals;
 let audioElements = {};
 
@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
     getDOMElements();
     loadSoundPreference();
     setupEventListeners();
-    startIntroSequence();
+    // === WAIT FOR USER TO CLICK START (ENABLES AUDIO) ===
+    showStartScreen();
 });
 
 /* === GET DOM ELEMENTS === */
@@ -50,6 +51,7 @@ function getDOMElements() {
     homeBtn = document.getElementById('homeBtn');
     soundBtn = document.getElementById('soundBtn');
     continueBtn = document.getElementById('continueBtn');
+    startGameBtn = document.getElementById('startGameBtn');
     
     hidingSpots = document.querySelectorAll('.hiding-spot');
     animals = document.querySelectorAll('.animal');
@@ -79,6 +81,7 @@ function setupEventListeners() {
     homeBtn.addEventListener('click', handleHomeClick);
     soundBtn.addEventListener('click', handleSoundToggle);
     continueBtn.addEventListener('click', handleContinue);
+    startGameBtn.addEventListener('click', handleStartGame);
     
     // === HIDING SPOT CLICKS ===
     hidingSpots.forEach(spot => {
@@ -93,6 +96,26 @@ function setupEventListeners() {
     document.addEventListener('mouseup', handleSliderEnd);
     document.addEventListener('touchmove', handleSliderMove, { passive: false });
     document.addEventListener('touchend', handleSliderEnd);
+}
+
+/* === SHOW START SCREEN === */
+function showStartScreen() {
+    roundInfo.textContent = `Round ${currentRound} of ${totalRounds}`;
+    countingText.textContent = 'Ready to play Hide and Seek?';
+    introOverlay.classList.remove('hidden');
+    startGameBtn.classList.add('bounce');
+}
+
+/* === HANDLE START GAME === */
+function handleStartGame() {
+    // === USER INTERACTION ENABLES AUDIO ===
+    startGameBtn.classList.add('fade-out');
+    startGameBtn.classList.remove('bounce');
+    
+    setTimeout(() => {
+        startGameBtn.style.display = 'none';
+        startIntroSequence();
+    }, 300);
 }
 
 /* === START INTRO SEQUENCE === */
@@ -122,7 +145,7 @@ function hideAnimalsSequence(animalList) {
         setTimeout(() => {
             showAndHideAnimal(animalId, index + 1);
         }, delay);
-        delay += 800; // Stagger each animal
+        delay += 1200; // Slower stagger for 8 second total
     });
     
     // === START COUNTING AUDIO ===
@@ -130,10 +153,10 @@ function hideAnimalsSequence(animalList) {
         playAudio('countToFive');
     }
     
-    // === AFTER ALL ANIMALS HIDE ===
+    // === AFTER ALL ANIMALS HIDE (8 SECONDS TOTAL) ===
     setTimeout(() => {
         startGameplay();
-    }, delay + 1000);
+    }, 8000);
 }
 
 /* === SHOW AND HIDE ANIMAL === */
@@ -186,11 +209,11 @@ function startGameplay() {
     // === UPDATE INTRO TEXT ===
     countingText.textContent = 'Ready or not, here I come!';
     
-    // === HIDE INTRO OVERLAY ===
+    // === HIDE INTRO OVERLAY (4 SECONDS FOR AUDIO) ===
     setTimeout(() => {
         introOverlay.classList.add('hidden');
         gameActive = true;
-    }, 2000);
+    }, 4000);
 }
 
 /* === HANDLE HIDING SPOT CLICK === */
@@ -205,7 +228,12 @@ function handleHidingSpotClick(event) {
     
     // === FIND ANIMAL AT THIS SPOT ===
     const animal = document.querySelector(`[data-animal][data-spot="${spotNumber}"]`);
-    if (!animal) return;
+    
+    // === ONLY SHOW SLIDER IF ANIMAL EXISTS AT THIS SPOT ===
+    if (!animal) {
+        console.log('No animal at this spot!');
+        return;
+    }
     
     // === SHOW SLIDER AT SPOT POSITION ===
     showSliderAtSpot(spot, animal);
@@ -374,7 +402,10 @@ function handleAnimalFound() {
         foundAnimal.classList.remove('celebrating');
         
         if (animalsFound >= animalsInRound) {
-            completeRound();
+            // === WAIT 3 SECONDS TO SEE ALL ANIMALS ===
+            setTimeout(() => {
+                completeRound();
+            }, 3000);
         }
     }, 1000);
 }
@@ -439,9 +470,12 @@ function handleContinue() {
         spot.classList.add('active');
     });
     
-    // === START NEXT ROUND ===
+    // === SHOW START BUTTON FOR NEXT ROUND ===
+    startGameBtn.style.display = '';
+    startGameBtn.classList.remove('fade-out');
+    
     setTimeout(() => {
-        startIntroSequence();
+        showStartScreen();
     }, 500);
 }
 
