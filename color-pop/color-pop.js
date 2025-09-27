@@ -185,6 +185,16 @@ function createBubble(color, index, totalCount) {
     // === ADD TO GAME AREA ===
     gameArea.appendChild(bubble);
     bubbles.push(bubble);
+    
+    // === TRIGGER GROW ANIMATION ===
+    setTimeout(() => {
+        bubble.classList.add('growing');
+    }, 50); // Small delay to ensure DOM is ready
+    
+    // === ADD WOBBLE AFTER GROWTH COMPLETES ===
+    setTimeout(() => {
+        bubble.classList.add('wobbling');
+    }, 3050); // After 3s growth + 50ms initial delay
 }
 
 /* === POSITION BUBBLE IN GAME AREA === */
@@ -252,8 +262,8 @@ function handleCorrectChoice(bubble) {
     gameActive = false;
     roundComplete = true;
     
-    // === VISUAL FEEDBACK ===
-    bubble.classList.add('correct-feedback', 'pop-animation');
+    // === VISUAL FEEDBACK - JUST POP ANIMATION ===
+    bubble.classList.add('pop-animation');
     
     // === AUDIO FEEDBACK ===
     playAudio('pop');
