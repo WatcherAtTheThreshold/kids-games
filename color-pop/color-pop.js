@@ -182,9 +182,6 @@ function createBubble(color, index, totalCount) {
     // === POSITION BUBBLE ===
     positionBubble(bubble, index, totalCount);
     
-    // === ADD FLOATING ANIMATION ===
-    bubble.classList.add('float');
-    
     // === ADD TO GAME AREA ===
     gameArea.appendChild(bubble);
     bubbles.push(bubble);
