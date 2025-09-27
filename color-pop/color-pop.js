@@ -454,14 +454,7 @@ function updateProgress() {
 
 /* === HANDLE BACK TO HUB === */
 function handleBackToHub() {
-    // === CONFIRM IF GAME IN PROGRESS ===
-    if (gameActive || currentRound > 1) {
-        const confirmExit = confirm('Are you sure you want to go back? Your progress will be lost.');
-        if (!confirmExit) {
-            return;
-        }
-    }
-    
+   
     returnToHub();
 }
 
