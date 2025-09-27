@@ -111,7 +111,6 @@
             width: 120px;
             height: 120px;
             cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -119,8 +118,8 @@
             min-width: 120px;
             min-height: 120px;
             /* === START SMALL FOR GROWTH ANIMATION === */
-            transform: scale(0.5);
-            animation: bubbleGrow 3s ease-out forwards, bubbleWobble 4s ease-in-out infinite;
+            opacity: 0;
+            animation: bubbleGrowFloat 3s ease-out forwards;
         }
 
         .bubble img {
@@ -138,25 +137,41 @@
             transform: scale(0.9);
         }
 
-        /* === BUBBLE GROWTH ANIMATION === */
-        @keyframes bubbleGrow {
-            0% { transform: scale(0.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
+        /* === COMBINED BUBBLE GROW AND WOBBLE ANIMATION === */
+        @keyframes bubbleGrowFloat {
+            0% { 
+                transform: scale(0.5) translateY(0) rotate(0deg); 
+                opacity: 0.3; 
+            }
+            50% { 
+                transform: scale(0.75) translateY(-5px) rotate(-2deg); 
+                opacity: 0.7; 
+            }
+            100% { 
+                transform: scale(1) translateY(0) rotate(0deg); 
+                opacity: 1; 
+            }
         }
 
-        /* === BUBBLE WOBBLE ANIMATION === */
-        @keyframes bubbleWobble {
-            0%, 100% { transform: translateX(0) rotate(0deg); }
-            25% { transform: translateX(-3px) rotate(-2deg); }
-            50% { transform: translateX(3px) rotate(2deg); }
-            75% { transform: translateX(-2px) rotate(-1deg); }
-        }
-
-        /* === BUBBLE FLOAT (INHERITED FROM SHARED STYLES) === */
+        /* === CONTINUOUS BUBBLE WOBBLE (AFTER GROWTH) === */
         .bubble.float {
-            animation: bubbleGrow 3s ease-out forwards, 
-                       bubbleWobble 4s ease-in-out infinite,
-                       float 3s ease-in-out infinite;
+            animation: bubbleGrowFloat 3s ease-out forwards,
+                       bubbleWobble 4s ease-in-out 3s infinite;
+        }
+
+        @keyframes bubbleWobble {
+            0%, 100% { 
+                transform: scale(1) translateX(0) translateY(0) rotate(0deg); 
+            }
+            25% { 
+                transform: scale(1) translateX(-4px) translateY(-8px) rotate(-3deg); 
+            }
+            50% { 
+                transform: scale(1) translateX(4px) translateY(-15px) rotate(3deg); 
+            }
+            75% { 
+                transform: scale(1) translateX(-2px) translateY(-8px) rotate(-2deg); 
+            }
         }
 
         /* === CELEBRATION OVERLAY === */
