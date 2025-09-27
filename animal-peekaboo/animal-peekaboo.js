@@ -17,9 +17,9 @@ const animals = [
     { emoji: '🐰', name: 'bunny', sound: 'hop', image: 'images/bunny.png' },
     { emoji: '🐸', name: 'froggy', sound: 'ribbit', image: 'images/froggie.png' },
     { emoji: '🐻', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
-    { emoji: '🦆', name: 'duck', sound: 'quack' },
-    { emoji: '🐷', name: 'piggy', sound: 'oink' },
-    { emoji: '🐵', name: 'monkey', sound: 'ooh-ooh' }
+    //{ emoji: '🦆', name: 'duck', sound: 'quack' },
+    //{ emoji: '🐷', name: 'piggy', sound: 'oink' },
+    //{ emoji: '🐵', name: 'monkey', sound: 'ooh-ooh' }
 ];
 
 // === DOM ELEMENTS - WILL BE SET AFTER DOM LOADS ===
