@@ -329,11 +329,7 @@ function showScreen(screenType) {
 
 /* === NAVIGATION === */
 function goBackToHub() {
-    // === CONFIRM IF GAME IN PROGRESS ===
-    if (gameInProgress) {
-        const confirmLeave = confirm('Are you sure you want to leave the game?');
-        if (!confirmLeave) return;
-    }
+   
     
     // === NAVIGATE TO HUB ===
     window.location.href = '../index.html';
