@@ -105,22 +105,58 @@
             border: 3px dashed rgba(255, 255, 255, 0.5);
         }
 
+        /* === START GAME BUTTON === */
+        .start-game-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 25px 50px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .start-game-button:hover {
+            background: var(--success-green);
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .start-game-button:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
         /* === BUBBLE STYLES === */
         .bubble {
             position: absolute;
             width: 120px;
             height: 120px;
             cursor: pointer;
-            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            /* === BIG TOUCH TARGET === */
             min-width: 120px;
             min-height: 120px;
-            /* === START SMALL FOR GROWTH ANIMATION === */
-            transform: scale(0.5);
-            animation: bubbleGrow 3s ease-out forwards, bubbleWobble 4s ease-in-out infinite;
+            /* === START AT SCALE 1 === */
+            transform: scale(1);
+            opacity: 0.5;
+        }
+        
+        /* === GROW CLASS TRIGGERS ANIMATION === */
+        .bubble.growing {
+            animation: bubbleGrow 3s ease-out forwards;
+        }
+        
+        /* === WOBBLE CLASS FOR CONTINUOUS MOTION === */
+        .bubble.wobbling {
+            animation: bubbleWobble 4s ease-in-out infinite;
         }
 
         .bubble img {
@@ -130,33 +166,28 @@
             pointer-events: none;
         }
 
-        .bubble:hover {
-            transform: scale(1.1);
-        }
-
-        .bubble:active {
-            transform: scale(0.9);
-        }
-
-        /* === BUBBLE GROWTH ANIMATION === */
+        /* === BUBBLE ENTRANCE (GROW FROM NORMAL TO DOUBLE) === */
         @keyframes bubbleGrow {
-            0% { transform: scale(0.5); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
+            from { 
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            to { 
+                transform: scale(2);
+                opacity: 1;
+            }
         }
 
-        /* === BUBBLE WOBBLE ANIMATION === */
+        /* === BUBBLE FLOAT AND WOBBLE === */
         @keyframes bubbleWobble {
-            0%, 100% { transform: translateX(0) rotate(0deg); }
-            25% { transform: translateX(-3px) rotate(-2deg); }
-            50% { transform: translateX(3px) rotate(2deg); }
-            75% { transform: translateX(-2px) rotate(-1deg); }
-        }
-
-        /* === BUBBLE FLOAT (INHERITED FROM SHARED STYLES) === */
-        .bubble.float {
-            animation: bubbleGrow 3s ease-out forwards, 
-                       bubbleWobble 4s ease-in-out infinite,
-                       float 3s ease-in-out infinite;
+            0%, 100% { 
+                transform: scale(2) translateY(0px) translateX(0px);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(2) translateY(-15px) translateX(8px);
+                opacity: 1;
+            }
         }
 
         /* === CELEBRATION OVERLAY === */
@@ -244,6 +275,11 @@
                 min-height: 100px;
             }
             
+            .start-game-button {
+                padding: 20px 40px;
+                font-size: 1.5rem;
+            }
+            
             .celebration-text {
                 font-size: 2rem;
             }
@@ -278,6 +314,10 @@
 
     <!-- === GAME AREA === -->
     <main class="game-area" id="gameArea">
+        <!-- Start Button for Audio Initialization -->
+        <button class="start-game-button" id="startGameBtn">
+            Start Game! 🫧
+        </button>
         <!-- Bubbles will be dynamically created here -->
     </main>
 
