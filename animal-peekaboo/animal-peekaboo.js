@@ -12,11 +12,11 @@ let roundComplete = false;
 
 // === ANIMAL DATA ===
 const animals = [
-    { emoji: '🐶', name: 'puppy', sound: 'woof' },
-    { emoji: '🐱', name: 'kitty', sound: 'meow' },
-    { emoji: '🐰', name: 'bunny', sound: 'hop' },
-    { emoji: '🐸', name: 'froggy', sound: 'ribbit' },
-    { emoji: '🐻', name: 'teddy bear', sound: 'growl' },
+    { emoji: '🐶', name: 'puppy', sound: 'woof', image: 'images/puppy.png' },
+    { emoji: '🐱', name: 'kitty', sound: 'meow', image: 'images/kitty.png' },
+    { emoji: '🐰', name: 'bunny', sound: 'hop', image: 'images/bunny.png' },
+    { emoji: '🐸', name: 'froggy', sound: 'ribbit', image: 'images/froggie.png' },
+    { emoji: '🐻', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
     { emoji: '🦆', name: 'duck', sound: 'quack' },
     { emoji: '🐷', name: 'piggy', sound: 'oink' },
     { emoji: '🐵', name: 'monkey', sound: 'ooh-ooh' }
@@ -201,8 +201,20 @@ function showAnimalInSpot() {
     // === CREATE ANIMAL ELEMENT ===
     const animalElement = document.createElement('div');
     animalElement.className = 'animal-in-spot';
-    animalElement.textContent = currentAnimal.emoji;
     animalElement.id = 'currentAnimal';
+    
+    // === USE CUSTOM IMAGE IF AVAILABLE, OTHERWISE USE EMOJI ===
+    if (currentAnimal.image) {
+        const img = document.createElement('img');
+        img.src = currentAnimal.image;
+        img.alt = currentAnimal.name;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'contain';
+        animalElement.appendChild(img);
+    } else {
+        animalElement.textContent = currentAnimal.emoji;
+    }
     
     // === POSITION ANIMAL IN SPOT ===
     targetSpot.appendChild(animalElement);
