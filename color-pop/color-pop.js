@@ -1,26 +1,23 @@
-/* === COLOR POP GAME JAVASCRIPT === */
+/* === BUBBLE POP GAME JAVASCRIPT === */
 
 // === GLOBAL GAME VARIABLES ===
 let currentRound = 1;
 let totalRounds = 5;
 let targetColor = '';
-let balloons = [];
+let bubbles = [];
 let gameActive = false;
 let soundEnabled = true;
 let roundComplete = false;
 
 // === GAME COLORS ARRAY ===
 const gameColors = [
-    { name: 'red', display: 'Red' },
-    { name: 'blue', display: 'Blue' },
-    { name: 'yellow', display: 'Yellow' },
-    { name: 'green', display: 'Green' },
-    { name: 'purple', display: 'Purple' },
-    { name: 'orange', display: 'Orange' }
+    { name: 'red', display: 'Red', image: 'images/red-bubble.png' },
+    { name: 'blue', display: 'Blue', image: 'images/blue-bubble.png' },
+    { name: 'yellow', display: 'Yellow', image: 'images/yellow-bubble.png' },
+    { name: 'green', display: 'Green', image: 'images/green-bubble.png' },
+    { name: 'purple', display: 'Purple', image: 'images/purple-bubble.png' },
+    { name: 'orange', display: 'Orange', image: 'images/orange-bubble.png' }
 ];
-
-// === BALLOON FACES ARRAY ===
-const balloonFaces = ['😊', '😄', '🙂', '😃', '😁', '🥰'];
 
 // === DOM ELEMENTS ===
 const gameArea = document.getElementById('gameArea');
@@ -30,6 +27,15 @@ const backButton = document.getElementById('backButton');
 const celebrationOverlay = document.getElementById('celebrationOverlay');
 const celebrationText = document.getElementById('celebrationText');
 const continueButton = document.getElementById('continueButton');
+
+// === AUDIO ELEMENTS ===
+const audioElements = {
+    pop: document.getElementById('audioPop'),
+    amazing: document.getElementById('audioAmazing'),
+    greatJob: document.getElementById('audioGreatJob'),
+    chime: document.getElementById('audioChime'),
+    whoosh: document.getElementById('audioWhoosh')
+};
 
 /* === GAME INITIALIZATION === */
 document.addEventListener('DOMContentLoaded', function() {
@@ -49,7 +55,7 @@ function initializeGame() {
     roundComplete = false;
     
     // === SHOW WELCOME MESSAGE ===
-    updateInstruction('Get ready to pop balloons!', '👀', '🎈');
+    updateInstruction('Get ready to pop bubbles!', '👀', '🫧');
     updateProgress();
     
     // === START FIRST ROUND AFTER DELAY ===
@@ -97,10 +103,6 @@ function loadSoundPreference() {
     const savedSound = localStorage.getItem('kidsGames_soundEnabled');
     soundEnabled = savedSound !== null ? savedSound === 'true' : true;
 }
-function loadSoundPreference() {
-    const savedSound = localStorage.getItem('kidsGames_soundEnabled');
-    soundEnabled = savedSound !== null ? savedSound === 'true' : true;
-}
 
 /* === START NEW ROUND === */
 function startNewRound() {
@@ -108,17 +110,17 @@ function startNewRound() {
     roundComplete = false;
     gameActive = false;
     
-    // === CLEAR PREVIOUS BALLOONS ===
-    clearBalloons();
+    // === CLEAR PREVIOUS BUBBLES ===
+    clearBubbles();
     
     // === SELECT TARGET COLOR ===
     selectTargetColor();
     
-    // === CREATE BALLOONS ===
-    createBalloons();
+    // === CREATE BUBBLES ===
+    createBubbles();
     
     // === UPDATE INSTRUCTION WITH COLOR STYLING ===
-    updateInstructionWithColor(`Find the ${targetColor.display} balloon!`, '👆', '🎈', targetColor.name);
+    updateInstructionWithColor(`Find the ${targetColor.display} bubble!`, '👆', '🫧', targetColor.name);
     
     // === PLAY VOICE PROMPT ===
     playVoicePrompt(targetColor.display);
@@ -126,7 +128,7 @@ function startNewRound() {
     // === ACTIVATE GAME AFTER VOICE PROMPT ===
     setTimeout(() => {
         gameActive = true;
-        addBalloonEventListeners();
+        addBubbleEventListeners();
     }, 1500);
 }
 
@@ -137,18 +139,18 @@ function selectTargetColor() {
     targetColor = gameColors[randomIndex];
 }
 
-/* === CREATE BALLOONS === */
-function createBalloons() {
-    balloons = [];
+/* === CREATE BUBBLES === */
+function createBubbles() {
+    bubbles = [];
     
-    // === CREATE 4-6 BALLOONS ===
-    const balloonCount = 4 + Math.floor(Math.random() * 3); // 4-6 balloons
+    // === CREATE 4-6 BUBBLES ===
+    const bubbleCount = 4 + Math.floor(Math.random() * 3); // 4-6 bubbles
     
     // === ENSURE TARGET COLOR IS INCLUDED ===
     const colorsToUse = [targetColor];
     
     // === ADD RANDOM OTHER COLORS ===
-    while (colorsToUse.length < balloonCount) {
+    while (colorsToUse.length < bubbleCount) {
         const randomColor = gameColors[Math.floor(Math.random() * gameColors.length)];
         if (!colorsToUse.find(color => color.name === randomColor.name)) {
             colorsToUse.push(randomColor);
@@ -158,43 +160,45 @@ function createBalloons() {
     // === SHUFFLE COLORS ===
     shuffleArray(colorsToUse);
     
-    // === CREATE BALLOON ELEMENTS ===
-    for (let i = 0; i < balloonCount; i++) {
-        createBalloon(colorsToUse[i], i, balloonCount);
+    // === CREATE BUBBLE ELEMENTS ===
+    for (let i = 0; i < bubbleCount; i++) {
+        createBubble(colorsToUse[i], i, bubbleCount);
     }
 }
 
-/* === CREATE INDIVIDUAL BALLOON === */
-function createBalloon(color, index, totalCount) {
-    // === CREATE BALLOON ELEMENT ===
-    const balloon = document.createElement('div');
-    balloon.classList.add('balloon', color.name);
-    balloon.dataset.color = color.name;
+/* === CREATE INDIVIDUAL BUBBLE === */
+function createBubble(color, index, totalCount) {
+    // === CREATE BUBBLE ELEMENT ===
+    const bubble = document.createElement('div');
+    bubble.classList.add('bubble', color.name);
+    bubble.dataset.color = color.name;
     
-    // === ADD FACE EMOJI ===
-    const randomFace = balloonFaces[Math.floor(Math.random() * balloonFaces.length)];
-    balloon.textContent = randomFace;
+    // === ADD BUBBLE IMAGE ===
+    const bubbleImg = document.createElement('img');
+    bubbleImg.src = color.image;
+    bubbleImg.alt = `${color.display} bubble`;
+    bubble.appendChild(bubbleImg);
     
-    // === POSITION BALLOON ===
-    positionBalloon(balloon, index, totalCount);
+    // === POSITION BUBBLE ===
+    positionBubble(bubble, index, totalCount);
     
     // === ADD FLOATING ANIMATION ===
-    balloon.classList.add('float');
+    bubble.classList.add('float');
     
     // === ADD TO GAME AREA ===
-    gameArea.appendChild(balloon);
-    balloons.push(balloon);
+    gameArea.appendChild(bubble);
+    bubbles.push(bubble);
 }
 
-/* === POSITION BALLOON IN GAME AREA === */
-function positionBalloon(balloon, index, totalCount) {
+/* === POSITION BUBBLE IN GAME AREA === */
+function positionBubble(bubble, index, totalCount) {
     const gameAreaRect = gameArea.getBoundingClientRect();
-    const balloonSize = 120;
+    const bubbleSize = 120;
     const padding = 20;
     
     // === CALCULATE SAFE POSITIONING AREA ===
-    const maxX = gameArea.offsetWidth - balloonSize - padding;
-    const maxY = gameArea.offsetHeight - balloonSize - padding;
+    const maxX = gameArea.offsetWidth - bubbleSize - padding;
+    const maxY = gameArea.offsetHeight - bubbleSize - padding;
     
     // === USE GRID-LIKE POSITIONING FOR BETTER DISTRIBUTION ===
     const cols = Math.ceil(Math.sqrt(totalCount));
@@ -216,54 +220,56 @@ function positionBalloon(balloon, index, totalCount) {
     const finalY = Math.max(padding, Math.min(maxY, baseY + offsetY));
     
     // === SET POSITION ===
-    balloon.style.left = finalX + 'px';
-    balloon.style.top = finalY + 'px';
+    bubble.style.left = finalX + 'px';
+    bubble.style.top = finalY + 'px';
 }
 
-/* === ADD EVENT LISTENERS TO BALLOONS === */
-function addBalloonEventListeners() {
-    balloons.forEach(balloon => {
-        balloon.addEventListener('click', handleBalloonClick);
+/* === ADD EVENT LISTENERS TO BUBBLES === */
+function addBubbleEventListeners() {
+    bubbles.forEach(bubble => {
+        bubble.addEventListener('click', handleBubbleClick);
     });
 }
 
-/* === HANDLE BALLOON CLICK === */
-function handleBalloonClick(event) {
+/* === HANDLE BUBBLE CLICK === */
+function handleBubbleClick(event) {
     // === PREVENT ACTION IF GAME NOT ACTIVE ===
     if (!gameActive || roundComplete) {
         return;
     }
     
-    const clickedBalloon = event.currentTarget;
-    const clickedColor = clickedBalloon.dataset.color;
+    const clickedBubble = event.currentTarget;
+    const clickedColor = clickedBubble.dataset.color;
     
     // === CHECK IF CORRECT COLOR ===
     if (clickedColor === targetColor.name) {
-        handleCorrectChoice(clickedBalloon);
+        handleCorrectChoice(clickedBubble);
     } else {
-        handleIncorrectChoice(clickedBalloon);
+        handleIncorrectChoice(clickedBubble);
     }
 }
 
 /* === HANDLE CORRECT CHOICE === */
-function handleCorrectChoice(balloon) {
+function handleCorrectChoice(bubble) {
     // === DISABLE FURTHER CLICKS ===
     gameActive = false;
     roundComplete = true;
     
     // === VISUAL FEEDBACK ===
-    balloon.classList.add('correct-feedback', 'pop-animation');
+    bubble.classList.add('correct-feedback', 'pop-animation');
     
     // === AUDIO FEEDBACK ===
-    playPopSound();
-    playCheerSound();
+    playAudio('pop');
+    setTimeout(() => {
+        playAudio(Math.random() < 0.5 ? 'amazing' : 'greatJob');
+    }, 300);
     
     // === UPDATE INSTRUCTION ===
     updateInstruction('Great job!', '🎉', '⭐');
     
-    // === REMOVE OTHER BALLOONS ===
+    // === REMOVE OTHER BUBBLES ===
     setTimeout(() => {
-        removeOtherBalloons(balloon);
+        removeOtherBubbles(bubble);
     }, 500);
     
     // === PROCEED TO NEXT ROUND OR FINISH ===
@@ -273,30 +279,30 @@ function handleCorrectChoice(balloon) {
 }
 
 /* === HANDLE INCORRECT CHOICE === */
-function handleIncorrectChoice(balloon) {
+function handleIncorrectChoice(bubble) {
     // === VISUAL FEEDBACK ===
-    balloon.classList.add('try-again-feedback', 'shake');
+    bubble.classList.add('try-again-feedback', 'shake');
     
     // === AUDIO FEEDBACK ===
-    playTryAgainSound();
+    playAudio('whoosh');
     
     // === UPDATE INSTRUCTION ===
-    updateInstructionWithColor(`Try again! Find the ${targetColor.display} balloon!`, '🤔', '🎈', targetColor.name);
+    updateInstructionWithColor(`Try again! Find the ${targetColor.display} bubble!`, '🤔', '🫧', targetColor.name);
     
     // === REMOVE FEEDBACK AFTER ANIMATION ===
     setTimeout(() => {
-        balloon.classList.remove('try-again-feedback', 'shake');
+        bubble.classList.remove('try-again-feedback', 'shake');
     }, 1000);
 }
 
-/* === REMOVE OTHER BALLOONS === */
-function removeOtherBalloons(correctBalloon) {
-    balloons.forEach(balloon => {
-        if (balloon !== correctBalloon) {
-            balloon.classList.add('fade-out');
+/* === REMOVE OTHER BUBBLES === */
+function removeOtherBubbles(correctBubble) {
+    bubbles.forEach(bubble => {
+        if (bubble !== correctBubble) {
+            bubble.classList.add('fade-out');
             setTimeout(() => {
-                if (balloon.parentNode) {
-                    balloon.parentNode.removeChild(balloon);
+                if (bubble.parentNode) {
+                    bubble.parentNode.removeChild(bubble);
                 }
             }, 300);
         }
@@ -348,12 +354,13 @@ function awardSticker() {
     // === UPDATE COUNT FOR BACKWARD COMPATIBILITY ===
     localStorage.setItem('kidsGames_stickerCount', stickerList.length.toString());
     
-    console.log(`🎈 Color Pop sticker earned! Total: ${stickerList.length}`);
+    console.log(`🫧 Bubble Pop sticker earned! Total: ${stickerList.length}`);
 }
+
 /* === SHOW GAME COMPLETION === */
 function showGameCompletion() {
     // === UPDATE CELEBRATION TEXT ===
-    celebrationText.textContent = 'Amazing! You popped all the balloons!';
+    celebrationText.textContent = 'Amazing! You popped all the bubbles!';
     
     // === SHOW CELEBRATION OVERLAY ===
     celebrationOverlay.style.display = 'flex';
@@ -363,7 +370,7 @@ function showGameCompletion() {
     celebrationContent.classList.add('celebration', 'fade-in');
     
     // === PLAY COMPLETION SOUND ===
-    playCompletionSound();
+    playAudio('amazing');
 }
 
 /* === HANDLE CONTINUE FROM CELEBRATION === */
@@ -375,14 +382,14 @@ function handleContinueFromCelebration() {
     returnToHub();
 }
 
-/* === CLEAR BALLOONS === */
-function clearBalloons() {
-    balloons.forEach(balloon => {
-        if (balloon.parentNode) {
-            balloon.parentNode.removeChild(balloon);
+/* === CLEAR BUBBLES === */
+function clearBubbles() {
+    bubbles.forEach(bubble => {
+        if (bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
         }
     });
-    balloons = [];
+    bubbles = [];
 }
 
 /* === UPDATE INSTRUCTION TEXT WITH COLOR === */
@@ -427,25 +434,6 @@ function updateInstruction(text, emoji1, emoji2) {
         instructionText.innerHTML = newHTML;
     }
 }
-function updateInstruction(text, emoji1, emoji2) {
-    const instructionEmojis = document.querySelectorAll('.instruction-emoji');
-    
-    if (instructionEmojis.length >= 2) {
-        instructionEmojis[0].textContent = emoji1;
-        instructionEmojis[1].textContent = emoji2;
-    }
-    
-    // === UPDATE TEXT BETWEEN EMOJIS ===
-    const textParts = instructionText.innerHTML.split('<span class="instruction-emoji">');
-    if (textParts.length >= 3) {
-        const newHTML = `
-            <span class="instruction-emoji">${emoji1}</span>
-            ${text}
-            <span class="instruction-emoji">${emoji2}</span>
-        `;
-        instructionText.innerHTML = newHTML;
-    }
-}
 
 /* === UPDATE PROGRESS INDICATOR === */
 function updateProgress() {
@@ -454,7 +442,14 @@ function updateProgress() {
 
 /* === HANDLE BACK TO HUB === */
 function handleBackToHub() {
-   
+    // === CONFIRM IF GAME IN PROGRESS ===
+    if (gameActive || currentRound > 1) {
+        const confirmExit = confirm('Are you sure you want to go back? Your progress will be lost.');
+        if (!confirmExit) {
+            return;
+        }
+    }
+    
     returnToHub();
 }
 
@@ -462,7 +457,7 @@ function handleBackToHub() {
 function returnToHub() {
     // === CLEAN UP GAME ===
     gameActive = false;
-    clearBalloons();
+    clearBubbles();
     
     // === NAVIGATE BACK ===
     window.location.href = '../index.html';
@@ -470,8 +465,9 @@ function returnToHub() {
 
 /* === PREVENT DOCUMENT CLICKS DURING TRANSITIONS === */
 function handleDocumentClick(event) {
-    // === ALLOW CLICKS ON BALLOONS AND BUTTONS ===
-    if (event.target.classList.contains('balloon') || 
+    // === ALLOW CLICKS ON BUBBLES AND BUTTONS ===
+    if (event.target.classList.contains('bubble') || 
+        event.target.closest('.bubble') ||
         event.target.classList.contains('back-button') ||
         event.target.classList.contains('continue-button')) {
         return;
@@ -526,103 +522,27 @@ function playVoicePrompt(colorName) {
             speechSynthesis.speak(utterance);
         }
         
-        // === FALLBACK: PLAY INSTRUCTION CHIMES IF SPEECH FAILS ===
+        // === FALLBACK: PLAY CHIME IF SPEECH FAILS ===
         setTimeout(() => {
             if (speechSynthesis.speaking) return; // Speech worked
-            
-            // === PLAY CHIME PATTERN FOR COLOR INSTRUCTION ===
-            playInstructionChimes(colorName);
+            playAudio('chime');
         }, 1000);
     } else {
         // === NO SPEECH SYNTHESIS AVAILABLE ===
-        playInstructionChimes(colorName);
+        playAudio('chime');
     }
 }
 
-/* === PLAY POP SOUND === */
-function playPopSound() {
-    if (!soundEnabled) return;
-    playBeepSound(800, 100);
-}
-
-/* === PLAY CHEER SOUND === */
-function playCheerSound() {
-    if (!soundEnabled) return;
-    setTimeout(() => playBeepSound(600, 200), 100);
-    setTimeout(() => playBeepSound(800, 200), 200);
-    setTimeout(() => playBeepSound(1000, 300), 300);
-}
-
-/* === PLAY TRY AGAIN SOUND === */
-function playTryAgainSound() {
-    if (!soundEnabled) return;
-    playBeepSound(300, 200);
-}
-
-/* === PLAY INSTRUCTION CHIMES (FALLBACK FOR iOS) === */
-function playInstructionChimes(colorName) {
+/* === PLAY AUDIO === */
+function playAudio(audioName) {
     if (!soundEnabled) return;
     
-    // === PLAY DIFFERENT CHIME PATTERNS FOR EACH COLOR ===
-    const colorFrequencies = {
-        'Red': [440, 550],      // Lower tones for red
-        'Blue': [550, 660],     // Mid tones for blue  
-        'Yellow': [660, 770],   // Higher tones for yellow
-        'Green': [330, 440],    // Lower-mid tones for green
-        'Purple': [770, 880],   // Higher tones for purple
-        'Orange': [495, 550]    // Orange between red and yellow
-    };
-    
-    const frequencies = colorFrequencies[colorName] || [440, 550];
-    
-    // === PLAY TWO-TONE CHIME ===
-    playBeepSound(frequencies[0], 300);
-    setTimeout(() => playBeepSound(frequencies[1], 400), 200);
-}
-
-/* === PLAY COMPLETION SOUND === */
-function playCompletionSound() {
-    if (!soundEnabled) return;
-    
-    // === PLAY VICTORY MELODY ===
-    const melody = [523, 659, 784, 1047];
-    melody.forEach((freq, index) => {
-        setTimeout(() => playBeepSound(freq, 400), index * 200);
-    });
-}
-function playCompletionSound() {
-    if (!soundEnabled) return;
-    
-    // === PLAY VICTORY MELODY ===
-    const melody = [523, 659, 784, 1047];
-    melody.forEach((freq, index) => {
-        setTimeout(() => playBeepSound(freq, 400), index * 200);
-    });
-}
-
-/* === PLAY BEEP SOUND === */
-function playBeepSound(frequency, duration) {
-    if (!soundEnabled || !window.AudioContext && !window.webkitAudioContext) return;
-    
-    try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = frequency;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
-        
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + duration / 1000);
-    } catch (error) {
-        console.log('Audio playback not available');
+    const audio = audioElements[audioName];
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(err => {
+            console.log('Audio play failed:', err);
+        });
     }
 }
 
