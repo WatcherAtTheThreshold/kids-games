@@ -27,6 +27,7 @@ const backButton = document.getElementById('backButton');
 const celebrationOverlay = document.getElementById('celebrationOverlay');
 const celebrationText = document.getElementById('celebrationText');
 const continueButton = document.getElementById('continueButton');
+const startGameBtn = document.getElementById('startGameBtn');
 
 // === AUDIO ELEMENTS ===
 const audioElements = {
@@ -55,13 +56,11 @@ function initializeGame() {
     roundComplete = false;
     
     // === SHOW WELCOME MESSAGE ===
-    updateInstruction('Get ready to pop bubbles!', '👀', '🫧');
+    updateInstruction('Ready to pop bubbles?', '👀', '🫧');
     updateProgress();
     
-    // === START FIRST ROUND AFTER DELAY ===
-    setTimeout(() => {
-        startNewRound();
-    }, 2000);
+    // === WAIT FOR START BUTTON CLICK ===
+    // Game will start when user clicks "Start Game!" button
 }
 
 /* === SETUP EVENT LISTENERS === */
@@ -72,8 +71,31 @@ function setupEventListeners() {
     // === CONTINUE BUTTON ===
     continueButton.addEventListener('click', handleContinueFromCelebration);
     
+    // === START GAME BUTTON ===
+    startGameBtn.addEventListener('click', handleStartGameClick);
+    
     // === PREVENT ACCIDENTAL SELECTIONS DURING TRANSITIONS ===
     document.addEventListener('click', handleDocumentClick);
+}
+
+/* === HANDLE START GAME CLICK === */
+function handleStartGameClick() {
+    // === USER INTERACTION ENABLES AUDIO ===
+    gameActive = false; // Still waiting for first round
+    
+    // === HIDE START BUTTON WITH ANIMATION ===
+    startGameBtn.classList.add('fade-out');
+    
+    setTimeout(() => {
+        startGameBtn.style.display = 'none';
+        
+        // === SHOW GET READY MESSAGE ===
+        updateInstruction('Get ready to pop bubbles!', '🎯', '🫧');
+        
+        setTimeout(() => {
+            startNewRound();
+        }, 1500);
+    }, 300);
 }
 
 /* === INITIALIZE SPEECH FOR iOS === */
@@ -449,14 +471,7 @@ function updateProgress() {
 
 /* === HANDLE BACK TO HUB === */
 function handleBackToHub() {
-    // === CONFIRM IF GAME IN PROGRESS ===
-    if (gameActive || currentRound > 1) {
-        const confirmExit = confirm('Are you sure you want to go back? Your progress will be lost.');
-        if (!confirmExit) {
-            return;
-        }
-    }
-    
+    // === NO CONFIRMATION - JUST GO BACK ===
     returnToHub();
 }
 
@@ -472,11 +487,12 @@ function returnToHub() {
 
 /* === PREVENT DOCUMENT CLICKS DURING TRANSITIONS === */
 function handleDocumentClick(event) {
-    // === ALLOW CLICKS ON BUBBLES AND BUTTONS ===
+    // === ALLOW CLICKS ON BUBBLES, BUTTONS, AND START BUTTON ===
     if (event.target.classList.contains('bubble') || 
         event.target.closest('.bubble') ||
         event.target.classList.contains('back-button') ||
-        event.target.classList.contains('continue-button')) {
+        event.target.classList.contains('continue-button') ||
+        event.target.classList.contains('start-game-button')) {
         return;
     }
     
