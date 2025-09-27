@@ -35,7 +35,8 @@ const audioElements = {
     amazing: document.getElementById('audioAmazing'),
     greatJob: document.getElementById('audioGreatJob'),
     chime: document.getElementById('audioChime'),
-    whoosh: document.getElementById('audioWhoosh')
+    whoosh: document.getElementById('audioWhoosh'),
+    tryAgain: document.getElementById('audioTryAgain')
 };
 
 /* === GAME INITIALIZATION === */
@@ -316,18 +317,18 @@ function handleCorrectChoice(bubble) {
 
 /* === HANDLE INCORRECT CHOICE === */
 function handleIncorrectChoice(bubble) {
-    // === VISUAL FEEDBACK ===
-    bubble.classList.add('try-again-feedback', 'shake');
+    // === VISUAL FEEDBACK - JUST SHAKE, NO ORANGE BOX ===
+    bubble.classList.add('shake');
     
     // === AUDIO FEEDBACK ===
-    playAudio('whoosh');
+    playAudio('tryAgain');
     
     // === UPDATE INSTRUCTION ===
     updateInstructionWithColor(`Try again! Find the ${targetColor.display} bubble!`, '🤔', '🫧', targetColor.name);
     
     // === REMOVE FEEDBACK AFTER ANIMATION ===
     setTimeout(() => {
-        bubble.classList.remove('try-again-feedback', 'shake');
+        bubble.classList.remove('shake');
     }, 1000);
 }
 
