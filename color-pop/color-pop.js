@@ -284,8 +284,8 @@ function handleCorrectChoice(bubble) {
     gameActive = false;
     roundComplete = true;
     
-    // === VISUAL FEEDBACK - JUST POP ANIMATION ===
-    bubble.classList.add('pop-animation');
+    // === MAKE BUBBLE DISAPPEAR IMMEDIATELY ===
+    bubble.classList.add('fade-out');
     
     // === AUDIO FEEDBACK ===
     playAudio('pop');
@@ -295,6 +295,13 @@ function handleCorrectChoice(bubble) {
     
     // === UPDATE INSTRUCTION ===
     updateInstruction('Great job!', '🎉', '⭐');
+    
+    // === REMOVE BUBBLE FROM DOM ===
+    setTimeout(() => {
+        if (bubble.parentNode) {
+            bubble.parentNode.removeChild(bubble);
+        }
+    }, 300); // Match fade-out animation duration
     
     // === REMOVE OTHER BUBBLES ===
     setTimeout(() => {
