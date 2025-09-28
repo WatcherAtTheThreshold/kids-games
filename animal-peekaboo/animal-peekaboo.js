@@ -331,8 +331,25 @@ function handleCorrectGuess(clickedSpot) {
     const animalElement = document.getElementById('currentAnimal');
     if (animalElement) {
         // === BRING ANIMAL MORE INTO VIEW AS "FOUND" ===
-        const currentTop = parseInt(animalElement.style.top);
-        animalElement.style.top = (currentTop - 15) + 'px'; // Move further up
+        const peekSide = animalElement.dataset.peekSide || 'top';
+        let moveAmount = 15;
+        
+        // Move in appropriate direction based on peek side
+        switch(peekSide) {
+            case 'top':
+                animalElement.style.top = (parseInt(animalElement.style.top) - moveAmount) + 'px';
+                break;
+            case 'right':
+                animalElement.style.left = (parseInt(animalElement.style.left) + moveAmount) + 'px';
+                break;
+            case 'bottom':
+                animalElement.style.top = (parseInt(animalElement.style.top) + moveAmount) + 'px';
+                break;
+            case 'left':
+                animalElement.style.left = (parseInt(animalElement.style.left) - moveAmount) + 'px';
+                break;
+        }
+        
         animalElement.style.zIndex = '25'; // Temporarily show above hiding spot
         animalElement.classList.add('celebrating');
     }
