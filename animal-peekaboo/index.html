@@ -103,26 +103,35 @@
             background-repeat: no-repeat !important;
             background-position: center !important;
             z-index: 20; /* Higher than animals */
+            /* Remove any default background that might be showing */
+            background-color: transparent !important;
         }
 
         /* === ADD BACKGROUND IMAGES TO HIDING SPOTS === */
         .spot-1 { 
-            background: url('images/tree.png'); 
+            background: url('images/hiding-spots/tree.png');
+            top: 62px; 
+            left: 100px;
         }
         .spot-2 { 
-            background: url('images/bush.png');
+            background: url('images/hiding-spots/bush.png');
+            top: 100px; 
+            right: 75px;
         }
         .spot-3 { 
-            background: url('images/log.png');
+            background: url('images/hiding-spots/log.png');
+            bottom: 150px; 
+            left: 62px;
         }
         .spot-4 { 
-            background: url('images/rock.png');
+            background: url('images/hiding-spots/rock.png');
+            bottom: 100px; 
+            right: 100px;
         }
         .spot-5 { 
-            background: url('images/grass.png');
-        }
-        .spot-6 { 
-            background: url('images/bush-small.png');
+            background: url('images/hiding-spots/grass.png');
+            top: 188px; 
+            left: 312px;
         }
 
         .hiding-spot:hover {
@@ -132,14 +141,6 @@
         .hiding-spot:active {
             transform: scale(0.95);
         }
-
-        /* === INDIVIDUAL SPOT POSITIONS === */
-        .spot-1 { top: 62px; left: 100px; }    /* Tree trunk */
-        .spot-2 { top: 100px; right: 75px; }   /* Bush */
-        .spot-3 { bottom: 150px; left: 62px; }  /* Log */
-        .spot-4 { bottom: 100px; right: 100px; }  /* Rock */
-        .spot-5 { top: 188px; left: 312px; }    /* Tall grass */
-        .spot-6 { bottom: 250px; right: 250px; } /* Small bush */
 
         /* === ANIMAL IN SPOT === */
         .animal-in-spot {
@@ -179,6 +180,14 @@
         .correct-feedback {
             box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7);
             transform: scale(1.05);
+            /* Explicitly remove any background that might be applied */
+            background-color: transparent !important;
+        }
+
+        .try-again-feedback {
+            box-shadow: 0 0 15px 5px rgba(255, 99, 71, 0.7);
+            /* Explicitly remove any background that might be applied */
+            background-color: transparent !important;
         }
 
         .has-animal {
@@ -305,10 +314,6 @@
             40%, 80% { transform: translateX(5px); }
         }
 
-        .try-again-feedback {
-            box-shadow: 0 0 15px 5px rgba(255, 99, 71, 0.7);
-        }
-
         .fade-in {
             animation: fadeIn 0.5s ease-in;
         }
@@ -353,13 +358,12 @@
                 height: 70px;
             }
             
-            /* === MOBILE POSITIONS (SCALED FOR SMALLER CONTAINER) === */
+            /* === MOBILE POSITIONS === */
             .spot-1 { top: 40px; left: 50px; }
             .spot-2 { top: 60px; right: 40px; }
             .spot-3 { bottom: 100px; left: 40px; }
             .spot-4 { bottom: 70px; right: 50px; }
             .spot-5 { top: 150px; left: 50%; transform: translateX(-50%); }
-            .spot-6 { bottom: 180px; right: 30%; }
         }
 
         /* === ACCESSIBILITY === */
@@ -406,13 +410,12 @@
         <!-- === HIDING SPOTS CONTAINER === -->
         <div class="hiding-spots-container" id="hidingSpotsContainer">
             
-            <!-- === HIDING SPOTS (NOW WITH BACKGROUND IMAGES) === -->
+            <!-- === HIDING SPOTS (WITH BACKGROUND IMAGES) === -->
             <div class="hiding-spot spot-1" data-spot="1"></div>
             <div class="hiding-spot spot-2" data-spot="2"></div>
             <div class="hiding-spot spot-3" data-spot="3"></div>
             <div class="hiding-spot spot-4" data-spot="4"></div>
             <div class="hiding-spot spot-5" data-spot="5"></div>
-            <div class="hiding-spot spot-6" data-spot="6"></div>
             
         </div>
 
