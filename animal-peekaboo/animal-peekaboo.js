@@ -16,10 +16,7 @@ const animals = [
     { emoji: '🐱', name: 'kitty', sound: 'meow', image: 'images/kitty.png' },
     { emoji: '🐰', name: 'bunny', sound: 'hop', image: 'images/bunny.png' },
     { emoji: '🐸', name: 'froggy', sound: 'ribbit', image: 'images/froggie.png' },
-    { emoji: '🐻', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
-    //{ emoji: '🦆', name: 'duck', sound: 'quack' },
-    //{ emoji: '🐷', name: 'piggy', sound: 'oink' },
-    //{ emoji: '🐵', name: 'monkey', sound: 'ooh-ooh' }
+    { emoji: '🧸', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
 ];
 
 // === DOM ELEMENTS - WILL BE SET AFTER DOM LOADS ===
@@ -176,6 +173,11 @@ function startRound() {
     currentAnimal = animals[Math.floor(Math.random() * animals.length)];
     currentSpot = Math.floor(Math.random() * allHidingSpots.length) + 1;
     
+    // === VALIDATE SPOT NUMBER (ENSURE IT DOESN'T EXCEED AVAILABLE SPOTS) ===
+    if (currentSpot > allHidingSpots.length) {
+        currentSpot = allHidingSpots.length;
+    }
+    
     // === SHOW INSTRUCTION ===
     instructionText.textContent = `Find the ${currentAnimal.name}!`;
     instructionText.classList.add('pop-animation');
@@ -197,6 +199,13 @@ function showAnimalInSpot() {
     if (!gameActive) return;
     
     const targetSpot = document.querySelector(`[data-spot="${currentSpot}"]`);
+    if (!targetSpot) {
+        console.error(`No spot found with data-spot="${currentSpot}"`);
+        return;
+    }
+    
+    const spotRect = targetSpot.getBoundingClientRect();
+    const containerRect = hidingSpotsContainer.getBoundingClientRect();
     
     // === CREATE ANIMAL ELEMENT ===
     const animalElement = document.createElement('div');
@@ -216,9 +225,27 @@ function showAnimalInSpot() {
         animalElement.textContent = currentAnimal.emoji;
     }
     
-    // === POSITION ANIMAL IN SPOT ===
-    targetSpot.appendChild(animalElement);
-    targetSpot.classList.add('success-glow');
+    // === ADD TO CONTAINER INSTEAD OF SPOT ===
+    hidingSpotsContainer.appendChild(animalElement);
+    
+    // === POSITION ANIMAL ABOVE SPOT (ALWAYS PEEK FROM TOP) ===
+    const spotLeft = spotRect.left - containerRect.left;
+    const spotTop = spotRect.top - containerRect.top;
+    const spotWidth = spotRect.width;
+    
+    // Always peek from the top (animals should be above the hiding spots)
+    const peekAmount = 40; // How much the animal peeks out
+    const posLeft = spotLeft + (spotWidth/2 - 40); // Center horizontally
+    const posTop = spotTop - peekAmount; // Position above the hiding spot
+    
+    // === APPLY POSITION AND ANIMATION FOR PEEKING FROM TOP ===
+    animalElement.style.left = posLeft + 'px';
+    animalElement.style.top = posTop + 'px';
+    animalElement.style.animation = 'peek-top 0.5s ease-out';
+    animalElement.dataset.peekSide = 'top';
+    
+    // === ADD A REFERENCE CLASS TO THE SPOT ===
+    targetSpot.classList.add('has-animal');
     
     // === PLAY ANIMAL SOUND ===
     if (soundEnabled) {
@@ -237,11 +264,18 @@ function hideAnimal() {
     const targetSpot = document.querySelector(`[data-spot="${currentSpot}"]`);
     
     if (animalElement) {
+        animalElement.style.animation = 'none'; // Stop animation
         animalElement.classList.add('fade-out');
-        targetSpot.classList.remove('success-glow');
+        
+        // === REMOVE THE REFERENCE CLASS FROM SPOT ===
+        if (targetSpot) {
+            targetSpot.classList.remove('has-animal');
+        }
         
         setTimeout(() => {
-            animalElement.remove();
+            if (animalElement.parentNode) {
+                animalElement.parentNode.removeChild(animalElement);
+            }
         }, 300);
     }
 }
@@ -266,9 +300,22 @@ function handleCorrectGuess(clickedSpot) {
     roundComplete = true;
     clearTimeout(hideTimer);
     
-    // === VISUAL FEEDBACK ===
+    // Make sure the clicked spot stays visible
+    clickedSpot.style.visibility = 'visible';
+    clickedSpot.style.display = 'flex';
+    clickedSpot.style.opacity = '1';
+    
+    // === SHOW ANIMAL CLEARLY IF HIDDEN ===
+    const animalElement = document.getElementById('currentAnimal');
+    if (animalElement) {
+        // === MAKE SURE IT'S VISIBLE AND MOVE UP MORE ===
+        animalElement.style.top = (parseInt(animalElement.style.top) - 15) + 'px';
+        animalElement.style.zIndex = '25'; // Temporarily show above hiding spot
+        animalElement.classList.add('celebrating');
+    }
+    
+    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
     clickedSpot.classList.add('correct-feedback');
-    clickedSpot.classList.add('celebration');
     
     // === AUDIO FEEDBACK ===
     if (soundEnabled) {
@@ -282,15 +329,26 @@ function handleCorrectGuess(clickedSpot) {
     
     // === CONTINUE TO NEXT ROUND ===
     setTimeout(() => {
-        clickedSpot.classList.remove('correct-feedback', 'celebration');
+        clickedSpot.classList.remove('correct-feedback');
         instructionText.classList.remove('sparkle');
+        
+        // === REMOVE THE CELEBRATING ANIMAL ===
+        if (animalElement) {
+            animalElement.classList.remove('celebrating');
+        }
+        
         nextRound();
     }, 2500);
 }
 
 /* === HANDLE INCORRECT GUESS === */
 function handleIncorrectGuess(clickedSpot) {
-    // === VISUAL FEEDBACK ===
+    // Make sure the clicked spot stays visible
+    clickedSpot.style.visibility = 'visible';
+    clickedSpot.style.display = 'flex';
+    clickedSpot.style.opacity = '1';
+    
+    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
     clickedSpot.classList.add('try-again-feedback');
     clickedSpot.classList.add('shake');
     
@@ -406,11 +464,19 @@ function updateRoundDisplay() {
 /* === CLEAR ALL ANIMALS === */
 function clearAllAnimals() {
     const existingAnimals = document.querySelectorAll('.animal-in-spot');
-    existingAnimals.forEach(animal => animal.remove());
+    existingAnimals.forEach(animal => {
+        if (animal.parentNode) {
+            animal.parentNode.removeChild(animal);
+        }
+    });
     
-    // === CLEAR SPOT EFFECTS ===
+    // === CLEAR SPOT EFFECTS BUT ENSURE SPOTS REMAIN VISIBLE ===
     allHidingSpots.forEach(spot => {
-        spot.classList.remove('success-glow', 'correct-feedback', 'try-again-feedback');
+        spot.classList.remove('has-animal', 'success-glow', 'correct-feedback', 'try-again-feedback');
+        // Ensure spot is visible - apply directly to the element
+        spot.style.opacity = '1';
+        spot.style.visibility = 'visible';
+        spot.style.display = 'flex';
     });
     
     clearTimeout(hideTimer);
