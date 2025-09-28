@@ -191,12 +191,13 @@ function startRound() {
         showAnimalInSpot();
     }, 2000); // Increased delay to ensure speech system is ready
 }
-
 /* === SHOW ANIMAL IN SPOT === */
 function showAnimalInSpot() {
     if (!gameActive) return;
     
     const targetSpot = document.querySelector(`[data-spot="${currentSpot}"]`);
+    const spotRect = targetSpot.getBoundingClientRect();
+    const containerRect = hidingSpotsContainer.getBoundingClientRect();
     
     // === CREATE ANIMAL ELEMENT ===
     const animalElement = document.createElement('div');
@@ -216,9 +217,18 @@ function showAnimalInSpot() {
         animalElement.textContent = currentAnimal.emoji;
     }
     
-    // === POSITION ANIMAL IN SPOT ===
-    targetSpot.appendChild(animalElement);
-    targetSpot.classList.add('success-glow');
+    // === ADD TO CONTAINER INSTEAD OF SPOT ===
+    hidingSpotsContainer.appendChild(animalElement);
+    
+    // === POSITION ANIMAL BEHIND SPOT ===
+    const spotLeft = spotRect.left - containerRect.left;
+    const spotTop = spotRect.top - containerRect.top;
+    
+    // Position animal to peek out from top of the hiding spot
+    animalElement.style.left = (spotLeft + spotRect.width/2 - 40) + 'px'; // Center horizontally
+    animalElement.style.top = (spotTop - 40) + 'px'; // Position above spot to peek
+    
+    targetSpot.classList.add('has-animal');
     
     // === PLAY ANIMAL SOUND ===
     if (soundEnabled) {
