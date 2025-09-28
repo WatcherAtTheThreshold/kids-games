@@ -91,7 +91,7 @@
             position: absolute;
             width: 120px;
             height: 120px;
-            border-radius: 0;
+            border-radius: 50%;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -100,9 +100,6 @@
             font-size: 3.5rem;
             min-width: 140px;
             min-height: 140px;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
             z-index: 20; 
         }
 
@@ -151,17 +148,22 @@
             background-image: url('images/bush.png');
         }
 
-       .animal-in-spot {
-    position: absolute;
-    font-size: 3rem;
-    width: 80px;
-    height: 80px;
-    z-index: 10; /* Lower than hiding spots */
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: peek-animation 0.5s ease-out;
+        .has-animal {
+    /* Subtle indication that there's an animal here */
+    transform: scale(1.05);
+}
+
+   /* === ANIMAL IN SPOT === */
+        .animal-in-spot {
+            position: absolute;
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            z-index: 10; /* Lower than hiding spots */
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 }
 
         .animal-in-spot img {
@@ -170,7 +172,8 @@
             object-fit: contain;
         }
 
-      @keyframes peek-animation {
+ /* === PEEKING ANIMATION === */
+@keyframes peek-animation {
     0% { transform: translateY(40px); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
 }
@@ -283,6 +286,14 @@
                 transition: none;
             }
         }
+
+        /* === VISUAL FEEDBACK STYLES === */
+.correct-feedback {
+    /* Make sure this doesn't hide the spot */
+    box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7);
+    transform: scale(1.05);
+    /* Don't change opacity or visibility */
+}
         
        /* === REMOVE COLORED FEEDBACK BOXES FOR HIDING SPOTS === */
 .hiding-spot.correct-feedback {
