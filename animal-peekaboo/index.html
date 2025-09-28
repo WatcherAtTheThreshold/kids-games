@@ -86,105 +86,126 @@
             overflow: hidden;
         }
 
-    /* === UPDATED HIDING SPOTS === */
-.hiding-spot {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3.5rem;
-    min-width: 140px;
-    min-height: 140px;
-    background-size: contain !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-    z-index: 20; /* Higher than animals */
-    border-radius: 0; /* Remove circular shape */
-}
+        /* === HIDING SPOTS === */
+        .hiding-spot {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            min-width: 140px;
+            min-height: 140px;
+            background-size: contain !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            z-index: 20; /* Higher than animals */
+        }
 
-/* === ADD BACKGROUND IMAGES TO HIDING SPOTS === */
-.spot-1 { 
-    background: url('images/hiding-spots/tree.png'); 
-}
-.spot-2 { 
-    background: url('images/hiding-spots/bush.png');
-}
-.spot-3 { 
-    background: url('images/hiding-spots/log.png');
-}
-.spot-4 { 
-    background: url('images/hiding-spots/rock.png');
-}
-.spot-5 { 
-    background: url('images/hiding-spots/grass.png');
-}
-.spot-6 { 
-    background: url('images/hiding-spots/bush-small.png');
-}
+        /* === ADD BACKGROUND IMAGES TO HIDING SPOTS === */
+        .spot-1 { 
+            background: url('images/hiding-spots/tree.png'); 
+        }
+        .spot-2 { 
+            background: url('images/hiding-spots/bush.png');
+        }
+        .spot-3 { 
+            background: url('images/hiding-spots/log.png');
+        }
+        .spot-4 { 
+            background: url('images/hiding-spots/rock.png');
+        }
+        .spot-5 { 
+            background: url('images/hiding-spots/grass.png');
+        }
+        .spot-6 { 
+            background: url('images/hiding-spots/bush-small.png');
+        }
 
-/* === ANIMAL IN SPOT === */
-.animal-in-spot {
-    position: absolute;
-    font-size: 3rem;
-    width: 80px;
-    height: 80px;
-    z-index: 10; /* Lower than hiding spots */
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .hiding-spot:hover {
+            transform: scale(1.05);
+        }
 
-/* === UPDATED PEEKING ANIMATIONS === */
-@keyframes peek-top {
-    0% { transform: translateY(40px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-}
+        .hiding-spot:active {
+            transform: scale(0.95);
+        }
 
-@keyframes peek-bottom {
-    0% { transform: translateY(-40px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-}
+        /* === INDIVIDUAL SPOT POSITIONS === */
+        .spot-1 { top: 62px; left: 100px; }    /* Tree trunk */
+        .spot-2 { top: 100px; right: 75px; }   /* Bush */
+        .spot-3 { bottom: 150px; left: 62px; }  /* Log */
+        .spot-4 { bottom: 100px; right: 100px; }  /* Rock */
+        .spot-5 { top: 188px; left: 312px; }    /* Tall grass */
+        .spot-6 { bottom: 250px; right: 250px; } /* Small bush */
 
-@keyframes peek-left {
-    0% { transform: translateX(40px); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
-}
+        /* === ANIMAL IN SPOT === */
+        .animal-in-spot {
+            position: absolute;
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            z-index: 10; /* Lower than hiding spots */
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-@keyframes peek-right {
-    0% { transform: translateX(-40px); opacity: 0; }
-    100% { transform: translateX(0); opacity: 1; }
-}
+        /* === UPDATED PEEKING ANIMATIONS === */
+        @keyframes peek-top {
+            0% { transform: translateY(40px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
 
-/* === VISUAL FEEDBACK STYLES === */
-.correct-feedback {
-    box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7);
-    transform: scale(1.05);
-}
+        @keyframes peek-bottom {
+            0% { transform: translateY(-40px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
 
-.has-animal {
-    transform: scale(1.05);
-}
+        @keyframes peek-left {
+            0% { transform: translateX(40px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
 
-.fade-out {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
+        @keyframes peek-right {
+            0% { transform: translateX(-40px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
 
-.celebrating {
-    animation: celebration 0.8s ease-out;
-}
+        /* === VISUAL FEEDBACK STYLES === */
+        .correct-feedback {
+            box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7);
+            transform: scale(1.05);
+        }
 
-@keyframes celebration {
-    0%, 100% { transform: scale(1) translateY(0); }
-    25% { transform: scale(1.2) translateY(-10px); }
-    50% { transform: scale(1.3) translateY(-15px); }
-    75% { transform: scale(1.2) translateY(-5px); }
-}
+        .has-animal {
+            transform: scale(1.05);
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .celebrating {
+            animation: celebration 0.8s ease-out;
+        }
+
+        @keyframes celebration {
+            0%, 100% { transform: scale(1) translateY(0); }
+            25% { transform: scale(1.2) translateY(-10px); }
+            50% { transform: scale(1.3) translateY(-15px); }
+            75% { transform: scale(1.2) translateY(-5px); }
+        }
+
+        .animal-in-spot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
 
         /* === GAME CONTROLS === */
         .game-controls {
@@ -244,6 +265,64 @@
             margin-bottom: 30px;
         }
 
+        /* Animation classes */
+        .bounce {
+            animation: bounce 0.5s ease infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        .pop-animation {
+            animation: pop 0.3s ease-in-out;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .sparkle {
+            animation: sparkle 1s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 165, 0, 0.5); }
+            100% { text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .try-again-feedback {
+            box-shadow: 0 0 15px 5px rgba(255, 99, 71, 0.7);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Hide elements with hidden class */
+        .hidden {
+            display: none !important;
+        }
+
         /* === MOBILE RESPONSIVE === */
         @media (max-width: 768px) {
             .game-title {
@@ -266,7 +345,6 @@
                 min-width: 120px;
                 min-height: 120px;
                 font-size: 3rem;
-                background-size: contain;
             }
             
             .animal-in-spot {
@@ -275,7 +353,7 @@
                 height: 70px;
             }
             
-            /* === MOBILE POSITIONS === */
+            /* === MOBILE POSITIONS (SCALED FOR SMALLER CONTAINER) === */
             .spot-1 { top: 40px; left: 50px; }
             .spot-2 { top: 60px; right: 40px; }
             .spot-3 { bottom: 100px; left: 40px; }
@@ -293,34 +371,19 @@
             .hiding-spot {
                 transition: none;
             }
+            
+            .bounce, .pop-animation, .sparkle, .shake, .celebrating {
+                animation: none;
+            }
         }
-
-        /* === VISUAL FEEDBACK STYLES === */
-.correct-feedback {
-    /* Make sure this doesn't hide the spot */
-    box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7);
-    transform: scale(1.05);
-    /* Don't change opacity or visibility */
-}
-        
-       /* === REMOVE COLORED FEEDBACK BOXES FOR HIDING SPOTS === */
-.hiding-spot.correct-feedback {
-    background: transparent !important;
-    /* Keep the glow animation */
-}
-
-.hiding-spot.try-again-feedback {
-    background: transparent !important;
-    /* Keep the shake animation */
-} 
     </style>
 </head>
 <body>
 
     <!-- === GAME CONTROLS === -->
     <div class="game-controls">
-        <button class="control-btn" id="homeBtn" title="Back to Hub">🏠</button>
-        <button class="control-btn" id="soundBtn" title="Toggle Sound">🔊</button>
+        <button class="control-btn" id="homeBtn" title="Back to Hub">ðŸ </button>
+        <button class="control-btn" id="soundBtn" title="Toggle Sound">ðŸ"Š</button>
     </div>
 
     <!-- === GAME HEADER === -->
@@ -343,7 +406,7 @@
         <!-- === HIDING SPOTS CONTAINER === -->
         <div class="hiding-spots-container" id="hidingSpotsContainer">
             
-            <!-- === HIDING SPOTS (NOW WITH CUSTOM IMAGES VIA CSS) === -->
+            <!-- === HIDING SPOTS (NOW WITH BACKGROUND IMAGES) === -->
             <div class="hiding-spot spot-1" data-spot="1"></div>
             <div class="hiding-spot spot-2" data-spot="2"></div>
             <div class="hiding-spot spot-3" data-spot="3"></div>
