@@ -9,6 +9,7 @@ let currentAnimal = null;
 let currentSpot = null;
 let hideTimer = null;
 let roundComplete = false;
+let glowElements = []; // Track all created glow elements
 
 // === ANIMAL DATA ===
 const animals = [
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     getDOMElements();
     loadGameSettings();
     setupEventListeners();
+    resetHidingSpots(); // Force proper display at startup
     startGame();
 });
 
@@ -53,6 +55,59 @@ function getDOMElements() {
     soundBtn = document.getElementById('soundBtn');
     startGameBtn = document.getElementById('startGameBtn');
     allHidingSpots = document.querySelectorAll('.hiding-spot');
+}
+
+/* === RESET HIDING SPOTS === */
+function resetHidingSpots() {
+    // Force proper display of all spots
+    allHidingSpots.forEach((spot) => {
+        spot.style.display = 'block';
+        spot.style.visibility = 'visible';
+        spot.style.opacity = '1';
+        spot.style.pointerEvents = 'auto';
+        
+        // Force background image to be applied
+        const spotClass = spot.className.split(' ').find(cls => cls.startsWith('spot-'));
+        if (spotClass) {
+            // Make sure we're applying the right image based on the spot number
+            switch(spotClass) {
+                case 'spot-1':
+                    spot.style.backgroundImage = 'url("images/tree.png")';
+                    break;
+                case 'spot-2':
+                    spot.style.backgroundImage = 'url("images/bush.png")';
+                    break;
+                case 'spot-3':
+                    spot.style.backgroundImage = 'url("images/log.png")';
+                    break;
+                case 'spot-4':
+                    spot.style.backgroundImage = 'url("images/rock.png")';
+                    break;
+                case 'spot-5':
+                    spot.style.backgroundImage = 'url("images/barrel.png")';
+                    break;
+                case 'spot-6':
+                    spot.style.backgroundImage = 'url("images/bush.png")';
+                    break;
+            }
+        }
+    });
+    
+    // Remove any existing glow elements
+    removeAllGlows();
+}
+
+/* === REMOVE ALL GLOWS === */
+function removeAllGlows() {
+    // Remove all tracked glow elements
+    glowElements.forEach(glow => {
+        if (glow && glow.parentNode) {
+            glow.parentNode.removeChild(glow);
+        }
+    });
+    
+    // Clear the tracking array
+    glowElements = [];
 }
 
 /* === LOAD GAME SETTINGS === */
@@ -85,9 +140,6 @@ function setupEventListeners() {
     
     // === CLICK ANYWHERE TO START (WHILE WAITING) ===
     document.addEventListener('click', handleAnywhereClick);
-    
-    // === PREVENT DOUBLE-CLICKS ===
-    hidingSpotsContainer.addEventListener('click', preventDoubleClick);
 }
 
 /* === START GAME === */
@@ -166,8 +218,10 @@ function startRound() {
     // === RESET ROUND STATE === 
     roundComplete = false;  // CRITICAL: Reset so clicks work in this round
     
-    // === CLEAR ANY EXISTING ANIMALS ===
+    // === CLEAR ANY EXISTING ANIMALS AND GLOWS ===
     clearAllAnimals();
+    removeAllGlows();
+    resetHidingSpots(); // Force proper display of all spots
     
     // === SELECT RANDOM ANIMAL AND SPOT ===
     currentAnimal = animals[Math.floor(Math.random() * animals.length)];
@@ -203,6 +257,11 @@ function showAnimalInSpot() {
         console.error(`No spot found with data-spot="${currentSpot}"`);
         return;
     }
+    
+    // Ensure the spot is visible
+    targetSpot.style.display = 'block';
+    targetSpot.style.visibility = 'visible';
+    targetSpot.style.opacity = '1';
     
     const spotRect = targetSpot.getBoundingClientRect();
     const containerRect = hidingSpotsContainer.getBoundingClientRect();
@@ -242,10 +301,9 @@ function showAnimalInSpot() {
     animalElement.style.left = posLeft + 'px';
     animalElement.style.top = posTop + 'px';
     animalElement.style.animation = 'peek-top 0.5s ease-out';
-    animalElement.dataset.peekSide = 'top';
     
-    // === ADD A REFERENCE CLASS TO THE SPOT ===
-    targetSpot.classList.add('has-animal');
+    // === MARK SPOT AS HAVING ANIMAL ===
+    targetSpot.dataset.hasAnimal = 'true';
     
     // === PLAY ANIMAL SOUND ===
     if (soundEnabled) {
@@ -267,9 +325,9 @@ function hideAnimal() {
         animalElement.style.animation = 'none'; // Stop animation
         animalElement.classList.add('fade-out');
         
-        // === REMOVE THE REFERENCE CLASS FROM SPOT ===
+        // === REMOVE THE REFERENCE FROM SPOT ===
         if (targetSpot) {
-            targetSpot.classList.remove('has-animal');
+            delete targetSpot.dataset.hasAnimal;
         }
         
         setTimeout(() => {
@@ -280,12 +338,59 @@ function hideAnimal() {
     }
 }
 
+/* === CREATE GLOW EFFECT === */
+function createGlowEffect(spot, isCorrect) {
+    // Get the spot's position and size
+    const spotRect = spot.getBoundingClientRect();
+    const containerRect = hidingSpotsContainer.getBoundingClientRect();
+}
+   /* // Create a glow div
+    const glow = document.createElement('div');
+    glow.className = isCorrect ? 'spot-glow correct-glow' : 'spot-glow incorrect-glow';
+    
+    // Position it exactly where the spot is
+    glow.style.position = 'absolute';
+    glow.style.left = (spotRect.left - containerRect.left) + 'px';
+    glow.style.top = (spotRect.top - containerRect.top) + 'px';
+    glow.style.width = spotRect.width + 'px';
+    glow.style.height = spotRect.height + 'px';
+    glow.style.pointerEvents = 'none';
+    
+    // Apply animation
+    if (isCorrect) {
+        glow.style.animation = 'pulse-green 1.5s ease-out forwards';
+    } else {
+        glow.style.animation = 'pulse-red 1.5s ease-out forwards';
+    }
+    
+    // Add the glow to the container and track it
+    hidingSpotsContainer.appendChild(glow);
+    glowElements.push(glow);
+    
+    // Set a timeout to automatically remove the glow
+    setTimeout(() => {
+        if (glow.parentNode) {
+            glow.parentNode.removeChild(glow);
+            // Remove from tracking array
+            const index = glowElements.indexOf(glow);
+            if (index > -1) {
+                glowElements.splice(index, 1);
+            }
+        }
+    }, 1500);
+}*/
+
 /* === HANDLE SPOT CLICK === */
 function handleSpotClick(event) {
     if (!gameActive || roundComplete) return;
     
     const clickedSpot = event.currentTarget;
     const clickedSpotNumber = parseInt(clickedSpot.dataset.spot);
+    
+    // Make sure spot stays visible
+    clickedSpot.style.display = 'block';
+    clickedSpot.style.visibility = 'visible';
+    clickedSpot.style.opacity = '1';
     
     // === CHECK IF CORRECT SPOT ===
     if (clickedSpotNumber === currentSpot) {
@@ -300,10 +405,8 @@ function handleCorrectGuess(clickedSpot) {
     roundComplete = true;
     clearTimeout(hideTimer);
     
-    // Make sure the clicked spot stays visible
-    clickedSpot.style.visibility = 'visible';
-    clickedSpot.style.display = 'flex';
-    clickedSpot.style.opacity = '1';
+    // Create a green glow effect
+    createGlowEffect(clickedSpot, true);
     
     // === SHOW ANIMAL CLEARLY IF HIDDEN ===
     const animalElement = document.getElementById('currentAnimal');
@@ -313,9 +416,6 @@ function handleCorrectGuess(clickedSpot) {
         animalElement.style.zIndex = '25'; // Temporarily show above hiding spot
         animalElement.classList.add('celebrating');
     }
-    
-    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
-    clickedSpot.classList.add('correct-feedback');
     
     // === AUDIO FEEDBACK ===
     if (soundEnabled) {
@@ -329,7 +429,6 @@ function handleCorrectGuess(clickedSpot) {
     
     // === CONTINUE TO NEXT ROUND ===
     setTimeout(() => {
-        clickedSpot.classList.remove('correct-feedback');
         instructionText.classList.remove('sparkle');
         
         // === REMOVE THE CELEBRATING ANIMAL ===
@@ -343,13 +442,10 @@ function handleCorrectGuess(clickedSpot) {
 
 /* === HANDLE INCORRECT GUESS === */
 function handleIncorrectGuess(clickedSpot) {
-    // Make sure the clicked spot stays visible
-    clickedSpot.style.visibility = 'visible';
-    clickedSpot.style.display = 'flex';
-    clickedSpot.style.opacity = '1';
+    // Create a red glow effect
+    createGlowEffect(clickedSpot, false);
     
-    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
-    clickedSpot.classList.add('try-again-feedback');
+    // === ADD SHAKE ANIMATION TO THE SPOT ===
     clickedSpot.classList.add('shake');
     
     // === AUDIO FEEDBACK ===
@@ -363,7 +459,7 @@ function handleIncorrectGuess(clickedSpot) {
     
     // === RESET FEEDBACK ===
     setTimeout(() => {
-        clickedSpot.classList.remove('try-again-feedback', 'shake');
+        clickedSpot.classList.remove('shake');
         instructionText.classList.remove('bounce');
     }, 1000);
 }
@@ -376,6 +472,9 @@ function nextRound() {
         // === CONTINUE TO NEXT ROUND ===
         updateRoundDisplay();
         clearAllAnimals();
+        removeAllGlows();
+        resetHidingSpots(); // Force proper display of all spots
+        
         setTimeout(() => startRound(), 1000);
     } else {
         // === GAME COMPLETE ===
@@ -470,21 +569,13 @@ function clearAllAnimals() {
         }
     });
     
-    // === CLEAR SPOT EFFECTS BUT ENSURE SPOTS REMAIN VISIBLE ===
+    // === CLEAR ANIMAL REFERENCES FROM SPOTS ===
     allHidingSpots.forEach(spot => {
-        spot.classList.remove('has-animal', 'success-glow', 'correct-feedback', 'try-again-feedback');
-        // Ensure spot is visible - apply directly to the element
-        spot.style.opacity = '1';
-        spot.style.visibility = 'visible';
-        spot.style.display = 'flex';
+        delete spot.dataset.hasAnimal;
+        spot.classList.remove('shake');
     });
     
     clearTimeout(hideTimer);
-}
-
-/* === PREVENT DOUBLE-CLICK === */
-function preventDoubleClick(event) {
-    event.preventDefault();
 }
 
 /* === AUDIO FUNCTIONS === */
