@@ -338,7 +338,7 @@ function hideAnimal() {
     }
 }
 
-/* === CREATE GLOW EFFECT === */
+/* === CREATE GLOW EFFECT === 
 function createGlowEffect(spot, isCorrect) {
     // Get the spot's position and size
     const spotRect = spot.getBoundingClientRect();
@@ -378,7 +378,7 @@ function createGlowEffect(spot, isCorrect) {
             }
         }
     }, 1500);
-}
+}*/
 
 /* === HANDLE SPOT CLICK === */
 function handleSpotClick(event) {
