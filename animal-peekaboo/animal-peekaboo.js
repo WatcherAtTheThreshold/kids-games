@@ -217,17 +217,23 @@ function showAnimalInSpot() {
         animalElement.textContent = currentAnimal.emoji;
     }
     
-    // === ADD TO CONTAINER INSTEAD OF SPOT ===
+    // === ADD TO CONTAINER INSTEAD OF SPOT (IMPORTANT) ===
     hidingSpotsContainer.appendChild(animalElement);
     
-    // === POSITION ANIMAL BEHIND SPOT ===
+    // === POSITION ANIMAL PEEKING FROM BEHIND SPOT ===
     const spotLeft = spotRect.left - containerRect.left;
     const spotTop = spotRect.top - containerRect.top;
     
-    // Position animal to peek out from top of the hiding spot
-    animalElement.style.left = (spotLeft + spotRect.width/2 - 40) + 'px'; // Center horizontally
-    animalElement.style.top = (spotTop - 40) + 'px'; // Position above spot to peek
+    // Position calculations - animal peeks from behind/above the spot
+    const peekOffset = 30; // How much the animal peeks out
+    const posLeft = spotLeft + (spotRect.width/2 - 40); // Center horizontally
+    const posTop = spotTop - peekOffset; // Peek from top
     
+    animalElement.style.left = posLeft + 'px';
+    animalElement.style.top = posTop + 'px';
+    animalElement.style.animation = 'peek-animation 0.5s ease-out';
+    
+    // Add a reference class to the spot
     targetSpot.classList.add('has-animal');
     
     // === PLAY ANIMAL SOUND ===
@@ -242,16 +248,24 @@ function showAnimalInSpot() {
 }
 
 /* === HIDE ANIMAL === */
+// Update this function to ensure clean removal
 function hideAnimal() {
     const animalElement = document.getElementById('currentAnimal');
     const targetSpot = document.querySelector(`[data-spot="${currentSpot}"]`);
     
     if (animalElement) {
+        animalElement.style.animation = 'none'; // Stop animation
         animalElement.classList.add('fade-out');
-        targetSpot.classList.remove('success-glow');
+        
+        // Remove the reference class from spot
+        if (targetSpot) {
+            targetSpot.classList.remove('has-animal');
+        }
         
         setTimeout(() => {
-            animalElement.remove();
+            if (animalElement.parentNode) {
+                animalElement.parentNode.removeChild(animalElement);
+            }
         }, 300);
     }
 }
@@ -271,14 +285,26 @@ function handleSpotClick(event) {
     }
 }
 
+
+
 /* === HANDLE CORRECT GUESS === */
+// Update to ensure hiding spots remain visible
 function handleCorrectGuess(clickedSpot) {
     roundComplete = true;
     clearTimeout(hideTimer);
     
-    // === VISUAL FEEDBACK ===
+    // === SHOW ANIMAL CLEARLY IF HIDDEN ===
+    const animalElement = document.getElementById('currentAnimal');
+    if (animalElement) {
+        // Bring animal more into view as "found"
+        const currentTop = parseInt(animalElement.style.top);
+        animalElement.style.top = (currentTop - 15) + 'px'; // Move further up
+        animalElement.style.zIndex = '25'; // Temporarily show above hiding spot
+        animalElement.classList.add('celebrating');
+    }
+    
+    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
     clickedSpot.classList.add('correct-feedback');
-    clickedSpot.classList.add('celebration');
     
     // === AUDIO FEEDBACK ===
     if (soundEnabled) {
@@ -292,8 +318,14 @@ function handleCorrectGuess(clickedSpot) {
     
     // === CONTINUE TO NEXT ROUND ===
     setTimeout(() => {
-        clickedSpot.classList.remove('correct-feedback', 'celebration');
+        clickedSpot.classList.remove('correct-feedback');
         instructionText.classList.remove('sparkle');
+        
+        // Remove the celebrating animal
+        if (animalElement) {
+            animalElement.classList.remove('celebrating');
+        }
+        
         nextRound();
     }, 2500);
 }
@@ -414,17 +446,39 @@ function updateRoundDisplay() {
 }
 
 /* === CLEAR ALL ANIMALS === */
+// Ensure this function properly cleans up
 function clearAllAnimals() {
     const existingAnimals = document.querySelectorAll('.animal-in-spot');
-    existingAnimals.forEach(animal => animal.remove());
+    existingAnimals.forEach(animal => {
+        if (animal.parentNode) {
+            animal.parentNode.removeChild(animal);
+        }
+    });
     
-    // === CLEAR SPOT EFFECTS ===
+    // === CLEAR SPOT EFFECTS BUT DON'T REMOVE SPOTS ===
     allHidingSpots.forEach(spot => {
-        spot.classList.remove('success-glow', 'correct-feedback', 'try-again-feedback');
+        spot.classList.remove('has-animal', 'success-glow', 'correct-feedback', 'try-again-feedback');
     });
     
     clearTimeout(hideTimer);
 }
+
+// Add this CSS class for the fade-out animation
+// .fade-out {
+//   opacity: 0;
+//   transition: opacity 0.3s ease;
+// }
+
+// .celebrating {
+//   animation: celebration 0.8s ease-out;
+// }
+
+// @keyframes celebration {
+//   0%, 100% { transform: scale(1) translateY(0); }
+//   25% { transform: scale(1.2) translateY(-10px); }
+//   50% { transform: scale(1.3) translateY(-15px); }
+//   75% { transform: scale(1.2) translateY(-5px); }
+// }
 
 /* === PREVENT DOUBLE-CLICK === */
 function preventDoubleClick(event) {
