@@ -171,25 +171,10 @@
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        @keyframes peek-bottom {
-            0% { transform: translateY(-40px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
-        }
-
-        @keyframes peek-left {
-            0% { transform: translateX(40px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes peek-right {
-            0% { transform: translateX(-40px); opacity: 0; }
-            100% { transform: translateX(0); opacity: 1; }
-        }
-
         /* === VISUAL FEEDBACK STYLES === */
         .correct-feedback {
-            box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7);
-            /* Important to keep the element visible */
+            box-shadow: 0 0 20px 10px rgba(76, 217, 100, 0.7) !important;
+            /* IMPORTANT - keep the element visible */
             opacity: 1 !important;
             visibility: visible !important;
             display: flex !important;
@@ -198,7 +183,11 @@
         }
 
         .try-again-feedback {
-            box-shadow: 0 0 15px 5px rgba(255, 99, 71, 0.7);
+            box-shadow: 0 0 15px 5px rgba(255, 99, 71, 0.7) !important;
+            /* IMPORTANT - keep the element visible */
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: flex !important;
             /* Explicitly remove any background that might be applied */
             background-color: transparent !important;
         }
@@ -400,8 +389,8 @@
 
     <!-- === GAME CONTROLS === -->
     <div class="game-controls">
-        <button class="control-btn" id="homeBtn" title="Back to Hub">ðŸ </button>
-        <button class="control-btn" id="soundBtn" title="Toggle Sound">ðŸ"Š</button>
+        <button class="control-btn" id="homeBtn" title="Back to Hub">🏠</button>
+        <button class="control-btn" id="soundBtn" title="Toggle Sound">🔊</button>
     </div>
 
     <!-- === GAME HEADER === -->
