@@ -12,11 +12,11 @@ let roundComplete = false;
 
 // === ANIMAL DATA ===
 const animals = [
-    { emoji: 'ðŸ¶', name: 'puppy', sound: 'woof', image: 'images/puppy.png' },
-    { emoji: 'ðŸ±', name: 'kitty', sound: 'meow', image: 'images/kitty.png' },
-    { emoji: 'ðŸ°', name: 'bunny', sound: 'hop', image: 'images/bunny.png' },
-    { emoji: 'ðŸ¸', name: 'froggy', sound: 'ribbit', image: 'images/froggie.png' },
-    { emoji: 'ðŸ»', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
+    { emoji: '🐶', name: 'puppy', sound: 'woof', image: 'images/puppy.png' },
+    { emoji: '🐱', name: 'kitty', sound: 'meow', image: 'images/kitty.png' },
+    { emoji: '🐰', name: 'bunny', sound: 'hop', image: 'images/bunny.png' },
+    { emoji: '🐸', name: 'froggy', sound: 'ribbit', image: 'images/froggie.png' },
+    { emoji: '🧸', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
 ];
 
 // === DOM ELEMENTS - WILL BE SET AFTER DOM LOADS ===
@@ -300,6 +300,11 @@ function handleCorrectGuess(clickedSpot) {
     roundComplete = true;
     clearTimeout(hideTimer);
     
+    // Make sure the clicked spot stays visible
+    clickedSpot.style.visibility = 'visible';
+    clickedSpot.style.display = 'flex';
+    clickedSpot.style.opacity = '1';
+    
     // === SHOW ANIMAL CLEARLY IF HIDDEN ===
     const animalElement = document.getElementById('currentAnimal');
     if (animalElement) {
@@ -338,6 +343,11 @@ function handleCorrectGuess(clickedSpot) {
 
 /* === HANDLE INCORRECT GUESS === */
 function handleIncorrectGuess(clickedSpot) {
+    // Make sure the clicked spot stays visible
+    clickedSpot.style.visibility = 'visible';
+    clickedSpot.style.display = 'flex';
+    clickedSpot.style.opacity = '1';
+    
     // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
     clickedSpot.classList.add('try-again-feedback');
     clickedSpot.classList.add('shake');
@@ -394,7 +404,7 @@ function saveSticker() {
 /* === SHOW GAME COMPLETE CELEBRATION === */
 function showGameCompleteCelebration() {
     celebrationText.textContent = 'Amazing Detective Work!';
-    celebrationSubtitle.textContent = 'You found all the hidden animals! ðŸŽ‰';
+    celebrationSubtitle.textContent = 'You found all the hidden animals! 🎉';
     
     celebrationOverlay.classList.remove('hidden');
     celebrationOverlay.classList.add('celebration', 'fade-in');
@@ -442,7 +452,7 @@ function handleSoundToggle() {
 
 /* === UPDATE SOUND BUTTON === */
 function updateSoundButton() {
-    soundBtn.textContent = soundEnabled ? 'ðŸ"Š' : 'ðŸ"‡';
+    soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
     soundBtn.title = soundEnabled ? 'Turn Sound Off' : 'Turn Sound On';
 }
 
@@ -463,7 +473,7 @@ function clearAllAnimals() {
     // === CLEAR SPOT EFFECTS BUT ENSURE SPOTS REMAIN VISIBLE ===
     allHidingSpots.forEach(spot => {
         spot.classList.remove('has-animal', 'success-glow', 'correct-feedback', 'try-again-feedback');
-        // Ensure spot is visible
+        // Ensure spot is visible - apply directly to the element
         spot.style.opacity = '1';
         spot.style.visibility = 'visible';
         spot.style.display = 'flex';
