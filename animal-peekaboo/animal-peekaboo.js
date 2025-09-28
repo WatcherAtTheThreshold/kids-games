@@ -338,13 +338,13 @@ function hideAnimal() {
     }
 }
 
-/* === CREATE GLOW EFFECT === 
+/* === CREATE GLOW EFFECT === */
 function createGlowEffect(spot, isCorrect) {
     // Get the spot's position and size
     const spotRect = spot.getBoundingClientRect();
     const containerRect = hidingSpotsContainer.getBoundingClientRect();
-    
-    // Create a glow div
+}
+   /* // Create a glow div
     const glow = document.createElement('div');
     glow.className = isCorrect ? 'spot-glow correct-glow' : 'spot-glow incorrect-glow';
     
