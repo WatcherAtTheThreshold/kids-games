@@ -9,6 +9,7 @@ let currentAnimal = null;
 let currentSpot = null;
 let hideTimer = null;
 let roundComplete = false;
+let glowElements = []; // Track all created glow elements
 
 // === ANIMAL DATA ===
 const animals = [
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     getDOMElements();
     loadGameSettings();
     setupEventListeners();
+    resetHidingSpots(); // Force proper display at startup
     startGame();
 });
 
@@ -53,18 +55,59 @@ function getDOMElements() {
     soundBtn = document.getElementById('soundBtn');
     startGameBtn = document.getElementById('startGameBtn');
     allHidingSpots = document.querySelectorAll('.hiding-spot');
+}
+
+/* === RESET HIDING SPOTS === */
+function resetHidingSpots() {
+    // Force proper display of all spots
+    allHidingSpots.forEach((spot) => {
+        spot.style.display = 'block';
+        spot.style.visibility = 'visible';
+        spot.style.opacity = '1';
+        spot.style.pointerEvents = 'auto';
+        
+        // Force background image to be applied
+        const spotClass = spot.className.split(' ').find(cls => cls.startsWith('spot-'));
+        if (spotClass) {
+            // Make sure we're applying the right image based on the spot number
+            switch(spotClass) {
+                case 'spot-1':
+                    spot.style.backgroundImage = 'url("images/tree.png")';
+                    break;
+                case 'spot-2':
+                    spot.style.backgroundImage = 'url("images/bush.png")';
+                    break;
+                case 'spot-3':
+                    spot.style.backgroundImage = 'url("images/log.png")';
+                    break;
+                case 'spot-4':
+                    spot.style.backgroundImage = 'url("images/rock.png")';
+                    break;
+                case 'spot-5':
+                    spot.style.backgroundImage = 'url("images/barrel.png")';
+                    break;
+                case 'spot-6':
+                    spot.style.backgroundImage = 'url("images/bush.png")';
+                    break;
+            }
+        }
+    });
     
-    // Create a container for the glows
-    const glowContainer = document.createElement('div');
-    glowContainer.id = 'glowContainer';
-    glowContainer.style.position = 'absolute';
-    glowContainer.style.top = '0';
-    glowContainer.style.left = '0';
-    glowContainer.style.width = '100%';
-    glowContainer.style.height = '100%';
-    glowContainer.style.pointerEvents = 'none';
-    glowContainer.style.zIndex = '15'; // Between spots and animals
-    hidingSpotsContainer.appendChild(glowContainer);
+    // Remove any existing glow elements
+    removeAllGlows();
+}
+
+/* === REMOVE ALL GLOWS === */
+function removeAllGlows() {
+    // Remove all tracked glow elements
+    glowElements.forEach(glow => {
+        if (glow && glow.parentNode) {
+            glow.parentNode.removeChild(glow);
+        }
+    });
+    
+    // Clear the tracking array
+    glowElements = [];
 }
 
 /* === LOAD GAME SETTINGS === */
@@ -177,7 +220,8 @@ function startRound() {
     
     // === CLEAR ANY EXISTING ANIMALS AND GLOWS ===
     clearAllAnimals();
-    clearGlowEffects();
+    removeAllGlows();
+    resetHidingSpots(); // Force proper display of all spots
     
     // === SELECT RANDOM ANIMAL AND SPOT ===
     currentAnimal = animals[Math.floor(Math.random() * animals.length)];
@@ -213,6 +257,11 @@ function showAnimalInSpot() {
         console.error(`No spot found with data-spot="${currentSpot}"`);
         return;
     }
+    
+    // Ensure the spot is visible
+    targetSpot.style.display = 'block';
+    targetSpot.style.visibility = 'visible';
+    targetSpot.style.opacity = '1';
     
     const spotRect = targetSpot.getBoundingClientRect();
     const containerRect = hidingSpotsContainer.getBoundingClientRect();
@@ -252,7 +301,6 @@ function showAnimalInSpot() {
     animalElement.style.left = posLeft + 'px';
     animalElement.style.top = posTop + 'px';
     animalElement.style.animation = 'peek-top 0.5s ease-out';
-    animalElement.dataset.peekSide = 'top';
     
     // === MARK SPOT AS HAVING ANIMAL ===
     targetSpot.dataset.hasAnimal = 'true';
@@ -292,7 +340,7 @@ function hideAnimal() {
 
 /* === CREATE GLOW EFFECT === */
 function createGlowEffect(spot, isCorrect) {
-    // Get the spot's position
+    // Get the spot's position and size
     const spotRect = spot.getBoundingClientRect();
     const containerRect = hidingSpotsContainer.getBoundingClientRect();
     
@@ -306,40 +354,30 @@ function createGlowEffect(spot, isCorrect) {
     glow.style.top = (spotRect.top - containerRect.top) + 'px';
     glow.style.width = spotRect.width + 'px';
     glow.style.height = spotRect.height + 'px';
-    glow.style.borderRadius = '50%'; // Make it round like the spots
-    glow.style.pointerEvents = 'none'; // Don't block clicks
+    glow.style.pointerEvents = 'none';
     
-    // Add the glow to the container
-    document.getElementById('glowContainer').appendChild(glow);
-    
-    // Add animation
+    // Apply animation
     if (isCorrect) {
-        glow.style.animation = 'pulse-green 2s ease-out forwards';
+        glow.style.animation = 'pulse-green 1.5s ease-out forwards';
     } else {
-        glow.style.animation = 'pulse-red 1s ease-out forwards';
+        glow.style.animation = 'pulse-red 1.5s ease-out forwards';
     }
     
-    // Set timeout to remove incorrect glows (correct ones stay until next round)
-    if (!isCorrect) {
-        setTimeout(() => {
-            if (glow.parentNode) {
-                glow.parentNode.removeChild(glow);
+    // Add the glow to the container and track it
+    hidingSpotsContainer.appendChild(glow);
+    glowElements.push(glow);
+    
+    // Set a timeout to automatically remove the glow
+    setTimeout(() => {
+        if (glow.parentNode) {
+            glow.parentNode.removeChild(glow);
+            // Remove from tracking array
+            const index = glowElements.indexOf(glow);
+            if (index > -1) {
+                glowElements.splice(index, 1);
             }
-        }, 1500);
-    }
-    
-    return glow;
-}
-
-/* === CLEAR GLOW EFFECTS === */
-function clearGlowEffects() {
-    const glowContainer = document.getElementById('glowContainer');
-    if (glowContainer) {
-        // Remove all children
-        while (glowContainer.firstChild) {
-            glowContainer.removeChild(glowContainer.firstChild);
         }
-    }
+    }, 1500);
 }
 
 /* === HANDLE SPOT CLICK === */
@@ -348,6 +386,11 @@ function handleSpotClick(event) {
     
     const clickedSpot = event.currentTarget;
     const clickedSpotNumber = parseInt(clickedSpot.dataset.spot);
+    
+    // Make sure spot stays visible
+    clickedSpot.style.display = 'block';
+    clickedSpot.style.visibility = 'visible';
+    clickedSpot.style.opacity = '1';
     
     // === CHECK IF CORRECT SPOT ===
     if (clickedSpotNumber === currentSpot) {
@@ -362,7 +405,7 @@ function handleCorrectGuess(clickedSpot) {
     roundComplete = true;
     clearTimeout(hideTimer);
     
-    // === ADD GLOW EFFECT (NOT MODIFYING THE SPOT) ===
+    // Create a green glow effect
     createGlowEffect(clickedSpot, true);
     
     // === SHOW ANIMAL CLEARLY IF HIDDEN ===
@@ -399,7 +442,7 @@ function handleCorrectGuess(clickedSpot) {
 
 /* === HANDLE INCORRECT GUESS === */
 function handleIncorrectGuess(clickedSpot) {
-    // === ADD GLOW EFFECT (NOT MODIFYING THE SPOT) ===
+    // Create a red glow effect
     createGlowEffect(clickedSpot, false);
     
     // === ADD SHAKE ANIMATION TO THE SPOT ===
@@ -429,7 +472,9 @@ function nextRound() {
         // === CONTINUE TO NEXT ROUND ===
         updateRoundDisplay();
         clearAllAnimals();
-        clearGlowEffects();
+        removeAllGlows();
+        resetHidingSpots(); // Force proper display of all spots
+        
         setTimeout(() => startRound(), 1000);
     } else {
         // === GAME COMPLETE ===
@@ -531,11 +576,6 @@ function clearAllAnimals() {
     });
     
     clearTimeout(hideTimer);
-}
-
-/* === PREVENT DOUBLE-CLICK === */
-function preventDoubleClick(event) {
-    event.preventDefault();
 }
 
 /* === AUDIO FUNCTIONS === */
