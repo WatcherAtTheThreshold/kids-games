@@ -17,9 +17,6 @@ const animals = [
     { emoji: 'ðŸ°', name: 'bunny', sound: 'hop', image: 'images/bunny.png' },
     { emoji: 'ðŸ¸', name: 'froggy', sound: 'ribbit', image: 'images/froggie.png' },
     { emoji: 'ðŸ»', name: 'teddy bear', sound: 'growl', image: 'images/teddy.png' },
-    //{ emoji: 'ðŸ¦†', name: 'duck', sound: 'quack' },
-    //{ emoji: 'ðŸ·', name: 'piggy', sound: 'oink' },
-    //{ emoji: 'ðŸµ', name: 'monkey', sound: 'ooh-ooh' }
 ];
 
 // === DOM ELEMENTS - WILL BE SET AFTER DOM LOADS ===
@@ -176,6 +173,11 @@ function startRound() {
     currentAnimal = animals[Math.floor(Math.random() * animals.length)];
     currentSpot = Math.floor(Math.random() * allHidingSpots.length) + 1;
     
+    // === VALIDATE SPOT NUMBER (ENSURE IT DOESN'T EXCEED AVAILABLE SPOTS) ===
+    if (currentSpot > allHidingSpots.length) {
+        currentSpot = allHidingSpots.length;
+    }
+    
     // === SHOW INSTRUCTION ===
     instructionText.textContent = `Find the ${currentAnimal.name}!`;
     instructionText.classList.add('pop-animation');
@@ -197,6 +199,11 @@ function showAnimalInSpot() {
     if (!gameActive) return;
     
     const targetSpot = document.querySelector(`[data-spot="${currentSpot}"]`);
+    if (!targetSpot) {
+        console.error(`No spot found with data-spot="${currentSpot}"`);
+        return;
+    }
+    
     const spotRect = targetSpot.getBoundingClientRect();
     const containerRect = hidingSpotsContainer.getBoundingClientRect();
     
@@ -354,7 +361,7 @@ function handleCorrectGuess(clickedSpot) {
         animalElement.classList.add('celebrating');
     }
     
-    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
+    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT OR USING BACKGROUND ===
     clickedSpot.classList.add('correct-feedback');
     
     // === AUDIO FEEDBACK ===
@@ -383,7 +390,7 @@ function handleCorrectGuess(clickedSpot) {
 
 /* === HANDLE INCORRECT GUESS === */
 function handleIncorrectGuess(clickedSpot) {
-    // === VISUAL FEEDBACK ===
+    // === VISUAL FEEDBACK WITHOUT USING BACKGROUND ===
     clickedSpot.classList.add('try-again-feedback');
     clickedSpot.classList.add('shake');
     
