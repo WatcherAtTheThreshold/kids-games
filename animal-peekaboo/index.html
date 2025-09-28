@@ -103,6 +103,7 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            z-index: 20; 
         }
 
         .hiding-spot:hover {
@@ -150,19 +151,18 @@
             background-image: url('images/bush.png');
         }
 
-        /* === ANIMAL IN SPOT === */
-        .animal-in-spot {
-            position: absolute;
-            font-size: 3rem;
-            width: 80px;
-            height: 80px;
-            z-index: 10;
-            animation: peek-animation 0.5s ease-out;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+       .animal-in-spot {
+    position: absolute;
+    font-size: 3rem;
+    width: 80px;
+    height: 80px;
+    z-index: 10; /* Lower than hiding spots */
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: peek-animation 0.5s ease-out;
+}
 
         .animal-in-spot img {
             width: 100%;
@@ -170,10 +170,10 @@
             object-fit: contain;
         }
 
-        @keyframes peek-animation {
-            0% { transform: translateY(20px) scale(0.5); opacity: 0; }
-            100% { transform: translateY(0) scale(1); opacity: 1; }
-        }
+      @keyframes peek-animation {
+    0% { transform: translateY(40px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
 
         /* === GAME CONTROLS === */
         .game-controls {
