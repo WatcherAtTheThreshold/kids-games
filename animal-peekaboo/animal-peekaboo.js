@@ -228,55 +228,21 @@ function showAnimalInSpot() {
     // === ADD TO CONTAINER INSTEAD OF SPOT ===
     hidingSpotsContainer.appendChild(animalElement);
     
-    // === POSITION ANIMAL BEHIND SPOT ===
+    // === POSITION ANIMAL ABOVE SPOT (ALWAYS PEEK FROM TOP) ===
     const spotLeft = spotRect.left - containerRect.left;
     const spotTop = spotRect.top - containerRect.top;
     const spotWidth = spotRect.width;
-    const spotHeight = spotRect.height;
     
-    // === DETERMINE BEST SIDE TO PEEK FROM BASED ON SPOT POSITION ===
-    let peekSide = 'top'; // Default peek from top
-    
-    if (spotTop < 150) {
-        peekSide = 'bottom'; // If spot is near top, peek from bottom
-    } else if (spotLeft < 100) {
-        peekSide = 'right'; // If spot is on left edge, peek from right
-    } else if (spotLeft > containerRect.width - 150) {
-        peekSide = 'left'; // If spot is on right edge, peek from left
-    }
-    
-    // === CALCULATE POSITION BASED ON PEEK SIDE ===
-    let posLeft = spotLeft;
-    let posTop = spotTop;
-    
+    // Always peek from the top (animals should be above the hiding spots)
     const peekAmount = 40; // How much the animal peeks out
+    const posLeft = spotLeft + (spotWidth/2 - 40); // Center horizontally
+    const posTop = spotTop - peekAmount; // Position above the hiding spot
     
-    switch (peekSide) {
-        case 'top':
-            posLeft = spotLeft + (spotWidth/2 - 40); // Center horizontally
-            posTop = spotTop - peekAmount; // Peek from top
-            break;
-        case 'right':
-            posLeft = spotLeft + spotWidth - peekAmount; // Peek from right side
-            posTop = spotTop + (spotHeight/2 - 40); // Center vertically
-            break;
-        case 'bottom':
-            posLeft = spotLeft + (spotWidth/2 - 40); // Center horizontally
-            posTop = spotTop + spotHeight - peekAmount; // Peek from bottom
-            break;
-        case 'left':
-            posLeft = spotLeft - peekAmount + 20; // Peek from left side
-            posTop = spotTop + (spotHeight/2 - 40); // Center vertically
-            break;
-    }
-    
-    // === APPLY POSITION AND ANIMATION BASED ON PEEK SIDE ===
+    // === APPLY POSITION AND ANIMATION FOR PEEKING FROM TOP ===
     animalElement.style.left = posLeft + 'px';
     animalElement.style.top = posTop + 'px';
-    animalElement.style.animation = `peek-${peekSide} 0.5s ease-out`;
-    
-    // === ADD DATA ATTRIBUTE FOR PEEK DIRECTION ===
-    animalElement.dataset.peekSide = peekSide;
+    animalElement.style.animation = 'peek-top 0.5s ease-out';
+    animalElement.dataset.peekSide = 'top';
     
     // === ADD A REFERENCE CLASS TO THE SPOT ===
     targetSpot.classList.add('has-animal');
@@ -337,31 +303,13 @@ function handleCorrectGuess(clickedSpot) {
     // === SHOW ANIMAL CLEARLY IF HIDDEN ===
     const animalElement = document.getElementById('currentAnimal');
     if (animalElement) {
-        // === BRING ANIMAL MORE INTO VIEW AS "FOUND" ===
-        const peekSide = animalElement.dataset.peekSide || 'top';
-        let moveAmount = 15;
-        
-        // Move in appropriate direction based on peek side
-        switch(peekSide) {
-            case 'top':
-                animalElement.style.top = (parseInt(animalElement.style.top) - moveAmount) + 'px';
-                break;
-            case 'right':
-                animalElement.style.left = (parseInt(animalElement.style.left) + moveAmount) + 'px';
-                break;
-            case 'bottom':
-                animalElement.style.top = (parseInt(animalElement.style.top) + moveAmount) + 'px';
-                break;
-            case 'left':
-                animalElement.style.left = (parseInt(animalElement.style.left) - moveAmount) + 'px';
-                break;
-        }
-        
+        // === MAKE SURE IT'S VISIBLE AND MOVE UP MORE ===
+        animalElement.style.top = (parseInt(animalElement.style.top) - 15) + 'px';
         animalElement.style.zIndex = '25'; // Temporarily show above hiding spot
         animalElement.classList.add('celebrating');
     }
     
-    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT OR USING BACKGROUND ===
+    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
     clickedSpot.classList.add('correct-feedback');
     
     // === AUDIO FEEDBACK ===
@@ -390,7 +338,7 @@ function handleCorrectGuess(clickedSpot) {
 
 /* === HANDLE INCORRECT GUESS === */
 function handleIncorrectGuess(clickedSpot) {
-    // === VISUAL FEEDBACK WITHOUT USING BACKGROUND ===
+    // === VISUAL FEEDBACK WITHOUT HIDING THE SPOT ===
     clickedSpot.classList.add('try-again-feedback');
     clickedSpot.classList.add('shake');
     
@@ -512,9 +460,13 @@ function clearAllAnimals() {
         }
     });
     
-    // === CLEAR SPOT EFFECTS BUT DON'T REMOVE SPOTS ===
+    // === CLEAR SPOT EFFECTS BUT ENSURE SPOTS REMAIN VISIBLE ===
     allHidingSpots.forEach(spot => {
         spot.classList.remove('has-animal', 'success-glow', 'correct-feedback', 'try-again-feedback');
+        // Ensure spot is visible
+        spot.style.opacity = '1';
+        spot.style.visibility = 'visible';
+        spot.style.display = 'flex';
     });
     
     clearTimeout(hideTimer);
