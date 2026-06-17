@@ -152,7 +152,7 @@ function startRound(index) {
     slimeEl.querySelectorAll('.inner-blob').forEach(b => b.remove());
 
     setSlimeColor(round.startColor);
-    slimeMouthEl.textContent = '😊';
+    setMouth('');
 
     if (round.type === 'add') {
         setupAdditionRound(round);
@@ -212,7 +212,7 @@ function setupSubtractionRound(round) {
         if (!gameActive) return;
         setInstruction('2 blobs are escaping! Watch!', '😱', '💨');
         speak('Oh no! Two blobs are escaping!');
-        slimeMouthEl.textContent = '😱';
+        setMouth('open');
         animateEscape(round);
     }, 2400);
 }
@@ -231,13 +231,13 @@ function animateEscape(round) {
     setTimeout(() => {
         if (!gameActive) return;
         setSlimeColor(round.fadedColor);
-        slimeMouthEl.textContent = '😢';
+        setMouth('sad');
         playTone(280, 0.35, 'sine');
         escapees.forEach(b => b.remove());
 
         setTimeout(() => {
             if (!gameActive) return;
-            slimeMouthEl.textContent = '🤔';
+            setMouth('');
             showQuestion(round);
         }, 900);
     }, 850);
@@ -251,8 +251,10 @@ function onBlobTap(blobEl, round) {
     blobEl.style.pointerEvents = 'none';
     playPop();
     addSlimeAnim('squish');
-    slimeMouthEl.textContent = '😮';
-    setTimeout(() => { slimeMouthEl.textContent = '😊'; }, 360);
+    setMouth('chewing');
+    slimeMouthEl.addEventListener('animationend', () => {
+        if (roundPhase === 'feeding') setMouth('');
+    }, { once: true });
 
     flyBlobToSlime(blobEl, () => {
         blobsRemaining--;
@@ -279,7 +281,7 @@ function flyBlobToSlime(blobEl, onDone) {
 function onAllFed(round) {
     roundPhase = 'question';
     setSlimeColor(round.mixedColor);
-    slimeMouthEl.textContent = '😄';
+    setMouth('happy-wide');
     addSlimeAnim('bounce');
     playJingle();
 
@@ -347,7 +349,7 @@ function onAnswer(selected, correct, btnEl) {
 
     if (selected === correct) {
         btnEl.classList.add('correct-flash');
-        slimeMouthEl.textContent = '😄';
+        setMouth('happy-wide');
         addSlimeAnim('bounce');
         playJingle();
         showBubble('Yay! ⭐');
@@ -365,7 +367,7 @@ function onAnswer(selected, correct, btnEl) {
         }, 1700);
     } else {
         btnEl.classList.add('wrong-flash');
-        slimeMouthEl.textContent = '😢';
+        setMouth('sad');
         addSlimeAnim('wiggle');
         playTone(180, 0.4, 'sawtooth');
         showBubble('Try again! 💪');
@@ -375,7 +377,7 @@ function onAnswer(selected, correct, btnEl) {
             if (!gameActive) return;
             btnEl.classList.remove('wrong-flash');
             hideBubble();
-            slimeMouthEl.textContent = '🤔';
+            setMouth('');
             answerButtonsEl.querySelectorAll('.answer-btn').forEach(b => {
                 b.style.pointerEvents = '';
             });
@@ -387,7 +389,7 @@ function onAnswer(selected, correct, btnEl) {
 /* === CELEBRATION === */
 function celebrate() {
     gameActive = false;
-    slimeMouthEl.textContent = '🥳';
+    setMouth('happy-wide');
     awardSticker();
     celebrationOverlayEl.classList.remove('hidden');
     playJingle();
@@ -409,16 +411,16 @@ function awardSticker() {
 
 /* === IDLE SLIME TAP REACTIONS === */
 const REACTIONS = [
-    () => { addSlimeAnim('squish'); slimeMouthEl.textContent = '😝'; resetMouth(650); },
-    () => { showBubble('Burp! 🤭'); slimeMouthEl.textContent = '🤭'; resetMouth(900); hideBubbleAfter(850); },
+    () => { addSlimeAnim('squish'); setMouth('open'); resetMouth(500); },
+    () => { showBubble('Burp! 🤭'); setMouth('happy-wide'); resetMouth(900); hideBubbleAfter(850); },
     () => {
         addSlimeAnim('wiggle');
         leftPupilEl.classList.add('roll'); rightPupilEl.classList.add('roll');
         setTimeout(() => { leftPupilEl.classList.remove('roll'); rightPupilEl.classList.remove('roll'); }, 900);
     },
-    () => { addSlimeAnim('bounce'); slimeMouthEl.textContent = '😂'; resetMouth(800); },
-    () => { showBubble('zzz... 😴'); slimeMouthEl.textContent = '😴'; resetMouth(1100); hideBubbleAfter(1000); },
-    () => { addSlimeAnim('squish'); showBubble('Bloop! 💧'); hideBubbleAfter(700); },
+    () => { addSlimeAnim('bounce'); setMouth('happy-wide'); resetMouth(800); },
+    () => { showBubble('zzz... 😴'); resetMouth(1100); hideBubbleAfter(1000); },
+    () => { addSlimeAnim('squish'); showBubble('Bloop! 💧'); setMouth('open'); resetMouth(450); hideBubbleAfter(700); },
 ];
 
 function handleSlimeTap() {
@@ -464,7 +466,7 @@ function hideBubbleAfter(ms) {
 }
 
 function resetMouth(ms) {
-    setTimeout(() => { if (slimeMouthEl.textContent !== '🥳') slimeMouthEl.textContent = '😊'; }, ms);
+    setTimeout(() => { if (gameActive) setMouth(''); }, ms);
 }
 
 function addSlimeAnim(cls) {
@@ -472,6 +474,12 @@ function addSlimeAnim(cls) {
     void slimeEl.offsetWidth;
     slimeEl.classList.add(cls);
     slimeEl.addEventListener('animationend', () => slimeEl.classList.remove(cls), { once: true });
+}
+
+function setMouth(state) {
+    slimeMouthEl.classList.remove('sad', 'open', 'chewing', 'happy-wide');
+    void slimeMouthEl.offsetWidth;
+    if (state) slimeMouthEl.classList.add(state);
 }
 
 function colorName(hex) {

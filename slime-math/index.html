@@ -112,16 +112,77 @@
             left: 48%;
         }
 
-        /* === MOUTH === */
+        /* === MOUTH (CSS-drawn) === */
         .slime-mouth {
             position: absolute;
-            bottom: 18%;
+            bottom: 16%;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 2rem;
-            line-height: 1;
+            width: 56px;
+            height: 38px;
             pointer-events: none;
-            transition: font-size 0.2s ease;
+        }
+
+        /* Curved line smile */
+        .mouth-curve {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 22px;
+            border-bottom: 4px solid #2a2a2a;
+            border-radius: 0 0 50% 50%;
+            transition: opacity 0.12s ease, width 0.2s ease, height 0.2s ease, transform 0.2s ease;
+        }
+
+        /* Filled oval for open/eating mouth */
+        .mouth-oval {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%) scaleY(0);
+            width: 36px;
+            height: 30px;
+            background: #1a1a1a;
+            border-radius: 50%;
+            transition: transform 0.12s ease;
+        }
+
+        /* SAD: flip the curve into a frown */
+        .slime-mouth.sad .mouth-curve {
+            transform: translateX(-50%) rotate(180deg);
+            bottom: 10px;
+        }
+
+        /* HAPPY-WIDE: bigger smile (celebration/correct) */
+        .slime-mouth.happy-wide .mouth-curve {
+            width: 54px;
+            height: 28px;
+        }
+
+        /* OPEN: surprised/scared — show oval, hide curve */
+        .slime-mouth.open .mouth-curve {
+            opacity: 0;
+        }
+        .slime-mouth.open .mouth-oval {
+            transform: translate(-50%, -40%) scaleY(1.1);
+        }
+
+        /* CHEWING: 2 chew cycles then closes */
+        .slime-mouth.chewing .mouth-curve {
+            opacity: 0;
+        }
+        .slime-mouth.chewing .mouth-oval {
+            animation: chewAnim 0.58s ease-in-out 2 forwards;
+        }
+
+        @keyframes chewAnim {
+            0%   { transform: translate(-50%, -40%) scaleY(1);    }
+            28%  { transform: translate(-50%, -40%) scaleY(0.2);  }
+            54%  { transform: translate(-50%, -40%) scaleY(0.85); }
+            78%  { transform: translate(-50%, -40%) scaleY(0.18); }
+            100% { transform: translate(-50%, -40%) scaleY(0);    }
         }
 
         /* === SPEECH BUBBLE === */
@@ -498,7 +559,10 @@
                     <div class="eye" id="leftEye"><div class="pupil" id="leftPupil"></div></div>
                     <div class="eye" id="rightEye"><div class="pupil" id="rightPupil"></div></div>
                 </div>
-                <div class="slime-mouth" id="slimeMouth">😊</div>
+                <div class="slime-mouth" id="slimeMouth">
+                    <div class="mouth-curve"></div>
+                    <div class="mouth-oval"></div>
+                </div>
                 <div class="speech-bubble" id="speechBubble"></div>
             </div>
         </div>
