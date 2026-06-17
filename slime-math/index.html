@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Slime Math - Kids Games</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e8f5e9 0%, #e3f2fd 50%, #f3e5f5 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* === GAME AREA LAYOUT === */
+        .game-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 12px 20px;
+            min-height: 260px;
+            position: relative;
+        }
+
+        /* === SLIME CHARACTER === */
+        .slime-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slime {
+            position: relative;
+            width: 220px;
+            height: 190px;
+            background-color: var(--slime-color, #66bb6a);
+            border-radius: 50% 50% 50% 50% / 58% 58% 42% 42%;
+            cursor: pointer;
+            transition: background-color 0.8s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            overflow: visible;
+        }
+
+        .slime-highlight {
+            position: absolute;
+            top: 14%;
+            left: 18%;
+            width: 44%;
+            height: 38%;
+            background: radial-gradient(circle, rgba(255,255,255,0.55) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Drip */
+        .slime::after {
+            content: '';
+            position: absolute;
+            bottom: -22px;
+            left: 44%;
+            width: 32px;
+            height: 32px;
+            background-color: var(--slime-color, #66bb6a);
+            border-radius: 0 0 55% 55% / 0 0 65% 65%;
+            transition: background-color 0.8s ease;
+        }
+
+        /* === EYES === */
+        .slime-eyes {
+            position: absolute;
+            top: 28%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 28px;
+            pointer-events: none;
+        }
+
+        .eye {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
+            transition: transform 0.1s;
+        }
+
+        .pupil {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: #333;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .pupil::after {
+            content: '';
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: white;
+            border-radius: 50%;
+            top: 10%;
+            left: 48%;
+        }
+
+        /* === MOUTH === */
+        .slime-mouth {
+            position: absolute;
+            bottom: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            line-height: 1;
+            pointer-events: none;
+            transition: font-size 0.2s ease;
+        }
+
+        /* === SPEECH BUBBLE === */
+        .speech-bubble {
+            position: absolute;
+            top: -56px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 3px solid rgba(0,0,0,0.12);
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 13px solid white;
+        }
+
+        /* === INNER BLOBS (subtraction round) === */
+        .inner-blob {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.75);
+            border: 2px solid rgba(255,255,255,0.5);
+            pointer-events: none;
+        }
+
+        /* === SLIME ANIMATIONS === */
+        @keyframes slimeSquish {
+            0%   { transform: scale(1, 1); }
+            20%  { transform: scale(1.28, 0.75); }
+            50%  { transform: scale(0.9, 1.18); }
+            80%  { transform: scale(1.07, 0.95); }
+            100% { transform: scale(1, 1); }
+        }
+
+        @keyframes slimeWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            20%  { transform: rotate(-9deg); }
+            50%  { transform: rotate(9deg); }
+            75%  { transform: rotate(-5deg); }
+        }
+
+        @keyframes slimeBounce {
+            0%, 100% { transform: translateY(0); }
+            35% { transform: translateY(-24px); }
+            65% { transform: translateY(-10px); }
+            85% { transform: translateY(-3px); }
+        }
+
+        @keyframes pupilRoll {
+            0%   { transform: translate(-50%, -50%); }
+            30%  { transform: translate(-80%, -75%); }
+            60%  { transform: translate(10%, -75%); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        @keyframes blobEscape {
+            0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--ex, 0px), var(--ey, -70px)) scale(0.15); }
+        }
+
+        @keyframes startSlimeBounce {
+            0%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-16px); }
+            70% { transform: translateY(-6px); }
+        }
+
+        .slime.squish { animation: slimeSquish 0.45s ease-in-out; }
+        .slime.wiggle { animation: slimeWiggle 0.6s ease-in-out; }
+        .slime.bounce { animation: slimeBounce 0.7s ease-out; }
+        .pupil.roll   { animation: pupilRoll 0.8s ease-in-out; }
+
+        /* === FEEDING BLOBS === */
+        .blobs-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .blob {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 4px solid rgba(255,255,255,0.65);
+            box-shadow: 0 5px 14px rgba(0,0,0,0.22), inset 0 2px 5px rgba(255,255,255,0.45);
+            transition: transform 0.12s ease;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .blob::after {
+            content: '';
+            position: absolute;
+            top: 14%;
+            left: 16%;
+            width: 34%;
+            height: 28%;
+            background: radial-gradient(circle, rgba(255,255,255,0.65), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .blob:active {
+            transform: scale(0.88);
+        }
+
+        /* === QUESTION SECTION === */
+        .question-section {
+            text-align: center;
+            padding: 10px 20px 16px;
+        }
+
+        .question-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #444;
+            margin: 0 0 16px;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .answer-btn {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            font-size: 2rem;
+            font-weight: 700;
+            background: white;
+            border: 4px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.14);
+            transition: transform 0.12s, border-color 0.2s, background-color 0.2s;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .answer-btn:active {
+            transform: scale(0.9);
+        }
+
+        .answer-btn.correct-flash {
+            border-color: #66bb6a;
+            background: #e8f5e9;
+        }
+
+        .answer-btn.wrong-flash {
+            border-color: #ef5350;
+            background: #ffebee;
+        }
+
+        /* === START SCREEN === */
+        .start-screen {
+            position: fixed;
+            inset: 0;
+            background: rgba(240, 250, 241, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .start-screen.hidden {
+            display: none;
+        }
+
+        .start-content {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .start-slime-emoji {
+            font-size: 6rem;
+            display: block;
+            margin-bottom: 16px;
+            animation: startSlimeBounce 1.8s ease-in-out infinite;
+        }
+
+        .start-content h2 {
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #2e7d32;
+            margin: 0 0 10px;
+        }
+
+        .start-content p {
+            font-size: 1.3rem;
+            color: #555;
+            margin: 0 0 28px;
+        }
+
+        .start-button {
+            background: linear-gradient(135deg, #66bb6a, #43a047);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 18px 48px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(102, 187, 106, 0.5);
+            transition: transform 0.15s;
+        }
+
+        .start-button:active {
+            transform: scale(0.95);
+        }
+
+        /* === CELEBRATION OVERLAY === */
+        .celebration-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(240, 240, 255, 0.97);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .celebration-overlay.hidden {
+            display: none;
+        }
+
+        .celebration-content {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .celebration-big-emoji {
+            font-size: 4.5rem;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        .celebration-content h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #7b1fa2;
+            margin: 0 0 10px;
+        }
+
+        .celebration-content p {
+            font-size: 1.3rem;
+            color: #555;
+            margin: 0 0 28px;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 18px 48px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(156, 39, 176, 0.45);
+            transition: transform 0.15s;
+        }
+
+        .continue-button:active {
+            transform: scale(0.95);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 600px) {
+            .slime {
+                width: 180px;
+                height: 155px;
+            }
+
+            .slime-eyes {
+                gap: 22px;
+            }
+
+            .eye {
+                width: 34px;
+                height: 34px;
+            }
+
+            .pupil {
+                width: 18px;
+                height: 18px;
+            }
+
+            .blob {
+                width: 60px;
+                height: 60px;
+            }
+
+            .game-area {
+                gap: 16px;
+            }
+
+            .answer-btn {
+                width: 78px;
+                height: 78px;
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .game-area {
+                flex-wrap: wrap;
+            }
+
+            .blobs-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- === GAME HEADER === -->
+    <header class="game-header">
+        <button class="back-button" id="backButton">←</button>
+        <h1 class="game-title">🟢 Slime Math</h1>
+        <div class="progress-indicator" id="progressIndicator">Round 1 of 5</div>
+    </header>
+
+    <!-- === INSTRUCTION === -->
+    <section class="instruction-section">
+        <p class="instruction-text" id="instructionText">Get ready!</p>
+    </section>
+
+    <!-- === MAIN GAME AREA === -->
+    <main class="game-area" id="gameArea">
+
+        <div class="blobs-container" id="blobsLeft"></div>
+
+        <div class="slime-wrapper">
+            <div class="slime" id="slime">
+                <div class="slime-highlight"></div>
+                <div class="slime-eyes" id="slimeEyes">
+                    <div class="eye" id="leftEye"><div class="pupil" id="leftPupil"></div></div>
+                    <div class="eye" id="rightEye"><div class="pupil" id="rightPupil"></div></div>
+                </div>
+                <div class="slime-mouth" id="slimeMouth">😊</div>
+                <div class="speech-bubble" id="speechBubble"></div>
+            </div>
+        </div>
+
+        <div class="blobs-container" id="blobsRight"></div>
+
+    </main>
+
+    <!-- === QUESTION SECTION === -->
+    <section class="question-section hidden" id="questionSection">
+        <p class="question-text" id="questionText"></p>
+        <div class="answer-buttons" id="answerButtons"></div>
+    </section>
+
+    <!-- === START SCREEN === -->
+    <div class="start-screen" id="startScreen">
+        <div class="start-content">
+            <span class="start-slime-emoji">🟢</span>
+            <h2>Slime Math!</h2>
+            <p>Feed the slime and count the blobs!</p>
+            <button class="start-button" id="startButton">Let's Play! ▶</button>
+        </div>
+    </div>
+
+    <!-- === CELEBRATION OVERLAY === -->
+    <div class="celebration-overlay hidden" id="celebrationOverlay">
+        <div class="celebration-content">
+            <span class="celebration-big-emoji">🟢 ✨ 🌟</span>
+            <h2>Amazing!</h2>
+            <p>You're a Slime Math Star!</p>
+            <button class="continue-button" id="continueButton">Back to Games!</button>
+        </div>
+    </div>
+
+    <script src="slime-math.js"></script>
+</body>
+</html>

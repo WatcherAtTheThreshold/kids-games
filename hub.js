@@ -17,7 +17,8 @@ const STICKER_REGISTRY = {
     'bug-count': { emoji: '🐞', name: 'Ladybug Count', unlocked: false },
     'bird-match': { emoji: '🦅', name: 'Bird Match', unlocked: false },
     'feelings-faces': { emoji: '😊', name: 'Happy Face', unlocked: false },
-    'sound-spelling': { emoji: '🔤', name: 'Word Star', unlocked: false }
+    'sound-spelling': { emoji: '🔤', name: 'Word Star', unlocked: false },
+    'slime-math': { emoji: '🟢', name: 'Slime Star', unlocked: false }
 };
 
 
